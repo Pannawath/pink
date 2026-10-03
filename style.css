@@ -590,3 +590,517 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.9);
 }
+
+/* ========================================================
+   PINK LIQUID GLASS REDESIGN - CANVA MOBILE REFERENCE
+   ======================================================== */
+:root {
+  --liquid-hot-pink: #ef4fa3;
+  --liquid-rose: #ff8fbe;
+  --liquid-deep: #9b315f;
+  --liquid-wine: #6e2446;
+  --liquid-ink: #1e293b;
+  --liquid-white: rgba(255, 255, 255, 0.22);
+  --liquid-panel: rgba(255, 255, 255, 0.16);
+  --liquid-border: rgba(255, 255, 255, 0.68);
+  --liquid-shadow: 0 24px 60px -15px rgba(113, 22, 65, 0.35);
+  --liquid-inner: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.85), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.04);
+}
+
+html {
+  scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.7) 0 4%, transparent 18%),
+    radial-gradient(circle at 82% 8%, rgba(255, 228, 242, 0.8) 0 10%, transparent 26%),
+    radial-gradient(ellipse at 20% 86%, rgba(180, 36, 102, 0.6) 0 14%, transparent 38%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 126, 184, 0.55) 0 14%, transparent 40%),
+    linear-gradient(135deg, #c74580 0%, #f47faf 28%, #ffcbe0 52%, #f074ac 75%, #a63769 100%);
+  color: var(--liquid-ink);
+  padding-bottom: 102px;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -18vh -12vw auto -12vw;
+  height: 58vh;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  filter: blur(0.2px);
+  background:
+    linear-gradient(112deg, transparent 5%, rgba(255, 255, 255, 0.32) 18%, transparent 29%),
+    radial-gradient(ellipse at 42% 64%, rgba(255, 255, 255, 0.3) 0 8%, rgba(255, 191, 219, 0.22) 20%, transparent 48%);
+  transform: rotate(-16deg);
+}
+
+body::after {
+  inset: auto -16vw -22vh -10vw;
+  height: 46vh;
+  opacity: 0.45;
+  background:
+    linear-gradient(118deg, transparent 8%, rgba(255, 255, 255, 0.28) 23%, transparent 34%),
+    radial-gradient(ellipse at 55% 42%, rgba(255, 225, 239, 0.45) 0 11%, rgba(198, 48, 111, 0.2) 28%, transparent 58%);
+  transform: rotate(-12deg);
+}
+
+.watermark-overlay {
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+}
+
+.apple-ambient-glow {
+  opacity: 0.62;
+}
+
+.ambient-orb {
+  filter: blur(78px);
+}
+
+.orb-top-left {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(255, 143, 190, 0.55) 46%, transparent 76%);
+}
+
+.orb-bottom-right {
+  background: radial-gradient(circle, rgba(255, 226, 240, 0.8) 0%, rgba(181, 46, 105, 0.42) 58%, transparent 80%);
+}
+
+.studio-3d-webgl-canvas {
+  opacity: 0.38;
+  mix-blend-mode: normal;
+}
+
+.studio-spotlight {
+  width: 920px;
+  height: 920px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0%, rgba(255, 142, 190, 0.28) 42%, transparent 74%);
+  left: 50%;
+  top: 34%;
+  filter: blur(80px);
+  transform: translateX(-50%);
+}
+
+.mobile-liquid-status {
+  display: none !important;
+}
+
+.apple-glass-nav {
+  min-height: 70px;
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    var(--liquid-shadow),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+}
+
+.app-brand-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.app-kicker {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.88);
+  text-transform: uppercase;
+}
+
+.app-brand-title {
+  font-size: 20px;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0;
+  text-shadow: 0 2px 10px rgba(91, 24, 58, 0.25);
+}
+
+.liquid-icon-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.1) 100%),
+    rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.85),
+    0 10px 24px rgba(117, 26, 68, 0.18);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.liquid-icon-btn:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+main {
+  isolation: isolate;
+}
+
+main.max-w-5xl {
+  max-width: 1080px;
+}
+
+.apple-glass-card {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--liquid-border);
+  box-shadow:
+    var(--liquid-shadow),
+    var(--liquid-inner);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  color: var(--liquid-ink);
+}
+
+.apple-glass-card h1,
+.apple-glass-card h2,
+.apple-glass-card h3,
+.apple-glass-card .font-sport-bold {
+  font-family: 'Kanit', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0;
+}
+
+.apple-segmented-control {
+  width: 100%;
+  justify-content: space-between;
+  padding: 6px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  box-shadow:
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.8),
+    0 12px 30px rgba(139, 35, 86, 0.16);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+.apple-segmented-btn {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-shadow: 0 1px 6px rgba(94, 24, 60, 0.24);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apple-segmented-btn:hover,
+.apple-segmented-btn.active {
+  color: #ffffff;
+}
+
+.apple-segmented-btn.active {
+  background:
+    linear-gradient(135deg, rgba(239, 79, 163, 0.85) 0%, rgba(255, 143, 196, 0.75) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 8px 22px rgba(199, 42, 122, 0.35),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.8);
+}
+
+.jersey-stage-container {
+  min-height: 520px;
+  border-radius: 34px;
+  padding: 24px;
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%),
+    rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    var(--liquid-shadow),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(26px) saturate(185%);
+  -webkit-backdrop-filter: blur(26px) saturate(185%);
+}
+
+.jersey-card-wrapper {
+  max-width: 500px;
+  filter: drop-shadow(0 26px 40px rgba(108, 23, 64, 0.22));
+}
+
+.jersey-card-wrapper[data-view="both"] {
+  max-width: 560px;
+  aspect-ratio: 1543 / 1019;
+}
+
+.jersey-hd-back,
+.jersey-hd-front,
+.jersey-hd-both {
+  transform: scale(1.02);
+}
+
+.number-style-clean {
+  fill: #fff7db;
+  stroke: #451a03;
+  stroke-width: 4.5px;
+}
+
+.apple-glass-input,
+.apple-dropzone,
+.apple-size-btn,
+.apple-style-swatch,
+.payment-status-btn {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%),
+    rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  color: #0f172a;
+  box-shadow:
+    inset 0 1.2px 1.8px 0 rgba(255, 255, 255, 0.8),
+    0 8px 22px rgba(123, 31, 77, 0.06);
+  backdrop-filter: blur(20px) saturate(175%);
+  -webkit-backdrop-filter: blur(20px) saturate(175%);
+}
+
+.apple-glass-input::placeholder {
+  color: #64748b;
+}
+
+.apple-glass-input:focus {
+  border-color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 0 3.5px rgba(239, 79, 163, 0.25),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+}
+
+.apple-size-btn {
+  border-radius: 9999px;
+  min-height: 42px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.apple-size-btn:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.38);
+  color: var(--liquid-deep);
+}
+
+.apple-size-btn.active {
+  background:
+    linear-gradient(135deg, rgba(239, 79, 163, 0.9) 0%, rgba(255, 143, 196, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #ffffff;
+  box-shadow:
+    0 12px 26px rgba(217, 49, 133, 0.35),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85);
+}
+
+.apple-btn-primary {
+  background:
+    linear-gradient(135deg, rgba(236, 72, 153, 0.92) 0%, rgba(251, 127, 186, 0.88) 55%, rgba(255, 189, 219, 0.85) 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 16px 36px rgba(209, 46, 126, 0.38),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85);
+  min-height: 48px;
+}
+
+.apple-btn-primary:hover:not(:disabled) {
+  background:
+    linear-gradient(135deg, rgba(219, 39, 119, 0.96) 0%, rgba(244, 114, 182, 0.92) 58%, rgba(255, 192, 217, 0.9) 100%);
+  box-shadow:
+    0 20px 42px rgba(187, 35, 113, 0.44),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+}
+
+.apple-btn-secondary {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.1) 100%),
+    rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  color: #0f172a;
+  box-shadow:
+    inset 0 1.2px 1.8px rgba(255, 255, 255, 0.8),
+    0 8px 22px rgba(123, 31, 77, 0.06);
+}
+
+#slipUploadSection,
+#submitButtonSection,
+.apple-glass-card .border-b,
+.apple-glass-card .border-t {
+  border-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.liquid-bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 45;
+  width: min(calc(100vw - 30px), 430px);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  padding: 8px;
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow:
+    0 24px 56px rgba(105, 23, 62, 0.32),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+}
+
+.liquid-bottom-nav a,
+.liquid-bottom-nav button {
+  min-width: 0;
+  border: 0;
+  border-radius: 20px;
+  padding: 8px 4px 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  text-shadow: 0 1px 8px rgba(98, 22, 60, 0.22);
+  transition: all 0.2s ease;
+}
+
+.liquid-bottom-nav i {
+  font-size: 17px;
+}
+
+.liquid-bottom-nav .active {
+  background:
+    linear-gradient(135deg, rgba(236, 72, 153, 0.88) 0%, rgba(255, 128, 188, 0.72) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  color: #ffffff;
+  box-shadow:
+    0 8px 22px rgba(180, 38, 109, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.75);
+}
+
+#toastContainer {
+  bottom: 106px;
+}
+
+#qrPromptPayModal .bg-white {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.18) 100%),
+    rgba(255, 255, 255, 0.22) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  box-shadow: 0 30px 70px rgba(105, 23, 62, 0.4), inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+}
+
+#qrPromptPayModal .bg-gradient-to-r {
+  background: linear-gradient(135deg, #ec4899, #fb8fc6) !important;
+}
+
+@media (min-width: 1024px) {
+  body {
+    padding-bottom: 36px;
+  }
+
+  .mobile-liquid-status,
+  .liquid-bottom-nav {
+    display: none;
+  }
+
+  .apple-glass-nav {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 1023px) {
+  body {
+    background-attachment: fixed;
+  }
+
+  header.sticky {
+    top: 14px;
+  }
+
+  .apple-glass-nav {
+    width: min(100%, 430px);
+    margin: 0 auto;
+    padding: 16px 18px !important;
+  }
+
+  main.max-w-5xl {
+    max-width: 460px;
+    padding-top: 18px;
+  }
+
+  .grid.lg\:grid-cols-12 {
+    gap: 18px;
+  }
+
+  .jersey-stage-container {
+    min-height: 420px;
+    padding: 18px;
+  }
+
+  .jersey-card-wrapper[data-view="both"] {
+    width: 100%;
+  }
+
+  .apple-glass-card {
+    border-radius: 28px;
+  }
+}
+
+@media (max-width: 520px) {
+  body {
+    padding-bottom: 116px;
+  }
+
+  main.max-w-5xl {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .jersey-stage-container {
+    min-height: 330px;
+  }
+
+  .apple-segmented-btn {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 12px;
+  }
+
+  .liquid-bottom-nav {
+    width: calc(100vw - 24px);
+  }
+}

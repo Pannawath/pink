@@ -62,7 +62,7 @@
   <div class="studio-spotlight" aria-hidden="true"></div>
   <canvas id="bg3dCanvas" class="studio-3d-webgl-canvas" aria-hidden="true"></canvas>
 
-  <!-- ================= FLOATING APPLE GLASS HEADER ================= -->
+  <!-- ================= FLOATING LIQUID GLASS HEADER ================= -->
   <header class="sticky top-4 z-40 px-4 sm:px-6 max-w-5xl mx-auto w-full">
     <div class="apple-glass-nav px-5 py-3 flex items-center justify-between">
 
@@ -73,11 +73,16 @@
           <i class="fa-solid fa-gem"></i>
         </div>
         <div class="flex items-center space-x-2">
-          <span class="text-sm font-bold tracking-tight text-slate-900 font-sport-bold">
-            Ayutthaya Sarakhampittayakhom <span class="text-xs text-slate-500 font-medium ml-1 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200/60">Studio 2026</span>
+          <span class="app-brand-copy">
+            <span class="app-kicker">SPORTS DAY</span>
+            <span class="app-brand-title">จองเสื้อกีฬาสี</span>
           </span>
         </div>
       </a>
+
+      <button type="button" class="liquid-icon-btn" aria-label="แจ้งเตือน">
+        <i class="fa-regular fa-bell"></i>
+      </button>
 
     </div>
   </header>
@@ -117,9 +122,9 @@
         <!-- View mode controls -->
         <div class="w-full flex items-center justify-between px-2 mb-2">
           <div class="apple-segmented-control">
-            <button type="button" id="btnViewBack" class="apple-segmented-btn active">ด้านหลัง</button>
+            <button type="button" id="btnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
             <button type="button" id="btnViewFront" class="apple-segmented-btn">ด้านหน้า</button>
-            <button type="button" id="btnViewBoth" class="apple-segmented-btn hidden sm:inline-block">คู่หน้า-หลัง</button>
+            <button type="button" id="btnViewBoth" class="apple-segmented-btn active">คู่หน้า-หลัง</button>
           </div>
         </div>
 
@@ -128,7 +133,7 @@
           <div id="jerseyCardWrapper" class="jersey-card-wrapper relative">
 
             <!-- 1. Back View HD (Fixed calibration: y=445, font-size=445, arc y=195, name-size=75) -->
-            <div id="jerseyViewBackEl" class="jersey-hd-back">
+            <div id="jerseyViewBackEl" class="jersey-hd-back hidden">
               <svg id="svgJerseyBack" class="jersey-svg-overlay" viewBox="0 0 780 1019" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -163,7 +168,7 @@
             </div>
 
             <!-- 3. Both Sides HD View -->
-            <div id="jerseyViewBothEl" class="jersey-hd-both hidden">
+            <div id="jerseyViewBothEl" class="jersey-hd-both">
               <svg id="svgJerseyBoth" class="jersey-svg-overlay" viewBox="0 0 1543 1019" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -204,9 +209,9 @@
           <div class="flex items-baseline justify-between border-b border-slate-200/60 pb-3">
             <div>
               <h1 class="text-xl font-bold tracking-tight text-slate-900 font-sport-bold">
-                FOOTBALL
+                เสื้อกีฬาสี สีชมพู
               </h1>
-              <p class="text-xs text-slate-500">หมายเหตุ สีของจริงอาจจะไม่ตรงนะครับ</p>
+              <p class="text-xs text-slate-500">ใส่ทีมเดียวกัน สู้ไปด้วยกัน</p>
             </div>
             <div class="text-right">
               <span class="text-2xl font-black text-slate-900 font-mono tracking-tight bg-slate-100/90 px-3.5 py-1 rounded-full border border-slate-200/70 shadow-2xs">฿390</span>
@@ -678,6 +683,26 @@
 
   <!-- Toast Container -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- Mobile Liquid Glass Bottom Navigation -->
+  <nav class="liquid-bottom-nav" aria-label="เมนูหลัก">
+    <a href="#" class="active">
+      <i class="fa-solid fa-house"></i>
+      <span>หน้าหลัก</span>
+    </a>
+    <a href="#jerseyCardWrapper">
+      <i class="fa-solid fa-shirt"></i>
+      <span>เสื้อทีม</span>
+    </a>
+    <button type="button" id="btnBottomOrders">
+      <i class="fa-regular fa-rectangle-list"></i>
+      <span>รายการจอง</span>
+    </button>
+    <button type="button" id="btnBottomSize">
+      <i class="fa-regular fa-user"></i>
+      <span>โปรไฟล์</span>
+    </button>
+  </nav>
 
   <!-- QR Code PromptPay Modal -->
   <div id="qrPromptPayModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">

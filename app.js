@@ -28,7 +28,7 @@ const JERSEY_CONFIG = {
 // ==========================================
 const AppState = {
   mode: 'new', // 'new' | 'edit'
-  viewSide: 'back', // 'back' | 'front' | 'both'
+  viewSide: 'both', // 'back' | 'front' | 'both'
   email: '',
   size: 'L',
   screenName: '',
@@ -156,6 +156,8 @@ const DOM = {
   modalDatabase: document.getElementById('modalDatabase'),
   ordersListContainer: document.getElementById('ordersListContainer'),
   btnExportCSV: document.getElementById('btnExportCSV'),
+  btnBottomOrders: document.getElementById('btnBottomOrders'),
+  btnBottomSize: document.getElementById('btnBottomSize'),
   toastContainer: document.getElementById('toastContainer')
 };
 
@@ -165,6 +167,7 @@ const DOM = {
 document.addEventListener('DOMContentLoaded', () => {
   bindEvents();
   updateLivePreview();
+  setJerseyView(AppState.viewSide);
   checkGasConnection();
   // Removed: loadOrdersDatabase() - No longer using LocalStorage
 });
@@ -308,6 +311,8 @@ function bindEvents() {
 
   // Modals
   if (DOM.btnOpenDatabase) DOM.btnOpenDatabase.addEventListener('click', openDatabaseModal);
+  if (DOM.btnBottomOrders) DOM.btnBottomOrders.addEventListener('click', openDatabaseModal);
+  if (DOM.btnBottomSize) DOM.btnBottomSize.addEventListener('click', () => DOM.modalSizeGuide.classList.remove('hidden'));
   if (DOM.btnCloseDatabase) DOM.btnCloseDatabase.addEventListener('click', closeDatabaseModal);
   if (DOM.btnCloseDatabaseFooter) DOM.btnCloseDatabaseFooter.addEventListener('click', closeDatabaseModal);
   if (DOM.btnExportCSV) DOM.btnExportCSV.addEventListener('click', exportOrdersToCSV);
@@ -800,6 +805,9 @@ function setJerseyView(side) {
   console.log('[VIEW] Switching to:', side);
   
   AppState.viewSide = side;
+  if (DOM.jerseyCardWrapper) {
+    DOM.jerseyCardWrapper.setAttribute('data-view', side);
+  }
 
   [DOM.btnViewBack, DOM.btnViewFront, DOM.btnViewBoth].forEach(btn => {
     if (btn) btn.classList.remove('active');
