@@ -1,14 +1,14 @@
 /**
  * =========================================================================
  * GOOGLE APPS SCRIPT BACKEND FOR AUTHONG ATHLETICS OFFICIAL STORE
- * ระบบบันทึกและจัดการคำสั่งจองเสื้อกีฬาสีทีมสีม่วง 2026 เชื่อมต่อ Google Sheets
- * Spreadsheet URL: https://docs.google.com/spreadsheets/d/1WOI_8VSHi_6FIaifxPNuX7hTHEElSVKeR8InFHSQZLw/edit
+ * ระบบบันทึกและจัดการคำสั่งจองเสื้อกีฬาสีทีมสีชมพู 2026 เชื่อมต่อ Google Sheets
+ * Spreadsheet URL: https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit
  * =========================================================================
  */
 
-var SPREADSHEET_ID = "1WOI_8VSHi_6FIaifxPNuX7hTHEElSVKeR8InFHSQZLw";
+var SPREADSHEET_ID = "YOUR_SPREADSHEET_ID";
 var SHEET_NAME = "Orders";
-var DRIVE_FOLDER_NAME = "Purple Jersey Slips 2026"; // โฟลเดอร์เก็บสลิป
+var DRIVE_FOLDER_NAME = "Pink Jersey Slips 2026"; // โฟลเดอร์เก็บสลิป
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -309,7 +309,7 @@ function getOrCreateSheet() {
     
     var headerRange = sheet.getRange(1, 1, 1, headers.length);
     headerRange.setFontWeight("bold");
-    headerRange.setBackground("#4c1d95");
+    headerRange.setBackground("#831843");
     headerRange.setFontColor("#ffffff");
     headerRange.setHorizontalAlignment("center");
     
@@ -434,7 +434,7 @@ function getOrCreateFolder() {
   } else {
     // สร้างโฟลเดอร์ใหม่
     var folder = DriveApp.createFolder(DRIVE_FOLDER_NAME);
-    folder.setDescription('โฟลเดอร์เก็บสลิปการโอนเงินจากระบบจองเสื้อทีมสีม่วง 2026');
+    folder.setDescription('โฟลเดอร์เก็บสลิปการโอนเงินจากระบบจองเสื้อทีมสีชมพู 2026');
     return folder;
   }
 }

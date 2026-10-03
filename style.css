@@ -18,8 +18,8 @@
   --apple-text-secondary: #475569;
   --apple-text-tertiary: #94a3b8;
   
-  --apple-purple-primary: #7c3aed;
-  --apple-purple-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  --apple-pink-primary: #ec4899;
+  --apple-pink-gradient: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
   
   /* Apple visionOS / macOS Glass */
   --apple-glass-bg: rgba(255, 255, 255, 0.72);
@@ -112,7 +112,7 @@ body {
   -webkit-backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--apple-glass-border);
   box-shadow: 
-    0 20px 40px -15px rgba(124, 58, 237, 0.06),
+    0 20px 40px -15px rgba(219, 39, 119, 0.06),
     0 0 0 1px rgba(226, 232, 240, 0.5),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
   border-radius: 28px;
@@ -153,12 +153,12 @@ body {
 
 /* Apple Buttons */
 .apple-btn-primary {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #f43f5e 0%, #db2777 100%);
   color: #ffffff;
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 
-    0 10px 25px -5px rgba(124, 58, 237, 0.4),
+    0 10px 25px -5px rgba(219, 39, 119, 0.4),
     inset 0 1.5px 1.5px rgba(255, 255, 255, 0.4);
   border-radius: 16px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -168,7 +168,7 @@ body {
 .apple-btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 
-    0 14px 28px -5px rgba(124, 58, 237, 0.5),
+    0 14px 28px -5px rgba(219, 39, 119, 0.5),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.6);
 }
 
@@ -208,11 +208,11 @@ body {
 
 .apple-glass-input:focus {
   outline: none;
-  border-color: #8b5cf6;
+  border-color: #f43f5e;
   background: #ffffff;
   box-shadow: 
-    0 0 0 3.5px rgba(139, 92, 246, 0.18),
-    0 4px 12px rgba(139, 92, 246, 0.06);
+    0 0 0 3.5px rgba(244, 63, 94, 0.18),
+    0 4px 12px rgba(244, 63, 94, 0.06);
 }
 
 .apple-glass-input::placeholder {
@@ -231,18 +231,18 @@ body {
 }
 
 .apple-size-btn:hover {
-  border-color: #8b5cf6;
+  border-color: #f43f5e;
   background: #ffffff;
-  color: #7c3aed;
+  color: #db2777;
   transform: translateY(-1px);
 }
 
 .apple-size-btn.active {
-  background: #7c3aed;
-  border-color: #6d28d9;
+  background: #db2777;
+  border-color: #be185d;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 4px 14px rgba(219, 39, 119, 0.35);
 }
 
 /* Color Swatches (Print Style) */
@@ -268,9 +268,9 @@ body {
 
 .apple-style-swatch.active {
   background: #ffffff;
-  border-color: #7c3aed;
+  border-color: #db2777;
   color: #0f172a;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2), 0 4px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 0 2px rgba(219, 39, 119, 0.2), 0 4px 10px rgba(0, 0, 0, 0.04);
 }
 
 /* ========================================================
@@ -397,16 +397,16 @@ body {
 }
 
 .apple-dropzone:hover {
-  border-color: #8b5cf6;
+  border-color: #f43f5e;
   background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 20px -4px rgba(124, 58, 237, 0.12);
+  box-shadow: 0 4px 20px -4px rgba(219, 39, 119, 0.12);
   transform: translateY(-1px);
 }
 
 .apple-dropzone.dragover {
-  border-color: #7c3aed;
+  border-color: #db2777;
   background: rgba(245, 243, 255, 0.9);
-  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.15);
   transform: scale(1.01);
 }
 
@@ -570,14 +570,14 @@ body {
 
 /* จัดส่งแล้ว - purple */
 .status-btn[data-status="จัดส่งแล้ว"].active {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  border-color: #7c3aed;
+  background: linear-gradient(135deg, #f43f5e 0%, #db2777 100%);
+  border-color: #db2777;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 .status-btn[data-status="จัดส่งแล้ว"]:hover {
-  border-color: #8b5cf6;
-  color: #7c3aed;
+  border-color: #f43f5e;
+  color: #db2777;
 }
 
 /* เสร็จสิ้น - teal */

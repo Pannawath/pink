@@ -44,8 +44,8 @@ const AppState = {
   isSubmitting: false,
   gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.gasUrl) 
     ? CONFIG.gasUrl 
-    : (localStorage.getItem('PURPLE_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycby4uoyfn-QCbTk2BqZnzb1ZOt54AjAXMe5y0ahMKzFj7MZZQzNeTe8PAcHg5SrynOzhAQ/exec'),
-  spreadsheetId: '1WOI_8VSHi_6FIaifxPNuX7hTHEElSVKeR8InFHSQZLw',
+    : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'YOUR_GOOGLE_APPS_SCRIPT_URL'),
+  spreadsheetId: 'YOUR_SPREADSHEET_ID',
   existingRecord: null,
   orders: []
 };
@@ -447,9 +447,9 @@ if (DOM.qrPromptPayModal) {
 if (DOM.btnCopyPromptPay) {
   DOM.btnCopyPromptPay.addEventListener('click', () => {
     navigator.clipboard.writeText('0987654321').then(() => {
-      showToast('คัดลอกเลขพร้อมเพย์ 098-765-4321 แล้ว!', 'success');
+      showToast('คัดลอกเลขพร้อมเพย์ 08X-XXX-XXXX แล้ว!', 'success');
     }).catch(() => {
-      showToast('เลขพร้อมเพย์: 098-765-4321', 'info');
+      showToast('เลขพร้อมเพย์: 08X-XXX-XXXX', 'info');
     });
   });
 }
@@ -1184,7 +1184,7 @@ async function handleFormSubmit() {
   
   const orderData = {
     email: email,
-    productTitle: 'เสื้อแข่งขันทีมสีม่วง 2026',
+    productTitle: 'เสื้อแข่งขันทีมสีชมพู 2026',
     name: name.toUpperCase(),
     number: number,
     size: AppState.size,
@@ -1257,10 +1257,10 @@ function renderOrdersList() {
   }
 
   DOM.ordersListContainer.innerHTML = AppState.orders.map((o, idx) => `
-    <div class="p-3.5 rounded-2xl bg-white border border-purple-100 shadow-sm flex items-center justify-between gap-3">
+    <div class="p-3.5 rounded-2xl bg-white border border-pink-100 shadow-sm flex items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
         ${o.slipImage ? `
-          <div class="w-10 h-12 rounded-lg bg-slate-100 border border-purple-100 overflow-hidden shrink-0 cursor-pointer" onclick="viewOrderSlipFull(${idx})" title="คลิกเพื่อดูสลิป">
+          <div class="w-10 h-12 rounded-lg bg-slate-100 border border-pink-100 overflow-hidden shrink-0 cursor-pointer" onclick="viewOrderSlipFull(${idx})" title="คลิกเพื่อดูสลิป">
             <img src="${o.slipImage}" alt="Slip" class="w-full h-full object-cover">
           </div>
         ` : `
@@ -1271,14 +1271,14 @@ function renderOrdersList() {
         <div class="space-y-1">
           <div class="flex items-center gap-2">
             <span class="font-black text-slate-900 text-sm font-sport-bold">${o.name}</span>
-            <span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 font-mono font-bold text-xs">#${o.number}</span>
+            <span class="px-2 py-0.5 rounded-md bg-pink-100 text-pink-700 font-mono font-bold text-xs">#${o.number}</span>
             <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs">Size ${o.size}</span>
           </div>
           <p class="text-[11px] text-slate-500 font-mono">${o.email} &bull; ฿${o.price}</p>
         </div>
       </div>
       <div class="flex items-center gap-1.5">
-        <button onclick="editOrderFromList(${idx})" class="p-2 rounded-lg text-purple-600 hover:bg-purple-50 text-xs font-bold transition cursor-pointer" title="แก้ไข">
+        <button onclick="editOrderFromList(${idx})" class="p-2 rounded-lg text-pink-600 hover:bg-pink-50 text-xs font-bold transition cursor-pointer" title="แก้ไข">
           <i class="fa-solid fa-pen-to-square"></i>
         </button>
         <button onclick="deleteOrderFromList(${idx})" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 text-xs font-bold transition cursor-pointer" title="ลบ">
@@ -1330,7 +1330,7 @@ function exportOrdersToCSV() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `authong_purple_orders_${Date.now()}.csv`);
+  link.setAttribute('download', `ayutthaya_pink_orders_${Date.now()}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -1350,7 +1350,7 @@ function closeConfigModal() {
 function saveGasConfig() {
   const url = DOM.inputGasUrl ? DOM.inputGasUrl.value.trim() : '';
   AppState.gasUrl = url;
-  localStorage.setItem('PURPLE_JERSEY_GAS_URL', url);
+  localStorage.setItem('PINK_JERSEY_GAS_URL', url);
   checkGasConnection();
   closeConfigModal();
   showToast('บันทึกการตั้งค่า Google Sheets แล้ว', 'success');
@@ -1393,7 +1393,7 @@ function downloadJerseyMockup() {
     useCORS: true
   }).then(canvas => {
     const link = document.createElement('a');
-    link.download = `Authong_Purple_Jersey_${AppState.screenName || 'Custom'}_${AppState.screenNumber || '10'}.png`;
+    link.download = `Ayutthaya_Pink_Jersey_${AppState.screenName || 'Custom'}_${AppState.screenNumber || '10'}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
     showToast('ดาวน์โหลดรูปภาพเสื้อเรียบร้อยแล้ว!', 'success');
@@ -1441,12 +1441,12 @@ function showCancelledOrderAlert() {
         <p class="text-center">
           คำสั่งซื้อของคุณถูกยกเลิกเนื่องจากข้อมูลไม่ครบถ้วนหรือมีปัญหา
         </p>
-        <div class="p-3 rounded-xl bg-purple-50 border border-purple-200 text-xs space-y-1">
-          <p class="font-semibold text-purple-900">
+        <div class="p-3 rounded-xl bg-pink-50 border border-pink-200 text-xs space-y-1">
+          <p class="font-semibold text-pink-900">
             <i class="fa-solid fa-lightbulb mr-1"></i>
             วิธีแก้ไข:
           </p>
-          <ul class="list-disc list-inside text-purple-800 space-y-0.5 ml-1">
+          <ul class="list-disc list-inside text-pink-800 space-y-0.5 ml-1">
             <li>อัปโหลดสลิปการชำระเงินใหม่อีกครั้ง</li>
             <li>ตรวจสอบข้อมูลให้ถูกต้องครบถ้วน</li>
             <li>หรือติดต่อทีมงานที่ <strong>OpenChat</strong></li>
@@ -1457,7 +1457,7 @@ function showCancelledOrderAlert() {
       <!-- Actions -->
       <div class="flex gap-2">
         <button type="button" id="btnContactSupport" 
-          class="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-sm hover:shadow-lg transition">
+          class="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-indigo-600 text-white font-semibold text-sm hover:shadow-lg transition">
           <i class="fa-solid fa-comments mr-1.5"></i>
           ติดต่อทีมงาน
         </button>
@@ -1500,7 +1500,7 @@ function showToast(msg, type = 'info') {
   const bgColors = {
     success: 'bg-emerald-600 text-white',
     error: 'bg-rose-600 text-white',
-    info: 'bg-purple-700 text-white'
+    info: 'bg-pink-700 text-white'
   };
 
   toast.className = `px-4 py-2.5 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 pointer-events-auto transition transform translate-y-2 opacity-0 ${bgColors[type] || bgColors.info}`;
