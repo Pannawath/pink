@@ -11,26 +11,28 @@
   font-display: swap;
 }
 
+/* ========================================================
+   OPAL iOS DESIGN SYSTEM - WHITE EDITION
+   ======================================================== */
 :root {
-  /* Apple Liquid Glass Palette */
-  --apple-bg: #f8fafc;
-  --apple-text-primary: #0f172a;
-  --apple-text-secondary: #475569;
-  --apple-text-tertiary: #94a3b8;
-  
-  --apple-pink-primary: #ec4899;
-  --apple-pink-gradient: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
-  
-  /* Apple visionOS / macOS Glass */
-  --apple-glass-bg: rgba(255, 255, 255, 0.72);
-  --apple-glass-card: rgba(255, 255, 255, 0.68);
-  --apple-glass-border: rgba(255, 255, 255, 0.85);
-  --apple-glass-border-subtle: rgba(203, 213, 225, 0.45);
-  --apple-glass-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 1px 1px rgba(255, 255, 255, 0.9);
+  /* Opal Pure Porcelain & White Glass */
+  --opal-bg: #f8fafc;
+  --opal-card-bg: rgba(255, 255, 255, 0.88);
+  --opal-card-solid: #ffffff;
+  --opal-glass-border: rgba(255, 255, 255, 0.95);
+  --opal-border-subtle: rgba(226, 232, 240, 0.8);
+  --opal-text-primary: #0f172a;
+  --opal-text-secondary: #475569;
+  --opal-text-tertiary: #94a3b8;
+  --opal-noir: #0f172a;
+  --opal-noir-hover: #1e293b;
+  --opal-pill-track: rgba(241, 245, 249, 0.9);
+  --opal-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --opal-inner-glow: inset 0 1.5px 0 0 rgba(255, 255, 255, 1);
 }
 
 /* ========================================================
-   FULLSCREEN DIAGONAL WATERMARK
+   FULLSCREEN DIAGONAL WATERMARK (PANNAWAT MOCUP)
    ======================================================== */
 .watermark-overlay {
   position: fixed;
@@ -77,19 +79,21 @@
 
 body {
   font-family: 'Plus Jakarta Sans', 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--apple-bg);
+  background-color: var(--opal-bg);
   background-image: 
-    radial-gradient(at 15% 15%, rgba(221, 214, 254, 0.35) 0px, transparent 45%),
-    radial-gradient(at 85% 20%, rgba(251, 207, 232, 0.3) 0px, transparent 45%),
-    radial-gradient(at 50% 85%, rgba(186, 230, 253, 0.25) 0px, transparent 50%);
-  color: var(--apple-text-primary);
+    radial-gradient(at 10% 12%, rgba(224, 242, 254, 0.5) 0px, transparent 50%),
+    radial-gradient(at 88% 18%, rgba(243, 232, 255, 0.45) 0px, transparent 48%),
+    radial-gradient(at 50% 50%, rgba(255, 255, 255, 0.85) 0px, transparent 65%),
+    radial-gradient(at 82% 82%, rgba(254, 243, 199, 0.35) 0px, transparent 45%),
+    radial-gradient(at 18% 85%, rgba(254, 226, 226, 0.35) 0px, transparent 45%);
+  color: var(--opal-text-primary);
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
 }
 
 /* ========================================================
-   APPLE AMBIENT GLOW
+   OPAL AMBIENT PRISMATIC GLOW
    ======================================================== */
 .apple-ambient-glow {
   position: fixed;
@@ -102,78 +106,81 @@ body {
 .ambient-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.35;
-  animation: floatAmbient 20s infinite alternate ease-in-out;
+  filter: blur(100px);
+  opacity: 0.38;
+  animation: floatAmbient 22s infinite alternate ease-in-out;
 }
 
 .orb-top-left {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, #ddd6fe 0%, #f3eefc 70%, transparent 80%);
-  top: -10%;
-  left: -5%;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, #e0f2fe 0%, #f3e8ff 60%, transparent 80%);
+  top: -12%;
+  left: -8%;
 }
 
 .orb-bottom-right {
-  width: 550px;
-  height: 550px;
-  background: radial-gradient(circle, #fbcfe8 0%, #fdf2f8 70%, transparent 80%);
-  bottom: -10%;
-  right: -5%;
-  animation-duration: 25s;
-  animation-delay: -5s;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #ffe4e6 0%, #fef3c7 60%, transparent 80%);
+  bottom: -12%;
+  right: -8%;
+  animation-duration: 26s;
+  animation-delay: -6s;
 }
 
 @keyframes floatAmbient {
   0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(40px, 30px) scale(1.05); }
-  100% { transform: translate(-30px, 40px) scale(0.95); }
+  50% { transform: translate(35px, 25px) scale(1.06); }
+  100% { transform: translate(-25px, 35px) scale(0.96); }
 }
 
 /* ========================================================
-   APPLE LIQUID GLASS COMPONENTS
+   OPAL WHITE LIQUID GLASS COMPONENTS
    ======================================================== */
 .apple-glass-nav {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   box-shadow: 
-    0 10px 30px -10px rgba(0, 0, 0, 0.04),
-    0 0 0 1px rgba(226, 232, 240, 0.6),
+    0 12px 36px -8px rgba(15, 23, 42, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.02),
     inset 0 1px 1.5px rgba(255, 255, 255, 1);
-  border-radius: 20px;
+  border-radius: 9999px;
 }
 
 .apple-glass-card {
-  background: var(--apple-glass-card);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border: 1px solid var(--apple-glass-border);
+  background: var(--opal-card-bg);
+  backdrop-filter: blur(36px) saturate(190%);
+  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  border: 1px solid var(--opal-glass-border);
   box-shadow: 
-    0 20px 40px -15px rgba(219, 39, 119, 0.06),
-    0 0 0 1px rgba(226, 232, 240, 0.5),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
-  border-radius: 28px;
+    0 24px 50px -12px rgba(15, 23, 42, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.02),
+    inset 0 1.5px 2px rgba(255, 255, 255, 1);
+  border-radius: 30px;
 }
 
+/* Opal Segmented Pill Control */
 .apple-segmented-control {
-  background: rgba(241, 245, 249, 0.8);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 14px;
-  padding: 3px;
+  background: var(--opal-pill-track);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 9999px;
+  padding: 4px;
   display: inline-flex;
   align-items: center;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .apple-segmented-btn {
-  padding: 6px 14px;
+  padding: 7px 18px;
   font-size: 12px;
   font-weight: 600;
   color: #64748b;
-  border-radius: 11px;
+  border-radius: 9999px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   border: none;
@@ -188,108 +195,109 @@ body {
   background: #ffffff;
   color: #0f172a;
   font-weight: 700;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.07), 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
-/* Apple Buttons */
+/* Opal Action Buttons */
 .apple-btn-primary {
-  background: linear-gradient(135deg, #f43f5e 0%, #db2777 100%);
+  background: #0f172a;
   color: #ffffff;
-  font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 
-    0 10px 25px -5px rgba(219, 39, 119, 0.4),
-    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.4);
-  border-radius: 16px;
+    0 12px 28px -6px rgba(15, 23, 42, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
 .apple-btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
+  background: #1e293b;
+  transform: translateY(-1.5px);
   box-shadow: 
-    0 14px 28px -5px rgba(219, 39, 119, 0.5),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.6);
+    0 16px 32px -6px rgba(15, 23, 42, 0.32),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
 }
 
 .apple-btn-primary:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translateY(0.5px);
 }
 
 .apple-btn-secondary {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.95);
   color: #334155;
   font-weight: 600;
-  border-radius: 14px;
+  border-radius: 9999px;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
   cursor: pointer;
 }
 
 .apple-btn-secondary:hover {
-  background: #ffffff;
+  background: #f8fafc;
   color: #0f172a;
   border-color: #cbd5e1;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
-/* Apple Inputs */
+/* Opal Glass Inputs */
 .apple-glass-input {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(226, 232, 240, 0.85);
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  border-radius: 16px;
   color: #0f172a;
   transition: all 0.2s ease;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
 }
 
 .apple-glass-input:focus {
   outline: none;
-  border-color: #f43f5e;
+  border-color: #0f172a;
   background: #ffffff;
   box-shadow: 
-    0 0 0 3.5px rgba(244, 63, 94, 0.18),
-    0 4px 12px rgba(244, 63, 94, 0.06);
+    0 0 0 3.5px rgba(15, 23, 42, 0.06),
+    0 4px 12px rgba(15, 23, 42, 0.03);
 }
 
 .apple-glass-input::placeholder {
   color: #94a3b8;
 }
 
-/* Size Pills (Apple Style) */
+/* Opal Size Selector Pills */
 .apple-size-btn {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(226, 232, 240, 0.85);
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  border-radius: 14px;
   color: #334155;
   font-weight: 600;
   transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
 }
 
 .apple-size-btn:hover {
-  border-color: #f43f5e;
+  border-color: #0f172a;
   background: #ffffff;
-  color: #db2777;
+  color: #0f172a;
   transform: translateY(-1px);
 }
 
 .apple-size-btn.active {
-  background: #db2777;
-  border-color: #be185d;
+  background: #0f172a;
+  border-color: #0f172a;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(219, 39, 119, 0.35);
+  box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.25);
 }
 
-/* Color Swatches (Print Style) */
+/* Opal Swatches */
 .apple-style-swatch {
-  border: 1.5px solid rgba(226, 232, 240, 0.8);
+  border: 1.5px solid rgba(226, 232, 240, 0.85);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.75);
+  background: #ffffff;
   padding: 8px 12px;
   display: flex;
   align-items: center;
@@ -302,15 +310,15 @@ body {
 }
 
 .apple-style-swatch:hover {
-  background: #ffffff;
-  border-color: #cbd5e1;
+  background: #f8fafc;
+  border-color: #0f172a;
 }
 
 .apple-style-swatch.active {
   background: #ffffff;
-  border-color: #db2777;
+  border-color: #0f172a;
   color: #0f172a;
-  box-shadow: 0 0 0 2px rgba(219, 39, 119, 0.2), 0 4px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.15), 0 4px 10px rgba(0, 0, 0, 0.04);
 }
 
 /* ========================================================
@@ -390,9 +398,7 @@ body {
   z-index: 10;
 }
 
-/* ========================================================
-   SPORTS TYPOGRAPHY - SOLID VECTOR PRINT (NO DROP SHADOWS)
-   ======================================================== */
+/* Sports Typography */
 .font-jersey {
   font-family: 'JerseyMiami', sans-serif !important;
   letter-spacing: 0.04em;
@@ -425,35 +431,31 @@ body {
   filter: none !important;
 }
 
-/* ========================================================
-   APPLE DROPZONE & PAYMENT SLIP UPLOAD
-   ======================================================== */
+/* Opal Dropzone */
 .apple-dropzone {
-  border: 2px dashed rgba(167, 139, 250, 0.6);
-  background: rgba(255, 255, 255, 0.65);
+  border: 2px dashed rgba(203, 213, 225, 0.9);
+  background: rgba(248, 250, 252, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .apple-dropzone:hover {
-  border-color: #f43f5e;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 20px -4px rgba(219, 39, 119, 0.12);
+  border-color: #0f172a;
+  background: #ffffff;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
   transform: translateY(-1px);
 }
 
 .apple-dropzone.dragover {
-  border-color: #db2777;
-  background: rgba(245, 243, 255, 0.9);
-  box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.15);
+  border-color: #0f172a;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08);
   transform: scale(1.01);
 }
 
-
-/* ========================================================
-   PAYMENT STATUS BUTTONS (WITH COLORS)
-   ======================================================== */
+/* Payment Status Buttons */
 .payment-status-btn {
   display: flex;
   flex-direction: column;
@@ -461,14 +463,15 @@ body {
   justify-content: center;
   gap: 4px;
   padding: 12px 8px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(226, 232, 240, 0.85);
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  border-radius: 16px;
   font-size: 11px;
   font-weight: 600;
   color: #64748b;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
 }
 
 .payment-status-btn i {
@@ -479,185 +482,52 @@ body {
 
 .payment-status-btn:hover {
   background: #ffffff;
+  border-color: #0f172a;
+  color: #0f172a;
   transform: translateY(-1px);
 }
 
-.payment-status-btn[data-status="success"]:hover {
-  border-color: #10b981;
-  color: #059669;
-}
-
-.payment-status-btn[data-status="success"]:hover i {
-  color: #10b981;
-  opacity: 1;
-}
-
-.payment-status-btn[data-status="pending"]:hover {
-  border-color: #f59e0b;
-  color: #d97706;
-}
-
-.payment-status-btn[data-status="pending"]:hover i {
-  color: #f59e0b;
-  opacity: 1;
-}
-
-.payment-status-btn[data-status="failed"]:hover {
-  border-color: #ef4444;
-  color: #dc2626;
-}
-
-.payment-status-btn[data-status="failed"]:hover i {
-  color: #ef4444;
-  opacity: 1;
-}
-
-/* Active States with Colors */
-.payment-status-btn[data-status="success"].active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: #059669;
+.payment-status-btn.active {
+  background: #0f172a;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-}
-
-.payment-status-btn[data-status="pending"].active {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  border-color: #d97706;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
-}
-
-.payment-status-btn[data-status="failed"].active {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  border-color: #dc2626;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+  border-color: #0f172a;
+  box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.22);
 }
 
 .payment-status-btn.active i {
   opacity: 1;
-  color: #ffffff;
 }
 
-/* ========================================================
-   ORDER STATUS BUTTONS
-   ======================================================== */
-.status-btn {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(226, 232, 240, 0.85);
-  border-radius: 12px;
-  color: #334155;
-  font-weight: 600;
-  font-size: 11px;
-  padding: 8px 10px;
-  cursor: pointer;
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-  text-align: center;
+/* Modals */
+.apple-modal-backdrop {
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.status-btn:hover {
-  background: #ffffff;
-  transform: translateY(-1px);
+.apple-modal-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 30px 60px -15px rgba(15, 23, 42, 0.15),
+    inset 0 1.5px 2px rgba(255, 255, 255, 1);
+  border-radius: 32px;
 }
 
-/* รอชำระเงิน - gray */
-.status-btn[data-status="รอชำระเงิน"].active {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-  border-color: #475569;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(71, 85, 105, 0.35);
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-.status-btn[data-status="รอชำระเงิน"]:hover {
-  border-color: #64748b;
-  color: #475569;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-
-/* รอตรวจสอบสลิป - amber */
-.status-btn[data-status="รอตรวจสอบสลิป"].active {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  border-color: #d97706;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.8);
+  border-radius: 9999px;
 }
-.status-btn[data-status="รอตรวจสอบสลิป"]:hover {
-  border-color: #f59e0b;
-  color: #d97706;
-}
-
-/* ชำระเงินแล้ว - emerald */
-.status-btn[data-status="ชำระเงินแล้ว"].active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: #059669;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-}
-.status-btn[data-status="ชำระเงินแล้ว"]:hover {
-  border-color: #10b981;
-  color: #059669;
-}
-
-/* กำลังผลิต - blue */
-.status-btn[data-status="กำลังผลิต"].active {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  border-color: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
-}
-.status-btn[data-status="กำลังผลิต"]:hover {
-  border-color: #3b82f6;
-  color: #2563eb;
-}
-
-/* จัดส่งแล้ว - purple */
-.status-btn[data-status="จัดส่งแล้ว"].active {
-  background: linear-gradient(135deg, #f43f5e 0%, #db2777 100%);
-  border-color: #db2777;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
-}
-.status-btn[data-status="จัดส่งแล้ว"]:hover {
-  border-color: #f43f5e;
-  color: #db2777;
-}
-
-/* เสร็จสิ้น - teal */
-.status-btn[data-status="เสร็จสิ้น"].active {
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
-  border-color: #0d9488;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.35);
-}
-.status-btn[data-status="เสร็จสิ้น"]:hover {
-  border-color: #14b8a6;
-  color: #0d9488;
-}
-
-
-/* ========================================================
-   3D ROTATION ANIMATION - REMOVED
-   ======================================================== */
-.jersey-card-wrapper.rotating:hover {
-  animation-play-state: paused;
-}
-
-/* ========================================================
-   MODAL ANIMATIONS
-   ======================================================== */
-@keyframes scaleUp {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-scale-up {
-  animation: scaleUp 0.2s ease-out;
-}
-
-#cancelledOrderModal {
-  transition: opacity 0.2s ease-out;
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.9);
 }
