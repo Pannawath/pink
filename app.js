@@ -4,7 +4,7 @@
 const JERSEY_CONFIG = {
   // 1. เบอร์ด้านหลัง (Back Number)
   backNumber: {
-    x: 390,        // แนวนอน (390 = กึ่งกลางเสื้อพอดี)
+    x: 400,        // แนวนอน (390 = กึ่งกลางเสื้อพอดี)
     y: 505,        // แนวตั้ง (ความสูงของเบอร์หลัง)
     size: 380      // ขนาดตัวเลขด้านหลัง
   },
@@ -727,7 +727,7 @@ function updateLivePreview() {
     DOM.nameArcPath.setAttribute('d', `M 140 ${arcYEnd} Q 390 ${backName.arcCurveY} 640 ${arcYEnd}`);
   }
   if (DOM.nameArcPathBoth) {
-    DOM.nameArcPathBoth.setAttribute('d', `M 910 ${arcYEnd} Q 1155 ${backName.arcCurveY} 1400 ${arcYEnd}`);
+    DOM.nameArcPathBoth.setAttribute('d', `M 140 ${arcYEnd} Q 390 ${backName.arcCurveY} 640 ${arcYEnd}`);
   }
 
   // Name Text Content & Dynamic Font Size / Letter Spacing
@@ -746,7 +746,7 @@ function updateLivePreview() {
     DOM.svgCurvedNameBoth.textContent = displayName;
     const parentTextBoth = DOM.svgCurvedNameBoth.parentElement;
     if (parentTextBoth) {
-      parentTextBoth.setAttribute('font-size', Math.round(dynamicSize * 0.95).toString());
+      parentTextBoth.setAttribute('font-size', dynamicSize.toString());
       parentTextBoth.setAttribute('letter-spacing', letterSpacing);
       parentTextBoth.style.fill = '#ffffff';
       parentTextBoth.removeAttribute('filter');
@@ -771,11 +771,11 @@ function updateLivePreview() {
     DOM.svgFrontNumber.textContent = displayNumber;
   }
 
-  // Both Sides View: Back Number & Front Chest Number
+  // Both Sides View: Back Number & Front Chest Number (Front on Left, Back on Right)
   if (DOM.svgBothNumber) {
     DOM.svgBothNumber.style.fontFamily = "'JerseyMiami', sans-serif";
     DOM.svgBothNumber.setAttribute('font-size', backNumber.size.toString());
-    DOM.svgBothNumber.setAttribute('x', '1155');
+    DOM.svgBothNumber.setAttribute('x', backNumber.x.toString());
     DOM.svgBothNumber.setAttribute('y', backNumber.y.toString());
     DOM.svgBothNumber.textContent = displayNumber;
   }
@@ -862,8 +862,8 @@ function setJerseyView(side) {
       DOM.jerseyViewBackEl.classList.add('hidden');
       DOM.jerseyViewFrontEl.classList.add('hidden');
       DOM.jerseyViewBothEl.classList.remove('hidden');
-      DOM.jerseyCardWrapper.style.maxWidth = '680px';
-      DOM.jerseyCardWrapper.style.aspectRatio = '1543 / 1019';
+      DOM.jerseyCardWrapper.style.maxWidth = '640px';
+      DOM.jerseyCardWrapper.style.aspectRatio = '1560 / 1019';
       
       requestAnimationFrame(() => {
         DOM.jerseyViewBothEl.style.opacity = '1';
