@@ -59,14 +59,14 @@
 }
 
 .watermark-text-large {
-  font-size: clamp(4.5rem, 15vw, 13rem);
-  border-top: 8px dashed #dc2626;
-  border-bottom: 8px dashed #dc2626;
-  padding: 1rem 3rem;
+  font-size: clamp(3rem, 9vw, 8.5rem);
+  border-top: 6px dashed #dc2626;
+  border-bottom: 6px dashed #dc2626;
+  padding: 0.75rem 2.5rem;
 }
 
 .watermark-text-small {
-  font-size: clamp(2rem, 8vw, 6.5rem);
+  font-size: clamp(1.5rem, 5vw, 4.5rem);
 }
 
 * {
