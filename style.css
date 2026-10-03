@@ -410,6 +410,9 @@ body {
 
 .number-style-clean {
   fill: #ffffff;
+  stroke: #451a03;
+  stroke-width: 5px;
+  paint-order: stroke fill;
   filter: none !important;
 }
 
