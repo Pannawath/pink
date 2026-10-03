@@ -35,6 +35,10 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+  <!-- Three.js & GLTFLoader for Real 3D Model -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -53,6 +57,10 @@
     <div class="ambient-orb orb-top-left"></div>
     <div class="ambient-orb orb-bottom-right"></div>
   </div>
+
+  <!-- Real WebGL 3D Studio Canvas (Floating 3dmodel/shirt.glb with Studio Lighting) -->
+  <div class="studio-spotlight" aria-hidden="true"></div>
+  <canvas id="bg3dCanvas" class="studio-3d-webgl-canvas" aria-hidden="true"></canvas>
 
   <!-- ================= FLOATING APPLE GLASS HEADER ================= -->
   <header class="sticky top-4 z-40 px-4 sm:px-6 max-w-5xl mx-auto w-full">
@@ -730,6 +738,9 @@
 
   <!-- Main JS -->
   <script src="app.js"></script>
+
+  <!-- Real WebGL 3D Studio Engine -->
+  <script src="studio3d.js"></script>
 </body>
 
 </html>
