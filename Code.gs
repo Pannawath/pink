@@ -7,8 +7,8 @@
  */
 
 var SPREADSHEET_ID = "13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0";
-var SHEET_NAME = "Orders";
-var DRIVE_FOLDER_NAME = "Pink Jersey Slips 2026"; // โฟลเดอร์เก็บสลิปการโอนเงินทีมสีชมพู 2026
+var SHEET_NAME = "จองเสื้อกีฬาสี สีชมพู 2026 - สารคามพิทยาคม";
+var DRIVE_FOLDER_NAME = "Pink Slips 2026"; // โฟลเดอร์เก็บสลิปการโอนเงินทีมสีชมพู 2026
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
