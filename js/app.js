@@ -42,10 +42,12 @@ const AppState = {
   slipChanged: false, // Track if slip was changed during edit mode
   isSearchingEmail: false,
   isSubmitting: false,
-  gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.gasUrl) 
-    ? CONFIG.gasUrl 
-    : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycbx_sONVRF5-uf9KgIK27gXfs-M6IJtSTA07qZ3GRrYYTer4ZEAzMH4OlwVYoZ-9CA/exec'),
-  spreadsheetId: '13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0',
+  gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.gasUrl) 
+    ? CONFIG.backend.gasUrl 
+    : ((typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycbx_sONVRF5-uf9KgIK27gXfs-M6IJtSTA07qZ3GRrYYTer4ZEAzMH4OlwVYoZ-9CA/exec')),
+  spreadsheetId: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.spreadsheetId)
+    ? CONFIG.backend.spreadsheetId
+    : '13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0',
   existingRecord: null,
   orders: []
 };

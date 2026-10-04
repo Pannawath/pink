@@ -142,31 +142,37 @@
   }
 
   // 7. Interactive Mouse & Gyroscope (DeviceOrientation) Parallax Tracking
-  // Slower, smaller angle interaction (mouseX * 0.15 instead of 0.45)
   window.addEventListener('mousemove', (event) => {
     mouseX = (event.clientX - windowHalfX) / windowHalfX;
     mouseY = (event.clientY - windowHalfY) / windowHalfY;
 
-    targetRotationY = -0.35 + mouseX * 0.15;
-    targetRotationX = 0.12 + mouseY * 0.10;
+    const rotRangeY = (typeof CONFIG !== 'undefined' && CONFIG.studio3D) ? CONFIG.studio3D.rotationRangeY : 0.15;
+    const rotRangeX = (typeof CONFIG !== 'undefined' && CONFIG.studio3D) ? CONFIG.studio3D.rotationRangeX : 0.10;
+
+    targetRotationY = -0.35 + mouseX * rotRangeY;
+    targetRotationX = 0.12 + mouseY * rotRangeX;
   });
 
   // DeviceOrientation Gyroscope Handler for Mobile Devices (Android & iOS & iPad)
   function handleDeviceOrientation(event) {
     if (event.gamma === null || event.beta === null) return;
 
-    // Clamp gamma (roll left/right -90 to 90) and beta (pitch front/back -180 to 180)
-    let normGamma = Math.max(-45, Math.min(45, event.gamma)) / 45; // -1 to 1
-    let normBeta = Math.max(-45, Math.min(45, event.beta)) / 45;   // -1 to 1
+    let normGamma = Math.max(-45, Math.min(45, event.gamma)) / 45;
+    let normBeta = Math.max(-45, Math.min(45, event.beta)) / 45;
 
-    targetRotationY = -0.35 + normGamma * 0.18;
-    targetRotationX = 0.12 + normBeta * 0.12;
+    const rotRangeY = (typeof CONFIG !== 'undefined' && CONFIG.studio3D) ? CONFIG.studio3D.rotationRangeY : 0.15;
+    const rotRangeX = (typeof CONFIG !== 'undefined' && CONFIG.studio3D) ? CONFIG.studio3D.rotationRangeX : 0.10;
+
+    targetRotationY = -0.35 + normGamma * (rotRangeY * 1.2);
+    targetRotationX = 0.12 + normBeta * (rotRangeX * 1.2);
   }
 
   // Request Gyro Permission on iOS 13+ / iPadOS or listen directly on Android
   function enableGyroscope() {
+    const isGyroEnabled = (typeof CONFIG !== 'undefined' && CONFIG.studio3D) ? CONFIG.studio3D.enableGyroscope : true;
+    if (!isGyroEnabled) return;
+
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-      // iOS 13+ Devices & iPads requiring user gesture permission
       const requestGyroOnInteraction = () => {
         DeviceOrientationEvent.requestPermission()
           .then((response) => {
@@ -181,7 +187,6 @@
       window.addEventListener('touchstart', requestGyroOnInteraction, { once: true });
       window.addEventListener('click', requestGyroOnInteraction, { once: true });
     } else if (window.DeviceOrientationEvent) {
-      // Android and standard Web API devices
       window.addEventListener('deviceorientation', handleDeviceOrientation, true);
     }
   }
@@ -208,16 +213,16 @@
     const elapsedTime = clock.getElapsedTime();
 
     if (shirtMesh) {
-      // Gentle sinusoidal studio floating animation
       const floatOffsetY = Math.sin(elapsedTime * 1.0) * 0.05;
       const floatRotZ = -0.15 + Math.sin(elapsedTime * 0.7) * 0.02;
 
       modelGroup.position.y = (window.innerWidth < 1024 ? 0.25 : -0.05) + floatOffsetY;
 
-      // Slower lerp speed (0.025 instead of 0.05) for smooth gradual rotation
-      modelGroup.rotation.y += (targetRotationY - modelGroup.rotation.y) * 0.025;
-      modelGroup.rotation.x += (targetRotationX - modelGroup.rotation.x) * 0.025;
-      modelGroup.rotation.z += (floatRotZ - modelGroup.rotation.z) * 0.025;
+      const lerpSpeed = (typeof CONFIG !== 'undefined' && CONFIG.studio3D) ? CONFIG.studio3D.lerpSpeed : 0.025;
+
+      modelGroup.rotation.y += (targetRotationY - modelGroup.rotation.y) * lerpSpeed;
+      modelGroup.rotation.x += (targetRotationX - modelGroup.rotation.x) * lerpSpeed;
+      modelGroup.rotation.z += (floatRotZ - modelGroup.rotation.z) * lerpSpeed;
     }
 
     renderer.render(scene, camera);
