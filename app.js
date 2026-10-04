@@ -45,7 +45,7 @@ const AppState = {
   gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.gasUrl) 
     ? CONFIG.gasUrl 
     : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'YOUR_GOOGLE_APPS_SCRIPT_URL'),
-  spreadsheetId: 'YOUR_SPREADSHEET_ID',
+  spreadsheetId: '13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0',
   existingRecord: null,
   orders: []
 };

@@ -1,14 +1,14 @@
 /**
  * =========================================================================
- * GOOGLE APPS SCRIPT BACKEND FOR AUTHONG ATHLETICS OFFICIAL STORE
+ * GOOGLE APPS SCRIPT BACKEND FOR AYUTTHAYA SARAKHAMPITTAYAKHOM
  * ระบบบันทึกและจัดการคำสั่งจองเสื้อกีฬาสีทีมสีชมพู 2026 เชื่อมต่อ Google Sheets
- * Spreadsheet URL: https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit
+ * Spreadsheet URL: https://docs.google.com/spreadsheets/d/13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0/edit
  * =========================================================================
  */
 
-var SPREADSHEET_ID = "YOUR_SPREADSHEET_ID";
+var SPREADSHEET_ID = "13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0";
 var SHEET_NAME = "Orders";
-var DRIVE_FOLDER_NAME = "Pink Jersey Slips 2026"; // โฟลเดอร์เก็บสลิป
+var DRIVE_FOLDER_NAME = "Pink Jersey Slips 2026"; // โฟลเดอร์เก็บสลิปการโอนเงินทีมสีชมพู 2026
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
