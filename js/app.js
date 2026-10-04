@@ -752,9 +752,9 @@ function updateLivePreview() {
     }
   }
 
-  // 2. Number Position & Size (Inter Miami Font - Clean, No Shadows)
+  // 2. Number Position & Size (Bebas Neue Sports Font - Clean, No Shadows)
   if (DOM.svgBackNumber) {
-    DOM.svgBackNumber.style.fontFamily = "'JerseyMiami', sans-serif";
+    DOM.svgBackNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
     DOM.svgBackNumber.setAttribute('font-size', backNumber.size.toString());
     DOM.svgBackNumber.setAttribute('x', backNumber.x.toString());
     DOM.svgBackNumber.setAttribute('y', backNumber.y.toString());
@@ -763,7 +763,7 @@ function updateLivePreview() {
 
   // Front View Chest Number (Calibrated athletic chest size)
   if (DOM.svgFrontNumber) {
-    DOM.svgFrontNumber.style.fontFamily = "'JerseyMiami', sans-serif";
+    DOM.svgFrontNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
     DOM.svgFrontNumber.setAttribute('font-size', frontNumber.size.toString());
     DOM.svgFrontNumber.setAttribute('x', frontNumber.x.toString());
     DOM.svgFrontNumber.setAttribute('y', frontNumber.y.toString());
@@ -772,7 +772,7 @@ function updateLivePreview() {
 
   // Both Sides View: Back Number & Front Chest Number (Front on Left, Back on Right)
   if (DOM.svgBothNumber) {
-    DOM.svgBothNumber.style.fontFamily = "'JerseyMiami', sans-serif";
+    DOM.svgBothNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
     DOM.svgBothNumber.setAttribute('font-size', backNumber.size.toString());
     DOM.svgBothNumber.setAttribute('x', backNumber.x.toString());
     DOM.svgBothNumber.setAttribute('y', backNumber.y.toString());
@@ -780,7 +780,7 @@ function updateLivePreview() {
   }
 
   if (DOM.svgBothFrontNumber) {
-    DOM.svgBothFrontNumber.style.fontFamily = "'JerseyMiami', sans-serif";
+    DOM.svgBothFrontNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
     DOM.svgBothFrontNumber.setAttribute('font-size', frontNumber.size.toString());
     DOM.svgBothFrontNumber.setAttribute('x', frontNumber.x.toString());
     DOM.svgBothFrontNumber.setAttribute('y', frontNumber.y.toString());
@@ -1534,3 +1534,44 @@ function showToast(msg, type = 'info') {
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+// ==========================================
+// 11. SECURITY & F12 / DEVTOOLS PROTECTION
+// Prevent unauthorized API inspection & DevTools tampering
+// ==========================================
+(function initSecurityShield() {
+  // 1. Disable Right Click Context Menu
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // 2. Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+  document.addEventListener('keydown', (e) => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+      (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) ||
+      (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'U' || e.key === 'u'))
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  });
+
+  // 3. DevTools Detection & Auto Debugger Loop Neutralizer
+  let devtoolsOpen = false;
+  const element = new Image();
+  Object.defineProperty(element, 'id', {
+    get: function () {
+      devtoolsOpen = true;
+      showToast('DevTools Access Restricted', 'error');
+    }
+  });
+
+  setInterval(() => {
+    devtoolsOpen = false;
+    console.log('%c', element);
+    if (devtoolsOpen) {
+      window.location.reload();
+    }
+  }, 2000);
+})();

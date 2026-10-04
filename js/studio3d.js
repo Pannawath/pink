@@ -71,10 +71,10 @@
   let windowHalfX = window.innerWidth / 2;
   let windowHalfY = window.innerHeight / 2;
 
-  // 5. Load 3dmodel/shirt.glb via Three.js GLTFLoader
+  // 5. Load assets/models/shirt.glb via Three.js GLTFLoader
   const loader = new THREE.GLTFLoader();
   loader.load(
-    '3dmodel/shirt.glb',
+    'assets/models/shirt.glb',
     function onModelLoaded(gltf) {
       const model = gltf.scene;
 
