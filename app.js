@@ -311,8 +311,6 @@ function bindEvents() {
 
   // Modals
   if (DOM.btnOpenDatabase) DOM.btnOpenDatabase.addEventListener('click', openDatabaseModal);
-  if (DOM.btnBottomOrders) DOM.btnBottomOrders.addEventListener('click', openDatabaseModal);
-  if (DOM.btnBottomSize) DOM.btnBottomSize.addEventListener('click', () => DOM.modalSizeGuide.classList.remove('hidden'));
   if (DOM.btnCloseDatabase) DOM.btnCloseDatabase.addEventListener('click', closeDatabaseModal);
   if (DOM.btnCloseDatabaseFooter) DOM.btnCloseDatabaseFooter.addEventListener('click', closeDatabaseModal);
   if (DOM.btnExportCSV) DOM.btnExportCSV.addEventListener('click', exportOrdersToCSV);

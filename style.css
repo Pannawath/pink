@@ -1000,66 +1000,8 @@ main.max-w-5xl {
   border-color: rgba(255, 255, 255, 0.45) !important;
 }
 
-.liquid-bottom-nav {
-  position: fixed;
-  left: 50%;
-  bottom: max(16px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  z-index: 45;
-  width: min(calc(100vw - 30px), 430px);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-  padding: 8px;
-  border-radius: 28px;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.08) 100%),
-    rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.68);
-  box-shadow:
-    0 24px 56px rgba(105, 23, 62, 0.32),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(30px) saturate(190%);
-  -webkit-backdrop-filter: blur(30px) saturate(190%);
-}
-
-.liquid-bottom-nav a,
-.liquid-bottom-nav button {
-  min-width: 0;
-  border: 0;
-  border-radius: 20px;
-  padding: 8px 4px 7px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 11px;
-  font-weight: 700;
-  text-decoration: none;
-  background: transparent;
-  cursor: pointer;
-  text-shadow: 0 1px 8px rgba(98, 22, 60, 0.22);
-  transition: all 0.2s ease;
-}
-
-.liquid-bottom-nav i {
-  font-size: 17px;
-}
-
-.liquid-bottom-nav .active {
-  background:
-    linear-gradient(135deg, rgba(236, 72, 153, 0.88) 0%, rgba(255, 128, 188, 0.72) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  color: #ffffff;
-  box-shadow:
-    0 8px 22px rgba(180, 38, 109, 0.3),
-    inset 0 1px 2px rgba(255, 255, 255, 0.75);
-}
-
 #toastContainer {
-  bottom: 106px;
+  bottom: 24px;
 }
 
 #qrPromptPayModal .bg-white {
