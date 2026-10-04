@@ -1571,21 +1571,43 @@ function isValidEmail(email) {
   window.addEventListener('keyup', blockShortcuts, true);
   window.addEventListener('keypress', blockShortcuts, true);
 
-  // 3. DevTools Detection & Auto Debugger Loop Neutralizer
-  let devtoolsOpen = false;
+  // 3. Multi-Layer DevTools Detection (Dimension Delta + Console Setter Probe + Debugger Trap)
+  function isDevToolsOpened() {
+    const widthThreshold = window.outerWidth - window.innerWidth > 160;
+    const heightThreshold = window.outerHeight - window.innerHeight > 160;
+    return widthThreshold || heightThreshold;
+  }
+
+  // Active Console Cleanser & Debugger Freeze Loop
+  const freezeDevTools = () => {
+    if (isDevToolsOpened()) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f172a;color:#ffffff;font-family:sans-serif;font-size:18px;font-weight:bold;">Access Restricted: Developer Tools Disabled</div>';
+      setInterval(() => {
+        (function () {
+          return false;
+        })['constructor']('debugger')();
+      }, 50);
+    }
+  };
+
+  window.addEventListener('resize', freezeDevTools);
+
+  // Setter trap for docked/undocked DevTools
+  let devtoolsDetected = false;
   const element = new Image();
   Object.defineProperty(element, 'id', {
     get: function () {
-      devtoolsOpen = true;
-      showToast('DevTools Access Restricted', 'error');
+      devtoolsDetected = true;
     }
   });
 
   setInterval(() => {
-    devtoolsOpen = false;
+    devtoolsDetected = false;
     console.log('%c', element);
-    if (devtoolsOpen) {
-      window.location.reload();
+    console.clear();
+    
+    if (devtoolsDetected || isDevToolsOpened()) {
+      freezeDevTools();
     }
-  }, 1000);
+  }, 300);
 })();
