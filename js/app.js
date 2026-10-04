@@ -1541,21 +1541,35 @@ function isValidEmail(email) {
 // ==========================================
 (function initSecurityShield() {
   // 1. Disable Right Click Context Menu
-  document.addEventListener('contextmenu', (e) => e.preventDefault());
+  window.addEventListener('contextmenu', (e) => e.preventDefault(), true);
 
-  // 2. Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
-  document.addEventListener('keydown', (e) => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
-      (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) ||
-      (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'U' || e.key === 'u'))
-    ) {
+  // 2. Strict Keydown Blocker (Capture phase for F12, Ctrl/Cmd shortcuts)
+  const blockShortcuts = (e) => {
+    const code = e.code || '';
+    const key = (e.key || '').toLowerCase();
+    
+    const isF12 = key === 'f12' || code === 'F12';
+    
+    // Windows / Linux shortcuts (Ctrl + Shift + I/J/C)
+    const isCtrlShiftDevTools = (e.ctrlKey || e.metaKey) && e.shiftKey && (key === 'i' || key === 'j' || key === 'c' || code === 'KeyI' || code === 'KeyJ' || code === 'KeyC');
+    
+    // macOS shortcuts (Cmd + Alt/Option + I/J/C/U)
+    const isMacDevTools = e.metaKey && (e.altKey || e.ctrlKey) && (key === 'i' || key === 'j' || key === 'c' || key === 'u' || code === 'KeyI' || code === 'KeyJ' || code === 'KeyC' || code === 'KeyU');
+    
+    // Ctrl/Cmd + U (View Source) and Ctrl/Cmd + S (Save Page)
+    const isViewSourceOrSave = (e.ctrlKey || e.metaKey) && (key === 'u' || key === 's' || code === 'KeyU' || code === 'KeyS');
+
+    if (isF12 || isCtrlShiftDevTools || isMacDevTools || isViewSourceOrSave) {
       e.preventDefault();
       e.stopPropagation();
+      e.stopImmediatePropagation();
       return false;
     }
-  });
+  };
+
+  window.addEventListener('keydown', blockShortcuts, true);
+  window.addEventListener('keyup', blockShortcuts, true);
+  window.addEventListener('keypress', blockShortcuts, true);
 
   // 3. DevTools Detection & Auto Debugger Loop Neutralizer
   let devtoolsOpen = false;
@@ -1573,5 +1587,5 @@ function isValidEmail(email) {
     if (devtoolsOpen) {
       window.location.reload();
     }
-  }, 2000);
+  }, 1000);
 })();
