@@ -125,6 +125,7 @@ const DOM = {
   svgBothFrontNumber: document.getElementById('svgBothFrontNumber'),
 
   // View Switchers
+  segmentedIndicator: document.getElementById('segmentedIndicator'),
   btnViewBack: document.getElementById('btnViewBack'),
   btnViewFront: document.getElementById('btnViewFront'),
   btnViewBoth: document.getElementById('btnViewBoth'),
@@ -797,11 +798,22 @@ function applyNumberStyle() {
   if (DOM.svgBothFrontNumber) DOM.svgBothFrontNumber.setAttribute('class', cls);
 }
 
-// View switcher removed - always show back view
+function updateSegmentedIndicator(side) {
+  if (!DOM.segmentedIndicator) return;
+  let activeBtn = null;
+  if (side === 'back') activeBtn = DOM.btnViewBack;
+  else if (side === 'front') activeBtn = DOM.btnViewFront;
+  else if (side === 'both') activeBtn = DOM.btnViewBoth;
+
+  if (activeBtn) {
+    const leftPos = activeBtn.offsetLeft;
+    const btnWidth = activeBtn.offsetWidth;
+    DOM.segmentedIndicator.style.transform = `translateX(${leftPos}px)`;
+    DOM.segmentedIndicator.style.width = `${btnWidth}px`;
+  }
+}
 
 function setJerseyView(side) {
-  console.log('[VIEW] Switching to:', side);
-  
   AppState.viewSide = side;
   if (DOM.jerseyCardWrapper) {
     DOM.jerseyCardWrapper.setAttribute('data-view', side);
@@ -811,13 +823,13 @@ function setJerseyView(side) {
     if (btn) btn.classList.remove('active');
   });
 
-  console.log('[VIEW] Elements:', {
-    backEl: !!DOM.jerseyViewBackEl,
-    frontEl: !!DOM.jerseyViewFrontEl,
-    bothEl: !!DOM.jerseyViewBothEl
-  });
+  if (side === 'back' && DOM.btnViewBack) DOM.btnViewBack.classList.add('active');
+  if (side === 'front' && DOM.btnViewFront) DOM.btnViewFront.classList.add('active');
+  if (side === 'both' && DOM.btnViewBoth) DOM.btnViewBoth.classList.add('active');
 
-  // Fade out all views first
+  updateSegmentedIndicator(side);
+
+  // Fade out current views
   const allViews = [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl];
   allViews.forEach(view => {
     if (view && !view.classList.contains('hidden')) {
@@ -826,50 +838,46 @@ function setJerseyView(side) {
     }
   });
 
-  // After fade out, switch views
   setTimeout(() => {
     if (side === 'back') {
-      console.log('[VIEW] Showing back');
-      if (DOM.btnViewBack) DOM.btnViewBack.classList.add('active');
       DOM.jerseyViewBackEl.classList.remove('hidden');
       DOM.jerseyViewFrontEl.classList.add('hidden');
       DOM.jerseyViewBothEl.classList.add('hidden');
       DOM.jerseyCardWrapper.style.maxWidth = '440px';
-      DOM.jerseyCardWrapper.style.aspectRatio = '780 / 1019';
       
       requestAnimationFrame(() => {
         DOM.jerseyViewBackEl.style.opacity = '1';
         DOM.jerseyViewBackEl.style.transform = 'scale(1)';
       });
     } else if (side === 'front') {
-      console.log('[VIEW] Showing front');
-      if (DOM.btnViewFront) DOM.btnViewFront.classList.add('active');
       DOM.jerseyViewBackEl.classList.add('hidden');
       DOM.jerseyViewFrontEl.classList.remove('hidden');
       DOM.jerseyViewBothEl.classList.add('hidden');
       DOM.jerseyCardWrapper.style.maxWidth = '440px';
-      DOM.jerseyCardWrapper.style.aspectRatio = '780 / 1019';
       
       requestAnimationFrame(() => {
         DOM.jerseyViewFrontEl.style.opacity = '1';
         DOM.jerseyViewFrontEl.style.transform = 'scale(1)';
       });
     } else if (side === 'both') {
-      console.log('[VIEW] Showing both');
-      if (DOM.btnViewBoth) DOM.btnViewBoth.classList.add('active');
       DOM.jerseyViewBackEl.classList.add('hidden');
       DOM.jerseyViewFrontEl.classList.add('hidden');
       DOM.jerseyViewBothEl.classList.remove('hidden');
-      DOM.jerseyCardWrapper.style.maxWidth = '640px';
-      DOM.jerseyCardWrapper.style.aspectRatio = '1560 / 1019';
+      DOM.jerseyCardWrapper.style.maxWidth = '600px';
       
       requestAnimationFrame(() => {
         DOM.jerseyViewBothEl.style.opacity = '1';
         DOM.jerseyViewBothEl.style.transform = 'scale(1)';
       });
     }
-  }, 200);
+  }, 150);
 }
+
+window.addEventListener('resize', () => {
+  if (AppState && AppState.viewSide) {
+    updateSegmentedIndicator(AppState.viewSide);
+  }
+});
 
 // ==========================================
 // 7. SMART EMAIL LOOKUP & DATABASE

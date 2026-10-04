@@ -641,13 +641,17 @@ main.max-w-5xl {
 }
 
 .apple-segmented-control {
+  position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 6px;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%),
     rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 9999px;
   box-shadow:
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.8),
     0 12px 30px rgba(139, 35, 86, 0.16);
@@ -655,7 +659,26 @@ main.max-w-5xl {
   -webkit-backdrop-filter: blur(24px) saturate(180%);
 }
 
+.apple-segmented-indicator {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 33.3333%;
+  background: #ffffff;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.12),
+    inset 0 1.5px 2px rgba(255, 255, 255, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
 .apple-segmented-btn {
+  position: relative;
+  z-index: 2;
   flex: 1;
   color: #475569;
   padding: 11px 16px;
@@ -663,26 +686,27 @@ main.max-w-5xl {
   font-weight: 700;
   font-family: 'Kanit', sans-serif;
   text-shadow: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: color 0.25s ease;
 }
 
 .apple-segmented-btn:hover,
 .apple-segmented-btn.active {
   color: #0f172a;
-}
-
-.apple-segmented-btn.active {
-  background: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow:
-    0 4px 14px rgba(15, 23, 42, 0.12),
-    inset 0 1.5px 2px rgba(255, 255, 255, 1);
+  font-weight: 800;
 }
 
 .jersey-stage-container {
-  min-height: 520px;
+  min-height: 540px;
+  height: 540px;
   border-radius: 34px;
   padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   background:
     linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%),
     rgba(255, 255, 255, 0.08) !important;
@@ -696,13 +720,20 @@ main.max-w-5xl {
 }
 
 .jersey-card-wrapper {
-  max-width: 500px;
+  width: 100%;
+  max-width: 440px;
+  height: 100%;
+  max-height: 480px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   filter: drop-shadow(0 26px 40px rgba(108, 23, 64, 0.22));
 }
 
 .jersey-card-wrapper[data-view="both"] {
   max-width: 600px;
-  aspect-ratio: 1560 / 1019;
 }
 
 .jersey-hd-back,
