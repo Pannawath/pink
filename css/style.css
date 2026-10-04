@@ -523,9 +523,12 @@
   --liquid-ink: #1e293b;
   --liquid-white: rgba(255, 255, 255, 0.22);
   --liquid-panel: rgba(255, 255, 255, 0.16);
-  --liquid-border: rgba(255, 255, 255, 0.68);
-  --liquid-shadow: 0 24px 60px -15px rgba(113, 22, 65, 0.35);
-  --liquid-inner: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.85), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.04);
+  --liquid-border: rgba(255, 255, 255, 0.85);
+  --liquid-shadow: 
+    0 30px 75px -12px rgba(15, 23, 42, 0.22),
+    0 15px 35px -10px rgba(153, 27, 88, 0.28),
+    0 0 0 1px rgba(15, 23, 42, 0.10);
+  --liquid-inner: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1.5px 2px 0 rgba(15, 23, 42, 0.08);
 }
 
 html {
@@ -602,15 +605,15 @@ body::after {
   min-height: 70px;
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%),
-    rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.65);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.12) 100%),
+    rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.88);
   box-shadow:
     var(--liquid-shadow),
-    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1.2px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(48px) saturate(220%);
+  -webkit-backdrop-filter: blur(48px) saturate(220%);
 }
 
 .app-brand-copy {
@@ -646,14 +649,15 @@ main.max-w-5xl {
 
 .apple-glass-card {
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%),
-    rgba(255, 255, 255, 0.14);
-  border: 1px solid var(--liquid-border);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%),
+    rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.88);
   box-shadow:
     var(--liquid-shadow),
-    var(--liquid-inner);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
+    var(--liquid-inner),
+    0 0 0 1.2px rgba(15, 23, 42, 0.10);
+  backdrop-filter: blur(48px) saturate(220%);
+  -webkit-backdrop-filter: blur(48px) saturate(220%);
   color: var(--liquid-ink);
 }
 
@@ -673,15 +677,15 @@ main.max-w-5xl {
   justify-content: space-between;
   padding: 6px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%),
-    rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.62);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%),
+    rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 9999px;
   box-shadow:
-    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.8),
-    0 12px 30px rgba(139, 35, 86, 0.16);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.9),
+    0 12px 30px rgba(139, 35, 86, 0.18);
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
 }
 
 .apple-segmented-indicator {
@@ -692,9 +696,9 @@ main.max-w-5xl {
   width: 33.3333%;
   background: #ffffff;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(15, 23, 42, 0.15);
   box-shadow:
-    0 4px 14px rgba(15, 23, 42, 0.12),
+    0 6px 18px rgba(15, 23, 42, 0.16),
     inset 0 1.5px 2px rgba(255, 255, 255, 1);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
@@ -733,15 +737,15 @@ main.max-w-5xl {
   justify-content: center;
   overflow: hidden;
   background:
-    linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%),
-    rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.65);
+    linear-gradient(150deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.88);
   box-shadow:
     var(--liquid-shadow),
-    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(26px) saturate(185%);
-  -webkit-backdrop-filter: blur(26px) saturate(185%);
+    var(--liquid-inner),
+    0 0 0 1.2px rgba(15, 23, 42, 0.10);
+  backdrop-filter: blur(52px) saturate(220%);
+  -webkit-backdrop-filter: blur(52px) saturate(220%);
 }
 
 .jersey-card-wrapper {
