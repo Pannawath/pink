@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,700&family=Kanit:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,700&family=Kanit:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 /* ========================================================
    CUSTOM SPORTS FONT (Inter Miami 23-24)
@@ -509,18 +509,6 @@ html {
   overflow-x: clip;
 }
 
-body {
-  background:
-    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.7) 0 4%, transparent 18%),
-    radial-gradient(circle at 82% 8%, rgba(255, 228, 242, 0.8) 0 10%, transparent 26%),
-    radial-gradient(ellipse at 20% 86%, rgba(180, 36, 102, 0.6) 0 14%, transparent 38%),
-    radial-gradient(ellipse at 80% 80%, rgba(255, 126, 184, 0.55) 0 14%, transparent 40%),
-    linear-gradient(135deg, #c74580 0%, #f47faf 28%, #ffcbe0 52%, #f074ac 75%, #a63769 100%);
-  color: var(--liquid-ink);
-  padding-bottom: 36px;
-  max-width: 100%;
-  overflow-x: clip;
-}
 
 body::before,
 body::after {
@@ -610,7 +598,7 @@ body::after {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.88);
+  color: #334155;
   text-transform: uppercase;
 }
 
@@ -618,9 +606,9 @@ body::after {
   font-size: 20px;
   font-family: 'Kanit', sans-serif;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   letter-spacing: 0;
-  text-shadow: 0 2px 10px rgba(91, 24, 58, 0.25);
+  text-shadow: none;
 }
 
 main {
@@ -669,26 +657,26 @@ main.max-w-5xl {
 
 .apple-segmented-btn {
   flex: 1;
-  color: rgba(255, 255, 255, 0.92);
+  color: #475569;
   padding: 9px 12px;
   font-size: 13px;
   font-weight: 700;
-  text-shadow: 0 1px 6px rgba(94, 24, 60, 0.24);
+  font-family: 'Kanit', sans-serif;
+  text-shadow: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .apple-segmented-btn:hover,
 .apple-segmented-btn.active {
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .apple-segmented-btn.active {
-  background:
-    linear-gradient(135deg, rgba(239, 79, 163, 0.85) 0%, rgba(255, 143, 196, 0.75) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.95);
   box-shadow:
-    0 8px 22px rgba(199, 42, 122, 0.35),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.8);
+    0 4px 14px rgba(15, 23, 42, 0.12),
+    inset 0 1.5px 2px rgba(255, 255, 255, 1);
 }
 
 .jersey-stage-container {
@@ -771,32 +759,31 @@ main.max-w-5xl {
 }
 
 .apple-size-btn.active {
-  background:
-    linear-gradient(135deg, rgba(239, 79, 163, 0.9) 0%, rgba(255, 143, 196, 0.8) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  color: #ffffff;
+  background: #ffffff;
+  border: 1.5px solid #0f172a;
+  color: #0f172a;
+  font-weight: 800;
   box-shadow:
-    0 12px 26px rgba(217, 49, 133, 0.35),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.85);
+    0 4px 14px rgba(15, 23, 42, 0.15),
+    inset 0 1.5px 2px rgba(255, 255, 255, 1);
 }
 
 .apple-btn-primary {
-  background:
-    linear-gradient(135deg, rgba(236, 72, 153, 0.92) 0%, rgba(251, 127, 186, 0.88) 55%, rgba(255, 189, 219, 0.85) 100%);
+  background: #0f172a;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border: 1px solid #0f172a;
   box-shadow:
-    0 16px 36px rgba(209, 46, 126, 0.38),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.85);
+    0 12px 28px -6px rgba(15, 23, 42, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
   min-height: 48px;
 }
 
 .apple-btn-primary:hover:not(:disabled) {
-  background:
-    linear-gradient(135deg, rgba(219, 39, 119, 0.96) 0%, rgba(244, 114, 182, 0.92) 58%, rgba(255, 192, 217, 0.9) 100%);
+  background: #1e293b;
+  color: #ffffff;
   box-shadow:
-    0 20px 42px rgba(187, 35, 113, 0.44),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+    0 16px 32px -6px rgba(15, 23, 42, 0.32),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
 }
 
 .apple-btn-secondary {
