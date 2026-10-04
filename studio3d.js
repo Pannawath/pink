@@ -141,14 +141,52 @@
     }
   }
 
-  // 7. Interactive Mouse Parallax Tracking
+  // 7. Interactive Mouse & Gyroscope (DeviceOrientation) Parallax Tracking
+  // Slower, smaller angle interaction (mouseX * 0.15 instead of 0.45)
   window.addEventListener('mousemove', (event) => {
     mouseX = (event.clientX - windowHalfX) / windowHalfX;
     mouseY = (event.clientY - windowHalfY) / windowHalfY;
 
-    targetRotationY = -0.35 + mouseX * 0.45;
-    targetRotationX = 0.12 + mouseY * 0.35;
+    targetRotationY = -0.35 + mouseX * 0.15;
+    targetRotationX = 0.12 + mouseY * 0.10;
   });
+
+  // DeviceOrientation Gyroscope Handler for Mobile Devices (Android & iOS & iPad)
+  function handleDeviceOrientation(event) {
+    if (event.gamma === null || event.beta === null) return;
+
+    // Clamp gamma (roll left/right -90 to 90) and beta (pitch front/back -180 to 180)
+    let normGamma = Math.max(-45, Math.min(45, event.gamma)) / 45; // -1 to 1
+    let normBeta = Math.max(-45, Math.min(45, event.beta)) / 45;   // -1 to 1
+
+    targetRotationY = -0.35 + normGamma * 0.18;
+    targetRotationX = 0.12 + normBeta * 0.12;
+  }
+
+  // Request Gyro Permission on iOS 13+ / iPadOS or listen directly on Android
+  function enableGyroscope() {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // iOS 13+ Devices & iPads requiring user gesture permission
+      const requestGyroOnInteraction = () => {
+        DeviceOrientationEvent.requestPermission()
+          .then((response) => {
+            if (response === 'granted') {
+              window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+            }
+          })
+          .catch(console.error);
+        window.removeEventListener('touchstart', requestGyroOnInteraction);
+        window.removeEventListener('click', requestGyroOnInteraction);
+      };
+      window.addEventListener('touchstart', requestGyroOnInteraction, { once: true });
+      window.addEventListener('click', requestGyroOnInteraction, { once: true });
+    } else if (window.DeviceOrientationEvent) {
+      // Android and standard Web API devices
+      window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+    }
+  }
+
+  enableGyroscope();
 
   // 8. Viewport Resize Handler
   window.addEventListener('resize', () => {
@@ -161,7 +199,7 @@
     adjustLayoutForScreen();
   });
 
-  // 9. Studio Animation Loop (Smooth Floating Levitation + Parallax Lerp)
+  // 9. Studio Animation Loop (Ultra-smooth Floating Levitation + Slow Damping Lerp)
   let clock = new THREE.Clock();
 
   function animate() {
@@ -170,16 +208,16 @@
     const elapsedTime = clock.getElapsedTime();
 
     if (shirtMesh) {
-      // Smooth sinusoidal studio floating animation
-      const floatOffsetY = Math.sin(elapsedTime * 1.2) * 0.08;
-      const floatRotZ = -0.15 + Math.sin(elapsedTime * 0.8) * 0.03;
+      // Gentle sinusoidal studio floating animation
+      const floatOffsetY = Math.sin(elapsedTime * 1.0) * 0.05;
+      const floatRotZ = -0.15 + Math.sin(elapsedTime * 0.7) * 0.02;
 
       modelGroup.position.y = (window.innerWidth < 1024 ? 0.25 : -0.05) + floatOffsetY;
 
-      // Smooth damping (lerp) toward target mouse rotation
-      modelGroup.rotation.y += (targetRotationY - modelGroup.rotation.y) * 0.05;
-      modelGroup.rotation.x += (targetRotationX - modelGroup.rotation.x) * 0.05;
-      modelGroup.rotation.z += (floatRotZ - modelGroup.rotation.z) * 0.05;
+      // Slower lerp speed (0.025 instead of 0.05) for smooth gradual rotation
+      modelGroup.rotation.y += (targetRotationY - modelGroup.rotation.y) * 0.025;
+      modelGroup.rotation.x += (targetRotationX - modelGroup.rotation.x) * 0.025;
+      modelGroup.rotation.z += (floatRotZ - modelGroup.rotation.z) * 0.025;
     }
 
     renderer.render(scene, camera);
