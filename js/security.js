@@ -111,7 +111,9 @@
     if (existingModal) existingModal.remove();
 
     const modal = createPasswordModal();
-    document.body.appendChild(modal);
+    // Append to documentElement or body, whichever is available
+    const target = document.body || document.documentElement;
+    target.appendChild(modal);
 
     const input = document.getElementById('password-input');
     const submitBtn = document.getElementById('password-submit');
