@@ -6,6 +6,24 @@
  * =========================================================================
  */
 (function initSecurityShield() {
+  // DevTools Password Protection
+  const DEVTOOLS_PASSWORD = '28052552';
+  let isDevToolsUnlocked = false;
+
+  // Function to show password prompt
+  function showDevToolsPasswordPrompt() {
+    const password = prompt('🔐 กรุณาป้อนรหัสเพื่อเปิด Developer Tools:\n(Please enter password to open Developer Tools)');
+    if (password === DEVTOOLS_PASSWORD) {
+      isDevToolsUnlocked = true;
+      console.log('%c ✅ Developer Tools Unlocked!', 'color: #22c55e; font-size: 16px; font-weight: bold;');
+      return true;
+    } else if (password !== null) {
+      alert('❌ รหัสผ่านไม่ถูกต้อง (Incorrect password)');
+      return false;
+    }
+    return false;
+  }
+
   // Read Security Config Switches
   const sec = (typeof CONFIG !== 'undefined' && CONFIG.security) ? CONFIG.security : {};
   const disableRightClick = sec.disableRightClick !== false;
@@ -29,10 +47,13 @@
       const isViewSourceOrSave = (e.ctrlKey || e.metaKey) && (key === 'u' || key === 's' || code === 'KeyU' || code === 'KeyS');
 
       if (isF12 || isCtrlShiftDevTools || isMacDevTools || isViewSourceOrSave) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        return false;
+        if (!isDevToolsUnlocked) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          showDevToolsPasswordPrompt();
+          return false;
+        }
       }
     };
 
@@ -50,13 +71,16 @@
     }
 
     const freezeDevTools = () => {
-      if (isDevToolsOpened()) {
-        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f172a;color:#ffffff;font-family:sans-serif;font-size:18px;font-weight:bold;">Access Restricted: Developer Tools Disabled</div>';
-        setInterval(() => {
-          (function () {
-            return false;
-          })['constructor']('debugger')();
-        }, 50);
+      if (isDevToolsOpened() && !isDevToolsUnlocked) {
+        showDevToolsPasswordPrompt();
+        if (!isDevToolsUnlocked) {
+          document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f172a;color:#ffffff;font-family:sans-serif;font-size:18px;font-weight:bold;">🔐 Access Restricted: Developer Tools Disabled<br><small style="font-size:12px;margin-top:10px;">Please enter the correct password</small></div>';
+          setInterval(() => {
+            (function () {
+              return false;
+            })['constructor']('debugger')();
+          }, 50);
+        }
       }
     };
 
@@ -75,7 +99,7 @@
       console.log('%c', element);
       console.clear();
       
-      if (devtoolsDetected || isDevToolsOpened()) {
+      if ((devtoolsDetected || isDevToolsOpened()) && !isDevToolsUnlocked) {
         freezeDevTools();
       }
     }, 300);
