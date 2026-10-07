@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>จองเสื้อกีฬาสี - Pink Jersey Studio 2026</title>
   <meta name="description"
     content="สั่งจองเสื้อกีฬาสีชมพู พร้อมสกรีนชื่อและเบอร์ - Sarakhampittayakhom 2026">
@@ -61,6 +61,33 @@
   
   <!-- Accessibility Fixes CSS -->
   <link rel="stylesheet" href="css/accessibility-fixes.css">
+
+  <!-- Mobile Scroll & Zoom Prevention -->
+  <style>
+    /* ========================================================
+       MOBILE SCROLL & ZOOM PREVENTION
+       ======================================================== */
+    html, body {
+      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      position: fixed;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      touch-action: none;
+      overscroll-behavior: none;
+    }
+    
+    /* ป้องกัน element ใด ๆ ที่ทำให้เกิด horizontal scroll */
+    * {
+      max-width: 100%;
+    }
+    
+    body {
+      overflow-x: clip !important;
+    }
+  </style>
 </head>
 
 <body class="flex flex-col min-h-screen">
