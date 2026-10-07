@@ -228,10 +228,21 @@
     window.addEventListener('contextmenu', (e) => e.preventDefault(), true);
   }
 
-  // Initialize on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showPasswordModal);
-  } else {
-    showPasswordModal();
+  // Initialize on page load - use multiple event listeners for reliability
+  function initializePasswordModal() {
+    // Only show password modal if not already shown
+    if (!document.getElementById('security-password-modal')) {
+      showPasswordModal();
+    }
   }
+
+  // Try multiple ways to initialize
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePasswordModal);
+  } else {
+    initializePasswordModal();
+  }
+
+  // Backup: also initialize on window load
+  window.addEventListener('load', initializePasswordModal);
 })();
