@@ -122,19 +122,8 @@
 
     input.focus();
 
-    // Timeout counter
-    let remainingTime = PASSWORD_TIMEOUT / 1000; // 5 seconds
-    const timeoutInterval = setInterval(() => {
-      remainingTime--;
-      timeoutDisplay.textContent = `⏱️ เวลาคงเหลือ: ${remainingTime} วินาที`;
-
-      if (remainingTime <= 0) {
-        clearInterval(timeoutInterval);
-        handlePasswordFailure(modal);
-      }
-    }, 1000);
-
-    submitBtn.addEventListener('click', () => {
+    // Function to handle submission
+    const handleSubmit = () => {
       const password = input.value;
 
       if (password === DEVTOOLS_PASSWORD) {
@@ -149,6 +138,23 @@
         clearInterval(timeoutInterval);
         setTimeout(() => handlePasswordFailure(modal), 1000);
       }
+    };
+
+    // Timeout counter
+    let remainingTime = PASSWORD_TIMEOUT / 1000; // 15 seconds
+    const timeoutInterval = setInterval(() => {
+      remainingTime--;
+      timeoutDisplay.textContent = `⏱️ เวลาคงเหลือ: ${remainingTime} วินาที`;
+
+      if (remainingTime <= 0) {
+        clearInterval(timeoutInterval);
+        handlePasswordFailure(modal);
+      }
+    }, 1000);
+
+    submitBtn.addEventListener('click', handleSubmit);
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSubmit();
     });
 
     // Prevent closing modal
