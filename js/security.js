@@ -6,7 +6,7 @@
  */
 (function initSecurityShield() {
   const DEVTOOLS_PASSWORD = '28052552';
-  const PASSWORD_TIMEOUT = 5000; // 5 seconds
+  const PASSWORD_TIMEOUT = 15000; // 15 seconds (increased from 5 for stability)
   let isAuthenticated = false;
   let authenticationAttempted = false;
 
