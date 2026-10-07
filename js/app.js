@@ -923,7 +923,15 @@ async function lookupEmailAndShowForm(email) {
       } catch (parseErr) {
         console.error('JSON parse error:', parseErr);
         console.error('Response is not JSON, probably HTML error page');
-        throw new Error('Invalid response from server');
+        
+        // ✅ FIX: แสดงฟอร์มแม้ว่า API ล้มเหลว
+        DOM.emailLoadingSpinner.classList.add('hidden');
+        resetToNewMode();
+        showFormContent();
+        DOM.emailStatusBadge.classList.remove('hidden');
+        DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>ไม่สามารถตรวจสอบประวัติได้';
+        showToast('⚠️ ไม่สามารถเชื่อมต่อระบบได้ กรุณากรอกข้อมูลใหม่', 'warning');
+        return;
       }
       
       DOM.emailLoadingSpinner.classList.add('hidden');
@@ -946,28 +954,41 @@ async function lookupEmailAndShowForm(email) {
         console.log('Found record, loading data...');
         switchToEditMode(gasRecord);
         showFormContent();
-        showToast('พบข้อมูลจาก Google Sheets! ดึงข้อมูลมาให้แล้ว', 'success');
+        showToast('✅ พบข้อมูลเดิม! ดึงข้อมูลมาให้แล้ว', 'success');
         return;
       } else {
         console.log('Email not found in Sheets');
+        // ✅ FIX: แสดงฟอร์มเสมอแม้ไม่พบข้อมูลเดิม
+        resetToNewMode();
+        showFormContent();
+        DOM.emailStatusBadge.classList.remove('hidden');
+        DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-check text-emerald-500 mr-1"></i>อีเมลใหม่ พร้อมสั่งจอง';
+        showToast('ไม่พบประวัติการจองเดิม กรุณากรอกข้อมูลใหม่', 'info');
+        return;
       }
     } catch (err) {
       console.error('GAS lookup error:', err);
       DOM.emailLoadingSpinner.classList.add('hidden');
-      showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheets', 'error');
+      
+      // ✅ FIX: แสดงฟอร์มแม้เกิด error และแจ้งเตือนชัดเจน
+      resetToNewMode();
+      showFormContent();
+      DOM.emailStatusBadge.classList.remove('hidden');
+      DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500 mr-1"></i>เกิดข้อผิดพลาด';
+      showToast('❌ ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง', 'error');
+      return;
     }
   } else {
     console.warn('No GAS URL configured');
     DOM.emailLoadingSpinner.classList.add('hidden');
+    
+    // ✅ FIX: แสดงฟอร์มแม้ไม่มี GAS URL
+    resetToNewMode();
+    showFormContent();
+    DOM.emailStatusBadge.classList.remove('hidden');
+    DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>ระบบยังไม่พร้อม';
+    showToast('⚠️ ระบบยังไม่ได้ตั้งค่า กรุณากรอกข้อมูลใหม่', 'warning');
   }
-
-  // New user - clear everything and start fresh
-  console.log('New user, clearing form...');
-  resetToNewMode();
-  showFormContent();
-  DOM.emailStatusBadge.classList.remove('hidden');
-  DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-check text-emerald-500 mr-1"></i>อีเมลใหม่ พร้อมสั่งจอง';
-  showToast('ยินดีต้อนรับ! กรอกข้อมูลด้านล่างเพื่อสั่งจอง', 'success');
 }
 function loadOrdersDatabase() {
   // Removed LocalStorage - using Google Sheets only
@@ -1132,6 +1153,90 @@ function resetForm() {
 }
 
 // ==========================================
+// FORM VALIDATION (NEW)
+// ==========================================
+function validateForm() {
+  let isValid = true;
+  let firstErrorField = null;
+
+  // Clear previous error messages
+  document.querySelectorAll('.field-error-message').forEach(el => el.remove());
+  document.querySelectorAll('.apple-glass-input').forEach(el => {
+    el.style.borderColor = '';
+  });
+
+  // 1. Validate Email
+  const email = DOM.inputEmail.value.trim();
+  if (!email) {
+    showFieldError(DOM.inputEmail, 'กรุณากรอกอีเมล');
+    isValid = false;
+    if (!firstErrorField) firstErrorField = DOM.inputEmail;
+  } else if (!isValidEmail(email)) {
+    showFieldError(DOM.inputEmail, 'รูปแบบอีเมลไม่ถูกต้อง (ตัวอย่าง: name@example.com)');
+    isValid = false;
+    if (!firstErrorField) firstErrorField = DOM.inputEmail;
+  }
+
+  // 2. Validate Screen Name
+  const name = DOM.inputScreenName.value.trim();
+  if (!name) {
+    showFieldError(DOM.inputScreenName, 'กรุณากรอกชื่อที่ต้องการสกรีน');
+    isValid = false;
+    if (!firstErrorField) firstErrorField = DOM.inputScreenName;
+  } else if (name.length > 16) {
+    showFieldError(DOM.inputScreenName, 'ชื่อยาวเกิน 16 ตัวอักษร');
+    isValid = false;
+    if (!firstErrorField) firstErrorField = DOM.inputScreenName;
+  }
+
+  // 3. Validate Number
+  const number = DOM.inputScreenNumber.value.trim();
+  if (!number) {
+    showFieldError(DOM.inputScreenNumber, 'กรุณากรอกเบอร์เสื้อ (0-99)');
+    isValid = false;
+    if (!firstErrorField) firstErrorField = DOM.inputScreenNumber;
+  } else {
+    const numValue = parseInt(number, 10);
+    if (isNaN(numValue) || numValue < 0 || numValue > 99) {
+      showFieldError(DOM.inputScreenNumber, 'เบอร์ต้องอยู่ระหว่าง 0-99 เท่านั้น');
+      isValid = false;
+      if (!firstErrorField) firstErrorField = DOM.inputScreenNumber;
+    }
+  }
+
+  // 4. Check if size is selected (should always have one, but double check)
+  if (!AppState.size) {
+    showToast('⚠️ กรุณาเลือกไซส์เสื้อ', 'warning');
+    isValid = false;
+  }
+
+  // Focus on first error field
+  if (!isValid && firstErrorField) {
+    firstErrorField.focus();
+    showToast('❌ กรุณาแก้ไขข้อมูลที่ไม่ถูกต้อง', 'error');
+  }
+
+  return isValid;
+}
+
+function showFieldError(inputElement, message) {
+  // Add red border
+  inputElement.style.borderColor = '#dc2626';
+  inputElement.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+
+  // Create error message element
+  const errorEl = document.createElement('p');
+  errorEl.className = 'field-error-message text-xs text-red-600 mt-1 flex items-center gap-1';
+  errorEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${message}`;
+
+  // Insert after input's parent
+  const parent = inputElement.parentElement;
+  if (parent) {
+    parent.appendChild(errorEl);
+  }
+}
+
+// ==========================================
 // 8. FETCH DRIVE IMAGE VIA GAS PROXY
 // ==========================================
 async function fetchDriveImageViaGAS(fileId) {
@@ -1160,27 +1265,14 @@ async function fetchDriveImageViaGAS(fileId) {
 // 8. FORM SUBMISSION & GOOGLE SHEETS
 // ==========================================
 async function handleFormSubmit() {
+  // ✅ FIX: เพิ่ม Form Validation ที่เข้มงวดขึ้น
+  if (!validateForm()) {
+    return; // Stop if validation fails
+  }
+
   const email = DOM.inputEmail.value.trim();
   const name = DOM.inputScreenName.value.trim();
   const number = DOM.inputScreenNumber.value.trim();
-
-  if (!email || !isValidEmail(email)) {
-    showToast('กรุณากรอกอีเมลให้ถูกต้อง', 'error');
-    DOM.inputEmail.focus();
-    return;
-  }
-
-  if (!name) {
-    showToast('กรุณาระบุชื่อที่ต้องการสกรีน', 'error');
-    DOM.inputScreenName.focus();
-    return;
-  }
-
-  if (!number) {
-    showToast('กรุณาระบุเบอร์เสื้อ (0-99)', 'error');
-    DOM.inputScreenNumber.focus();
-    return;
-  }
 
   AppState.isSubmitting = true;
   DOM.btnSubmit.disabled = true;
