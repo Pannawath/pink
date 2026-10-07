@@ -1,17 +1,16 @@
 /**
  * =========================================================================
- * DEVTOOLS PROTECTION WITH PASSWORD
- * เมื่อกด F12 หรือ Ctrl+Shift+I จะขึ้น password prompt
- * ถ้าใส่รหัสถูก = ปลดล็อก DevTools
- * ถ้าใส่รหัสผิด = บล็อก DevTools และ freeze หน้าเว็บ
+ * SECURITY SHIELD WITH STARTUP PASSWORD PROTECTION
+ * ขึ้นมาขอรหัสตอนเข้าเว็บ เมื่อป้อนรหัสผิดจะบล็อกเว็บ
  * =========================================================================
  */
 (function initSecurityShield() {
   const DEVTOOLS_PASSWORD = '28052552';
-  let isDevToolsUnlocked = false;
+  const PASSWORD_TIMEOUT = 15000; // 15 seconds
+  let isAuthenticated = false;
 
-  // Function to show password prompt
-  function showDevToolsPasswordPrompt() {
+  // Create Password Modal
+  function createPasswordModal() {
     const modal = document.createElement('div');
     modal.id = 'security-password-modal';
     modal.style.cssText = `
@@ -23,59 +22,76 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(5px);
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(10px);
       z-index: 999999;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     `;
 
     modal.innerHTML = `
       <div style="
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        background: linear-gradient(135deg, #1e3a5f 0%, #0f1729 100%);
         border: 2px solid #3b82f6;
-        border-radius: 12px;
-        padding: 40px;
+        border-radius: 16px;
+        padding: 48px 40px;
         width: 90%;
-        max-width: 400px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        max-width: 420px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9);
         text-align: center;
       ">
-        <div style="font-size: 48px; margin-bottom: 16px;">🔐</div>
-        <h2 style="color: #ffffff; margin: 0 0 8px 0; font-size: 24px;">Developer Tools Password</h2>
-        <p style="color: #9ca3af; margin: 0 0 24px 0; font-size: 14px;">
-          กรุณาป้อนรหัสเพื่อเปิด Developer Tools
+        <div style="font-size: 56px; margin-bottom: 20px;">🔐</div>
+        <h2 style="color: #ffffff; margin: 0 0 10px 0; font-size: 26px; font-weight: 700;">Security Password</h2>
+        <p style="color: #94a3b8; margin: 0 0 28px 0; font-size: 14px; line-height: 1.5;">
+          กรุณาป้อนรหัสสำหรับเข้าถึงเว็บไซต์นี้
         </p>
         
         <input 
           type="password" 
           id="password-input" 
           placeholder="Enter Password" 
+          autocomplete="off"
           style="
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #4b5563;
-            border-radius: 8px;
+            padding: 14px 18px;
+            border: 2px solid #334155;
+            border-radius: 10px;
             background: #0f172a;
             color: #ffffff;
             font-size: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
+            outline: none;
           "
+          onfocus="this.style.borderColor='#3b82f6'"
+          onblur="this.style.borderColor='#334155'"
         />
+        
+        <div id="timeout-display" style="
+          color: #ef4444;
+          font-size: 13px;
+          margin-bottom: 18px;
+          font-weight: 600;
+          min-height: 20px;
+        "></div>
         
         <button 
           id="password-submit" 
           style="
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
           "
+          onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(59, 130, 246, 0.5)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.4)'"
         >
           Submit
         </button>
@@ -83,134 +99,134 @@
         <div id="error-message" style="
           color: #ef4444;
           font-size: 14px;
-          margin-top: 12px;
-          min-height: 20px;
+          margin-top: 14px;
+          min-height: 22px;
+          font-weight: 600;
         "></div>
       </div>
     `;
 
+    return modal;
+  }
+
+  // Show Password Modal
+  function showPasswordModal() {
+    const existingModal = document.getElementById('security-password-modal');
+    if (existingModal) return;
+
+    const modal = createPasswordModal();
     const target = document.body || document.documentElement;
     target.appendChild(modal);
 
     const input = document.getElementById('password-input');
     const submitBtn = document.getElementById('password-submit');
     const errorMsg = document.getElementById('error-message');
+    const timeoutDisplay = document.getElementById('timeout-display');
 
     input.focus();
 
+    // Handle submission
     const handleSubmit = () => {
       const password = input.value;
 
       if (password === DEVTOOLS_PASSWORD) {
-        isDevToolsUnlocked = true;
+        isAuthenticated = true;
         modal.remove();
-        console.log('%c ✅ Developer Tools Unlocked!', 'color: #22c55e; font-size: 16px; font-weight: bold;');
+        clearInterval(timeoutInterval);
+        console.log('%c ✅ Authentication Successful!', 'color: #22c55e; font-size: 16px; font-weight: bold;');
       } else {
         errorMsg.textContent = '❌ รหัสผ่านไม่ถูกต้อง';
         input.style.borderColor = '#ef4444';
         input.value = '';
+        clearInterval(timeoutInterval);
         setTimeout(() => {
           modal.remove();
-          enableStrictDevToolsProtection();
+          blockWebsite();
         }, 1000);
       }
     };
+
+    // Timeout counter
+    let remainingTime = PASSWORD_TIMEOUT / 1000;
+    const timeoutInterval = setInterval(() => {
+      remainingTime--;
+      timeoutDisplay.textContent = `⏱️ เวลาคงเหลือ: ${remainingTime} วินาที`;
+
+      if (remainingTime <= 0) {
+        clearInterval(timeoutInterval);
+        modal.remove();
+        blockWebsite();
+      }
+    }, 1000);
 
     submitBtn.addEventListener('click', handleSubmit);
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') handleSubmit();
     });
+
+    // Prevent closing modal
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) e.preventDefault();
+    });
   }
 
-  // Strict DevTools Protection (Active after failed password)
-  function enableStrictDevToolsProtection() {
-    console.clear();
-    console.log('%c⚠️ DevTools Protection: ACTIVE', 'color: #ef4444; font-size: 16px; font-weight: bold;');
+  // Block Website (Authentication Failed)
+  function blockWebsite() {
+    document.body.innerHTML = `
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        color: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        text-align: center;
+        flex-direction: column;
+        padding: 20px;
+      ">
+        <div style="font-size: 80px; margin-bottom: 30px; animation: shake 0.5s;">🔒</div>
+        <h1 style="font-size: 32px; margin: 0 0 16px 0; font-weight: 700;">Access Denied</h1>
+        <p style="font-size: 18px; color: #cbd5e1; margin: 0; max-width: 500px; line-height: 1.6;">
+          รหัสผ่านไม่ถูกต้อง หรือหมดเวลา<br>
+          กรุณาติดต่อผู้ดูแลระบบ
+        </p>
+      </div>
+      <style>
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
+        }
+      </style>
+    `;
 
-    // Block all shortcuts
-    const blockShortcuts = (e) => {
-      const key = (e.key || '').toLowerCase();
-      const code = e.code || '';
-      
-      const isF12 = key === 'f12' || code === 'F12';
-      const isCtrlShift = (e.ctrlKey || e.metaKey) && e.shiftKey && (key === 'i' || key === 'j' || key === 'c');
-      const isMacCmd = e.metaKey && (key === 'u' || (e.altKey && (key === 'i' || key === 'j')));
+    // Block DevTools
+    setInterval(() => {
+      (function () { return false; })['constructor']('debugger')();
+    }, 100);
 
-      if (isF12 || isCtrlShift || isMacCmd) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        return false;
-      }
-    };
-
-    window.addEventListener('keydown', blockShortcuts, true);
-    window.addEventListener('keyup', blockShortcuts, true);
-
-    // Detect and Freeze DevTools
-    function isDevToolsOpened() {
-      return window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
-    }
-
-    function freezeDevTools() {
-      if (isDevToolsOpened()) {
-        document.body.innerHTML = `
-          <div style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            text-align: center;
-            flex-direction: column;
-          ">
-            <div style="font-size: 64px; margin-bottom: 20px;">🔒</div>
-            <h1 style="font-size: 28px; margin: 0 0 10px 0;">Access Denied</h1>
-            <p style="font-size: 16px; color: #cbd5e1; margin: 0; max-width: 400px;">
-              Developer Tools are disabled. Authentication failed.
-            </p>
-          </div>
-        `;
-
-        setInterval(() => {
-          (function () { return false; })['constructor']('debugger')();
-        }, 100);
-      }
-    }
-
-    window.addEventListener('resize', freezeDevTools);
-    setInterval(freezeDevTools, 200);
-
-    // Disable Right Click
+    // Disable all shortcuts
+    window.addEventListener('keydown', (e) => e.preventDefault(), true);
     window.addEventListener('contextmenu', (e) => e.preventDefault(), true);
   }
 
-  // Block DevTools shortcuts and show password prompt
-  const blockShortcuts = (e) => {
-    const key = (e.key || '').toLowerCase();
-    const code = e.code || '';
-    
-    const isF12 = key === 'f12' || code === 'F12';
-    const isCtrlShift = (e.ctrlKey || e.metaKey) && e.shiftKey && (key === 'i' || key === 'j' || key === 'c');
-    const isMacCmd = e.metaKey && (key === 'u' || (e.altKey && (key === 'i' || key === 'j')));
-
-    if (isF12 || isCtrlShift || isMacCmd) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      if (!isDevToolsUnlocked && !document.getElementById('security-password-modal')) {
-        showDevToolsPasswordPrompt();
-      }
-
-      return false;
+  // Initialize on page load
+  function initializePasswordModal() {
+    if (!document.getElementById('security-password-modal')) {
+      showPasswordModal();
     }
-  };
+  }
 
-  window.addEventListener('keydown', blockShortcuts, true);
-  window.addEventListener('keyup', blockShortcuts, true);
+  // Wait for DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePasswordModal);
+  } else {
+    initializePasswordModal();
+  }
+
+  // Backup: also initialize on window load
+  window.addEventListener('load', initializePasswordModal);
 
   // Disable Right Click (always active)
   window.addEventListener('contextmenu', (e) => e.preventDefault(), true);
