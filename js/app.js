@@ -28,7 +28,7 @@ const JERSEY_CONFIG = {
 // ==========================================
 const AppState = {
   mode: 'new', // 'new' | 'edit'
-  viewSide: 'both', // 'back' | 'front' | 'both'
+  viewSide: 'front', // 'back' | 'front' | 'both'
   email: '',
   size: 'L',
   screenName: '',
