@@ -65,16 +65,24 @@
   <!-- Mobile Scroll & Zoom Prevention -->
   <style>
     /* ========================================================
-       MOBILE SCROLL & ZOOM PREVENTION
+       MOBILE SCROLL & ZOOM PREVENTION & SCROLLABLE CONTENT
        ======================================================== */
-    html, body {
+    html {
+      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      touch-action: none;
+      overscroll-behavior: none;
+    }
+    
+    body {
       overflow: hidden;
       overflow-x: hidden;
       overflow-y: hidden;
       position: fixed;
       width: 100%;
       max-width: 100%;
-      height: 100%;
+      height: 100vh;
       touch-action: none;
       overscroll-behavior: none;
     }
@@ -86,6 +94,24 @@
     
     body {
       overflow-x: clip !important;
+    }
+
+    /* ทำให้ main content เลื่อนได้ */
+    main {
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      height: calc(100vh - 100px) !important;
+      touch-action: pan-y !important;
+    }
+
+    /* Header ติดอยู่บนสุด */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      width: 100%;
     }
   </style>
 </head>
