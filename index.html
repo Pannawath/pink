@@ -65,7 +65,7 @@
   <!-- Mobile Scroll & Zoom Prevention -->
   <style>
     /* ========================================================
-       MOBILE SCROLL & ZOOM PREVENTION & SCROLLABLE CONTENT
+       MOBILE SCROLL & ZOOM PREVENTION & LIMITED SCROLLABLE CARD
        ======================================================== */
     html {
       overflow: hidden;
@@ -96,11 +96,11 @@
       overflow-x: clip !important;
     }
 
-    /* ทำให้ main content เลื่อนได้ */
-    main {
+    /* ทำให้เพียง .apple-glass-card (ฟอร์ม) เลื่อนได้ */
+    .apple-glass-card {
+      max-height: 400px !important;
       overflow-y: auto !important;
       overflow-x: hidden !important;
-      height: calc(100vh - 100px) !important;
       touch-action: pan-y !important;
     }
 
@@ -112,6 +112,12 @@
       right: 0;
       z-index: 40;
       width: 100%;
+    }
+
+    /* Main ไม่เลื่อน */
+    main {
+      overflow: hidden !important;
+      touch-action: none !important;
     }
   </style>
 </head>
