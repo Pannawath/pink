@@ -722,11 +722,12 @@ main.max-w-5xl {
   z-index: 2;
   flex: 1;
   color: #475569;
-  padding: 11px 12px;
-  font-size: 14px;
+  padding: 11px 8px;
+  font-size: 13px;
   font-weight: 700;
   font-family: 'Kanit', sans-serif;
   text-shadow: none;
+  white-space: nowrap;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -1073,13 +1074,21 @@ main.max-w-5xl {
   }
 
   main.max-w-5xl {
-    max-width: 460px;
+    max-width: 480px;
+    width: calc(100% - 28px);
+    margin-left: auto !important;
+    margin-right: auto !important;
     padding-top: 18px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    scrollbar-gutter: stable both-edges;
   }
 
   .grid.lg\:grid-cols-12 {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 100%;
     gap: 0;
     position: relative;
   }
@@ -1088,12 +1097,16 @@ main.max-w-5xl {
     position: sticky;
     top: 70px;
     z-index: 10;
+    width: 100%;
+    max-width: 440px;
   }
 
   .grid.lg\:grid-cols-12 > div:nth-child(2) {
     position: sticky;
     top: calc(70px + 200px);
     z-index: 20;
+    width: 100%;
+    max-width: 440px;
   }
 
   .jersey-stage-container {
@@ -1153,13 +1166,16 @@ main.max-w-5xl {
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    box-sizing: border-box;
+    width: 100%;
   }
 }
 
+
 @media (max-width: 520px) {
   main.max-w-5xl {
-    padding-left: 14px;
-    padding-right: 14px;
+    width: calc(100% - 24px);
+    max-width: 100%;
   }
 
   .jersey-stage-container {
@@ -1167,8 +1183,24 @@ main.max-w-5xl {
   }
 
   .apple-segmented-btn {
-    padding-left: 8px;
-    padding-right: 8px;
-    font-size: 12px;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 11.5px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  main.max-w-5xl {
+    max-width: 600px;
+    width: calc(100% - 40px);
+  }
+
+  .apple-glass-nav {
+    max-width: 600px;
+  }
+
+  .apple-segmented-btn {
+    font-size: 14px;
+    padding: 11px 14px;
   }
 }
