@@ -643,6 +643,44 @@ main.max-w-5xl {
   letter-spacing: 0;
 }
 
+/* ========================================================
+   APPLE GLASS MOBILE SHEET PULL HANDLE
+   ======================================================== */
+.mobile-sheet-handle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 2px;
+  padding-bottom: 12px;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.mobile-sheet-handle {
+  width: 44px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.90);
+  border-radius: 9999px;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.12),
+    inset 0 1px 1.5px rgba(255, 255, 255, 1);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-sheet-handle-container:hover .mobile-sheet-handle,
+.mobile-sheet-handle-container:active .mobile-sheet-handle {
+  width: 52px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 3px 12px rgba(239, 79, 163, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 1);
+}
+
 .apple-segmented-control {
   position: relative;
   width: 100%;
@@ -995,6 +1033,28 @@ main.max-w-5xl {
     max-width: 620px;
     margin: 0 auto;
   }
+
+  .grid.lg\:grid-cols-12 {
+    display: grid !important;
+  }
+
+  .grid.lg\:grid-cols-12 > div:first-child,
+  .grid.lg\:grid-cols-12 > div:nth-child(2) {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+  }
+
+  .mobile-sheet-handle-container,
+  .mobile-sheet-handle {
+    display: none !important;
+  }
+
+  .apple-glass-card {
+    position: static !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
 }
 
 @media (max-width: 1023px) {
@@ -1018,11 +1078,28 @@ main.max-w-5xl {
   }
 
   .grid.lg\:grid-cols-12 {
-    gap: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .grid.lg\:grid-cols-12 > div:first-child {
+    position: sticky;
+    top: 70px;
+    z-index: 10;
+  }
+
+  .grid.lg\:grid-cols-12 > div:nth-child(2) {
+    position: sticky;
+    top: calc(70px + 200px);
+    z-index: 20;
   }
 
   .jersey-stage-container {
-    min-height: 420px;
+    height: auto;
+    max-height: 420px;
+    min-height: 0;
     padding: 18px;
   }
 
@@ -1030,8 +1107,52 @@ main.max-w-5xl {
     width: 100%;
   }
 
+  .mobile-sheet-handle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-top: 2px;
+    padding-bottom: 12px;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  .mobile-sheet-handle {
+    width: 44px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    border-radius: 9999px;
+    box-shadow:
+      0 2px 8px rgba(15, 23, 42, 0.12),
+      inset 0 1px 1.5px rgba(255, 255, 255, 1);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-sheet-handle-container:hover .mobile-sheet-handle,
+  .mobile-sheet-handle-container:active .mobile-sheet-handle {
+    width: 52px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow:
+      0 3px 12px rgba(239, 79, 163, 0.25),
+      inset 0 1px 2px rgba(255, 255, 255, 1);
+  }
+
   .apple-glass-card {
     border-radius: 28px;
+    position: sticky;
+    top: calc(70px + 200px);
+    z-index: 20;
+    max-height: calc(100vh - 270px);
+    max-height: calc(100dvh - 270px);
+    overflow-y: auto;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 }
 
