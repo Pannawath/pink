@@ -120,12 +120,13 @@
 
 
 
-  <!-- Real WebGL 3D Liquid Pink Silk Ribbon Background -->
-  <canvas id="liquidSilkCanvas" class="studio-silk-webgl-canvas" aria-hidden="true"></canvas>
-
-  <!-- Real WebGL 3D Studio Canvas (Floating 3dmodel/shirt.glb with Studio Lighting) -->
-  <div class="studio-spotlight" aria-hidden="true"></div>
-  <canvas id="bg3dCanvas" class="studio-3d-webgl-canvas" aria-hidden="true"></canvas>
+  <!-- High Resolution 2K Liquid Silk Background Video & Fallback -->
+  <div class="luxury-2k-bg-container" aria-hidden="true">
+    <video id="bgSilkVideo" class="luxury-2k-video" autoplay loop muted playsinline poster="assets/images/bg_pink_silk_2k.webp">
+      <source src="assets/images/bg_pink_silk_2k.mp4" type="video/mp4">
+    </video>
+    <div class="luxury-2k-fallback" style="background-image: url('assets/images/bg_pink_silk_2k.webp');"></div>
+  </div>
 
   <!-- ================= FLOATING LIQUID GLASS HEADER ================= -->
   <header class="sticky top-4 z-40 px-4 sm:px-6 max-w-5xl mx-auto w-full">
@@ -828,9 +829,6 @@
 
   <!-- Main JS -->
   <script src="js/app.js?v=4"></script>
-
-  <!-- Real WebGL 3D Liquid Pink Silk Ribbon Background Engine -->
-  <script src="js/silk3d.js?v=8"></script>
 
   <!-- Real WebGL 3D Studio Engine -->
   <script src="js/studio3d.js?v=4"></script>

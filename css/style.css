@@ -538,32 +538,36 @@ html {
   overflow-x: clip;
 }
 
-.studio-silk-webgl-canvas {
+.luxury-2k-bg-container {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+  background-color: #fce7f3;
+}
+
+.luxury-2k-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  inset: 0;
   display: block;
 }
 
-html, body {
-  font-family: 'Kanit', 'Plus Jakarta Sans', sans-serif;
-  min-height: 100vh;
-  background-color: #fce7f3;
-  background-image:
-    radial-gradient(circle at 75% 15%, rgba(255, 255, 255, 0.95) 0%, rgba(253, 232, 243, 0.65) 38%, transparent 70%),
-    radial-gradient(circle at 18% 85%, rgba(244, 114, 182, 0.45) 0%, rgba(236, 72, 153, 0.28) 48%, transparent 75%),
-    linear-gradient(135deg, #fff5f8 0%, #fde8f2 25%, #fbcfe8 50%, #f9a8d4 75%, #f472b6 100%) !important;
-  background-attachment: fixed !important;
-  background-size: cover !important;
-  color: #0f172a;
-  position: relative;
-  overflow-x: hidden;
-  padding-bottom: 36px;
+.luxury-2k-fallback {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
 }
 
+.studio-silk-webgl-canvas,
 .studio-3d-webgl-canvas,
 .studio-spotlight {
   display: none !important;
