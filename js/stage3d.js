@@ -35,15 +35,27 @@ function setupStageLighting(scene) {
 }
 
 function normalizeStageShirtMesh(modelScene) {
-  const boundingBox = new THREE.Box3().setFromObject(modelScene);
+  modelScene.position.set(0, 0, 0);
+  modelScene.scale.set(1, 1, 1);
+  modelScene.updateMatrixWorld(true);
+
+  const initialBox = new THREE.Box3().setFromObject(modelScene);
   const sizeVector = new THREE.Vector3();
+  initialBox.getSize(sizeVector);
+
+  const maxDimension = Math.max(sizeVector.x, sizeVector.y, sizeVector.z);
+  const scaleRatio = 2.4 / maxDimension;
+  modelScene.scale.set(scaleRatio, scaleRatio, scaleRatio);
+  modelScene.updateMatrixWorld(true);
+
+  const scaledBox = new THREE.Box3().setFromObject(modelScene);
   const centerVector = new THREE.Vector3();
-  boundingBox.getSize(sizeVector);
-  boundingBox.getCenter(centerVector);
+  scaledBox.getCenter(centerVector);
 
   modelScene.position.x = -centerVector.x;
   modelScene.position.y = -centerVector.y;
   modelScene.position.z = -centerVector.z;
+  modelScene.updateMatrixWorld(true);
 
   modelScene.traverse((childNode) => {
     if (!childNode.isMesh) return;
@@ -55,10 +67,6 @@ function normalizeStageShirtMesh(modelScene) {
       childNode.material.needsUpdate = true;
     }
   });
-
-  const maxDimension = Math.max(sizeVector.x, sizeVector.y, sizeVector.z);
-  const scaleRatio = 2.4 / maxDimension;
-  modelScene.scale.set(scaleRatio, scaleRatio, scaleRatio);
 }
 
 function configureStageControls(camera, canvasElement) {
