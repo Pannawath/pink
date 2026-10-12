@@ -11,19 +11,19 @@ const CONFIG_UI = {
   // =========================================================================
   glassStyle: {
     // ความเบลอของตัวกรอบกระจก (px) - ค่าน้อยเบลอน้อย ค่ามากเบลอมาก (แนะนำ 20px - 60px)
-    backdropBlur: '48px',
+    backdropBlur: '40px',
 
     // ความใส/ความโปร่งแสงของพื้นหลังกรอบกระจก (0.0 ถึง 1.0)
-    bgOpacity: 0.18,
+    bgOpacity: 0.08,
 
     // ความชัดของเส้นขอบกระจก (0.0 ถึง 1.0)
-    borderOpacity: 0.88,
+    borderOpacity: 0.65,
 
     // สีเงาและขอบมิติกรอบกระจก
-    outlineColor: 'rgba(15, 23, 42, 0.12)',
+    outlineColor: 'rgba(15, 23, 42, 0.08)',
 
     // รัศมีมุมมนของกรอบกระจกหลัก (px)
-    cardBorderRadius: '30px'
+    cardBorderRadius: '32px'
   },
 
   // =========================================================================
@@ -129,53 +129,58 @@ const CONFIG_UI = {
 };
 
 // =========================================================================
-// HELPER FUNCTION: สคริปต์ปรับแต่ง UI และข้อความบนหน้าเว็บอัตโนมัติตาม CONFIG_UI
+// สคริปต์ปรับแต่ง UI และข้อความบนหน้าเว็บอัตโนมัติตาม CONFIG_UI
 // =========================================================================
-(function applyConfigUI() {
-  document.addEventListener('DOMContentLoaded', () => {
-    if (typeof CONFIG_UI === 'undefined') return;
+function applyGlassTokens() {
+  const styleConfig = CONFIG_UI.glassStyle;
+  if (!styleConfig) return;
+  const rootElement = document.documentElement;
+  if (styleConfig.backdropBlur) {
+    rootElement.style.setProperty('--glass-blur', styleConfig.backdropBlur);
+  }
+  if (styleConfig.cardBorderRadius) {
+    rootElement.style.setProperty('--glass-radius', styleConfig.cardBorderRadius);
+  }
+}
 
-    // 1. ปรับสไตล์กระจก Blur & Opacity ผ่าน CSS Variables
-    if (CONFIG_UI.glassStyle) {
-      const root = document.documentElement;
-      if (CONFIG_UI.glassStyle.backdropBlur) {
-        root.style.setProperty('--glass-blur', CONFIG_UI.glassStyle.backdropBlur);
-      }
-      if (CONFIG_UI.glassStyle.cardBorderRadius) {
-        root.style.setProperty('--glass-radius', CONFIG_UI.glassStyle.cardBorderRadius);
-      }
-    }
+function applyHeaderBranding() {
+  const headerConfig = CONFIG_UI.header;
+  if (!headerConfig) return;
+  const brandTitle = document.querySelector('.app-brand-title');
+  if (brandTitle && headerConfig.mainTitle) {
+    brandTitle.textContent = headerConfig.mainTitle;
+  }
+  const logoImage = document.querySelector('.apple-glass-nav img');
+  if (logoImage) {
+    if (headerConfig.logoSrc) logoImage.src = headerConfig.logoSrc;
+    if (headerConfig.logoAltText) logoImage.alt = headerConfig.logoAltText;
+  }
+}
 
-    // 2. ปรับข้อความส่วน Header
-    if (CONFIG_UI.header) {
-      const brandTitle = document.querySelector('.app-brand-title');
-      if (brandTitle && CONFIG_UI.header.mainTitle) {
-        brandTitle.textContent = CONFIG_UI.header.mainTitle;
-      }
-      const logoImg = document.querySelector('.apple-glass-nav img');
-      if (logoImg) {
-        if (CONFIG_UI.header.logoSrc) logoImg.src = CONFIG_UI.header.logoSrc;
-        if (CONFIG_UI.header.logoAltText) logoImg.alt = CONFIG_UI.header.logoAltText;
-      }
-    }
+function applyViewControlLabels() {
+  const controlsConfig = CONFIG_UI.viewControls;
+  if (!controlsConfig) return;
+  const btnBack = document.getElementById('btnViewBack');
+  const btnFront = document.getElementById('btnViewFront');
+  const btnBoth = document.getElementById('btnViewBoth');
+  if (btnBack && controlsConfig.backViewText) btnBack.textContent = controlsConfig.backViewText;
+  if (btnFront && controlsConfig.frontViewText) btnFront.textContent = controlsConfig.frontViewText;
+  if (btnBoth && controlsConfig.bothViewText) btnBoth.textContent = controlsConfig.bothViewText;
+}
 
-    // 3. ปรับข้อความปุ่มสลับมุมมอง
-    if (CONFIG_UI.viewControls) {
-      const btnBack = document.getElementById('btnViewBack');
-      const btnFront = document.getElementById('btnViewFront');
-      const btnBoth = document.getElementById('btnViewBoth');
-      if (btnBack && CONFIG_UI.viewControls.backViewText) btnBack.textContent = CONFIG_UI.viewControls.backViewText;
-      if (btnFront && CONFIG_UI.viewControls.frontViewText) btnFront.textContent = CONFIG_UI.viewControls.frontViewText;
-      if (btnBoth && CONFIG_UI.viewControls.bothViewText) btnBoth.textContent = CONFIG_UI.viewControls.bothViewText;
-    }
+function applyProductDetails() {
+  const productConfig = CONFIG_UI.productAndForm;
+  if (!productConfig) return;
+  const productHeading = document.querySelector('h1.font-sport-bold');
+  if (productHeading && productConfig.productTitle) productHeading.textContent = productConfig.productTitle;
+  const productSubtitle = document.querySelector('p.text-xs.text-slate-500');
+  if (productSubtitle && productConfig.productSubtitle) productSubtitle.textContent = productConfig.productSubtitle;
+}
 
-    // 4. ปรับข้อความข้อมูลสินค้า
-    if (CONFIG_UI.productAndForm) {
-      const pTitle = document.querySelector('h1.font-sport-bold');
-      if (pTitle && CONFIG_UI.productAndForm.productTitle) pTitle.textContent = CONFIG_UI.productAndForm.productTitle;
-
-      const pSubtitle = document.querySelector('p.text-xs.text-slate-500');
-      if (pSubtitle && CONFIG_UI.productAndForm.productSubtitle) pSubtitle.textContent = CONFIG_UI.productAndForm.productSubtitle;
-    }
-  });
-})();
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof CONFIG_UI === 'undefined') return;
+  applyGlassTokens();
+  applyHeaderBranding();
+  applyViewControlLabels();
+  applyProductDetails();
+});

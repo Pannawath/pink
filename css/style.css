@@ -473,18 +473,19 @@
 
 /* Opal Dropzone */
 .apple-dropzone {
-  border: 2px dashed rgba(203, 213, 225, 0.9);
-  background: rgba(248, 250, 252, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: 20px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1.5px dashed rgba(244, 63, 94, 0.45);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-radius: 24px;
+  box-shadow: inset 0 1.2px 1.8px rgba(255, 255, 255, 0.7);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .apple-dropzone:hover {
-  border-color: #0f172a;
-  background: #ffffff;
-  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
+  border-color: #f43f5e;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 24px -4px rgba(244, 63, 94, 0.2);
   transform: translateY(-1px);
 }
 
@@ -537,83 +538,51 @@ html {
   overflow-x: clip;
 }
 
-
-body::before,
-body::after {
-  content: "";
+.studio-silk-webgl-canvas {
   position: fixed;
-  inset: -18vh -12vw auto -12vw;
-  height: 58vh;
-  pointer-events: none;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
-  opacity: 0.5;
-  filter: blur(0.2px);
-  background:
-    linear-gradient(112deg, transparent 5%, rgba(255, 255, 255, 0.32) 18%, transparent 29%),
-    radial-gradient(ellipse at 42% 64%, rgba(255, 255, 255, 0.3) 0 8%, rgba(255, 191, 219, 0.22) 20%, transparent 48%);
-  transform: rotate(-16deg);
+  pointer-events: none;
+  display: block;
 }
 
-body::after {
-  inset: auto -16vw -22vh -10vw;
-  height: 46vh;
-  opacity: 0.45;
-  background:
-    linear-gradient(118deg, transparent 8%, rgba(255, 255, 255, 0.28) 23%, transparent 34%),
-    radial-gradient(ellipse at 55% 42%, rgba(255, 225, 239, 0.45) 0 11%, rgba(198, 48, 111, 0.2) 28%, transparent 58%);
-  transform: rotate(-12deg);
+html, body {
+  font-family: 'Kanit', 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  background-color: #e91e63;
+  background-image:
+    radial-gradient(circle at 82% 12%, rgba(255, 190, 225, 0.85) 0%, rgba(255, 64, 129, 0.45) 45%, transparent 72%),
+    radial-gradient(circle at 14% 88%, rgba(194, 24, 91, 0.8) 0%, rgba(233, 30, 99, 0.45) 48%, transparent 75%),
+    linear-gradient(145deg, #ff4081 0%, #f06292 20%, #e91e63 50%, #c2185b 80%, #ad1457 100%) !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  color: #0f172a;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 36px;
 }
 
-.watermark-overlay {
-  opacity: 0.18;
-  mix-blend-mode: multiply;
-}
-
-.apple-ambient-glow {
-  opacity: 0.62;
-}
-
-.ambient-orb {
-  filter: blur(78px);
-}
-
-.orb-top-left {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(255, 143, 190, 0.55) 46%, transparent 76%);
-}
-
-.orb-bottom-right {
-  background: radial-gradient(circle, rgba(255, 226, 240, 0.8) 0%, rgba(181, 46, 105, 0.42) 58%, transparent 80%);
-}
-
-.studio-3d-webgl-canvas {
-  opacity: 0.38;
-  mix-blend-mode: normal;
-}
-
+.studio-3d-webgl-canvas,
 .studio-spotlight {
-  width: 920px;
-  height: 920px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0%, rgba(255, 142, 190, 0.28) 42%, transparent 74%);
-  left: 50%;
-  top: 34%;
-  filter: blur(80px);
-  transform: translateX(-50%);
+  display: none !important;
 }
 
 
 .apple-glass-nav {
   min-height: 70px;
-  color: #ffffff;
+  color: #0f172a;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.12) 100%),
-    rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 100%),
+    rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.70);
   box-shadow:
-    var(--liquid-shadow),
-    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
-    0 0 0 1.2px rgba(15, 23, 42, 0.12);
-  backdrop-filter: blur(48px) saturate(220%);
-  -webkit-backdrop-filter: blur(48px) saturate(220%);
+    0 16px 40px -8px rgba(157, 23, 77, 0.12),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(40px) saturate(210%);
+  -webkit-backdrop-filter: blur(40px) saturate(210%);
+  border-radius: 9999px;
 }
 
 .app-brand-copy {
@@ -649,15 +618,16 @@ main.max-w-5xl {
 
 .apple-glass-card {
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%),
-    rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.75);
   box-shadow:
-    var(--liquid-shadow),
-    var(--liquid-inner),
-    0 0 0 1.2px rgba(15, 23, 42, 0.10);
-  backdrop-filter: blur(48px) saturate(220%);
-  -webkit-backdrop-filter: blur(48px) saturate(220%);
+    0 24px 60px -12px rgba(173, 20, 87, 0.25),
+    0 8px 24px -4px rgba(15, 23, 42, 0.05),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(36px) saturate(210%);
+  -webkit-backdrop-filter: blur(36px) saturate(210%);
+  border-radius: 32px;
   color: var(--liquid-ink);
 }
 
@@ -694,12 +664,12 @@ main.max-w-5xl {
   bottom: 6px;
   left: 0;
   width: 33.3333%;
-  background: #ffffff;
+  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 45%, #db2777 100%);
   border-radius: 9999px;
-  border: 1px solid rgba(15, 23, 42, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow:
-    0 6px 18px rgba(15, 23, 42, 0.16),
-    inset 0 1.5px 2px rgba(255, 255, 255, 1);
+    0 6px 18px rgba(244, 63, 94, 0.45),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.7);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
   z-index: 1;
@@ -721,9 +691,13 @@ main.max-w-5xl {
   transition: color 0.25s ease;
 }
 
-.apple-segmented-btn:hover,
-.apple-segmented-btn.active {
+.apple-segmented-btn:hover {
   color: #0f172a;
+  font-weight: 800;
+}
+
+.apple-segmented-btn.active {
+  color: #ffffff !important;
   font-weight: 800;
 }
 
@@ -737,15 +711,14 @@ main.max-w-5xl {
   justify-content: center;
   overflow: hidden;
   background:
-    linear-gradient(150deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%),
     rgba(255, 255, 255, 0.12) !important;
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.75);
   box-shadow:
-    var(--liquid-shadow),
-    var(--liquid-inner),
-    0 0 0 1.2px rgba(15, 23, 42, 0.10);
-  backdrop-filter: blur(52px) saturate(220%);
-  -webkit-backdrop-filter: blur(52px) saturate(220%);
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
+    0 24px 60px -12px rgba(173, 20, 87, 0.25);
+  backdrop-filter: blur(36px) saturate(210%);
+  -webkit-backdrop-filter: blur(36px) saturate(210%);
 }
 
 .jersey-card-wrapper {
@@ -782,15 +755,15 @@ main.max-w-5xl {
 .apple-size-btn,
 .apple-style-swatch {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%),
-    rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.65);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 100%),
+    rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.60);
   color: #0f172a;
   box-shadow:
     inset 0 1.2px 1.8px 0 rgba(255, 255, 255, 0.8),
-    0 8px 22px rgba(123, 31, 77, 0.06);
-  backdrop-filter: blur(20px) saturate(175%);
-  -webkit-backdrop-filter: blur(20px) saturate(175%);
+    0 8px 22px rgba(123, 31, 77, 0.05);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
 }
 
 .apple-glass-input::placeholder {
@@ -799,62 +772,111 @@ main.max-w-5xl {
 
 .apple-glass-input:focus {
   border-color: rgba(255, 255, 255, 0.95);
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.28);
   box-shadow:
-    0 0 0 3.5px rgba(239, 79, 163, 0.25),
+    0 0 0 3.5px rgba(244, 63, 94, 0.25),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
 }
 
 .apple-size-btn {
   border-radius: 9999px;
-  min-height: 42px;
+  min-height: 44px;
   font-weight: 700;
   color: #1e293b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 4px 12px rgba(15, 23, 42, 0.05),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.85);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .apple-size-btn:hover {
-  border-color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.38);
-  color: var(--liquid-deep);
+  border-color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.75);
+  color: #0f172a;
+  transform: translateY(-1px);
 }
 
 .apple-size-btn.active {
-  background: #ffffff;
-  border: 1.5px solid #0f172a;
-  color: #0f172a;
+  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 45%, #db2777 100%) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  color: #ffffff !important;
   font-weight: 800;
   box-shadow:
-    0 4px 14px rgba(15, 23, 42, 0.15),
-    inset 0 1.5px 2px rgba(255, 255, 255, 1);
+    0 8px 22px -3px rgba(244, 63, 94, 0.5),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.75) !important;
+  transform: scale(1.02);
 }
 
 .apple-btn-primary {
-  background: #0f172a;
+  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 45%, #db2777 100%);
   color: #ffffff;
-  border: 1px solid #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow:
-    0 12px 28px -6px rgba(15, 23, 42, 0.25),
-    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    0 14px 32px -6px rgba(244, 63, 94, 0.5),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.65);
   min-height: 48px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .apple-btn-primary:hover:not(:disabled) {
-  background: #1e293b;
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 45%, #be123c 100%);
   color: #ffffff;
+  transform: translateY(-1.5px) scale(1.01);
   box-shadow:
-    0 16px 32px -6px rgba(15, 23, 42, 0.32),
-    inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
+    0 18px 38px -6px rgba(225, 29, 72, 0.6),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.8);
+}
+
+.apple-btn-primary:active:not(:disabled) {
+  transform: translateY(0.5px) scale(0.99);
+  box-shadow:
+    0 8px 20px -4px rgba(225, 29, 72, 0.4),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.5);
+}
+
+.apple-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background: linear-gradient(135deg, #fda4af 0%, #f472b6 100%);
 }
 
 .apple-btn-secondary {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.1) 100%),
-    rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.62);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.35) 100%),
+    rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   color: #0f172a;
+  border-radius: 9999px;
+  font-weight: 700;
+  min-height: 44px;
   box-shadow:
-    inset 0 1.2px 1.8px rgba(255, 255, 255, 0.8),
-    0 8px 22px rgba(123, 31, 77, 0.06);
+    inset 0 1.2px 1.8px rgba(255, 255, 255, 0.9),
+    0 8px 22px rgba(123, 31, 77, 0.08);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.apple-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.apple-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 #slipUploadSection,

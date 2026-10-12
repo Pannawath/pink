@@ -8,11 +8,11 @@
   <meta name="description"
     content="สั่งจองเสื้อกีฬาสีชมพู พร้อมสกรีนชื่อและเบอร์ - Sarakhampittayakhom 2026">
   
-  <!-- ✅ Favicon -->
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/school_crest.png">
   <link rel="apple-touch-icon" href="assets/images/school_crest.png">
   
-  <!-- ✅ Open Graph Meta Tags สำหรับ Social Sharing -->
+  <!-- Open Graph Meta Tags สำหรับ Social Sharing -->
   <meta property="og:title" content="จองเสื้อกีฬาสี - Pink Jersey Studio 2026">
   <meta property="og:description" content="สั่งจองเสื้อกีฬาสีชมพู พร้อมสกรีนชื่อและเบอร์ ใส่ทีมเดียวกัน สู้ไปด้วยกัน">
   <meta property="og:image" content="https://pannawath.github.io/pink/assets/images/jersey_clean_both.png">
@@ -57,27 +57,28 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=6">
   
   <!-- Accessibility Fixes CSS -->
-  <link rel="stylesheet" href="css/accessibility-fixes.css">
+  <link rel="stylesheet" href="css/accessibility-fixes.css?v=4">
 
   <!-- Mobile Scroll & Zoom Prevention -->
   <style>
     /* ========================================================
-       MOBILE SCROLL & ZOOM PREVENTION & SCROLLABLE FORM ONLY
+       MOBILE SCROLL & ZOOM PREVENTION & SCROLLABLE CONTENT
        ======================================================== */
     html {
       overflow: hidden;
       overflow-x: hidden;
-      touch-action: pan-y pinch-zoom;
+      overflow-y: hidden;
+      touch-action: none;
       overscroll-behavior: none;
-      max-width: 100vw;
     }
     
     body {
       overflow: hidden;
       overflow-x: hidden;
+      overflow-y: hidden;
       position: fixed;
       width: 100%;
       max-width: 100%;
@@ -86,7 +87,7 @@
       overscroll-behavior: none;
     }
     
-    /* ป้องกัน horizontal scroll */
+    /* ป้องกัน element ใด ๆ ที่ทำให้เกิด horizontal scroll */
     * {
       max-width: 100%;
     }
@@ -95,81 +96,32 @@
       overflow-x: clip !important;
     }
 
-    /* Header ติดบนสุด */
+    /* ทำให้ main content เลื่อนได้ */
+    main {
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      height: calc(100vh - 100px) !important;
+      touch-action: pan-y !important;
+    }
+
+    /* Header ติดอยู่บนสุด */
     header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 50;
+      z-index: 40;
       width: 100%;
-    }
-
-    /* Main container - flex layout แนวตั้ง */
-    main {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      padding-top: 90px;
-      overflow: hidden;
-      touch-action: none;
-    }
-
-    /* Jersey stage - ล็อคไว้ด้านบน ไม่เลื่อน */
-    @media (max-width: 1023px) {
-      main > .grid {
-        display: flex !important;
-        flex-direction: column !important;
-        height: 100%;
-        overflow: hidden;
-      }
-
-      /* Left side (Jersey) - Fixed height, ไม่เลื่อน */
-      main > .grid > div:first-child {
-        flex-shrink: 0;
-        height: auto;
-        max-height: 40vh;
-        overflow: hidden;
-        touch-action: none;
-      }
-
-      /* Right side (Form) - Scrollable */
-      main > .grid > div:last-child {
-        flex: 1;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        touch-action: pan-y !important;
-        -webkit-overflow-scrolling: touch;
-        max-height: calc(100vh - 90px - 40vh);
-      }
-
-      /* Jersey stage ลดขนาดเล็กลง */
-      .jersey-stage-container {
-        min-height: 280px !important;
-        height: 280px !important;
-      }
-
-      .jersey-card-wrapper {
-        max-height: 240px !important;
-      }
     }
   </style>
 </head>
 
 <body class="flex flex-col min-h-screen">
 
-  <!-- Fullscreen Diagonal Red Watermark -->
-  <div class="watermark-overlay" aria-hidden="true">
-    <div class="watermark-text watermark-text-small">MOCUP</div>
-    <div class="watermark-text watermark-text-large">PANNAWAT MOCUP</div>
-    <div class="watermark-text watermark-text-small">MOCUP</div>
-  </div>
 
-  <!-- Apple Ambient Luminous Glow -->
-  <div class="apple-ambient-glow">
-    <div class="ambient-orb orb-top-left"></div>
-    <div class="ambient-orb orb-bottom-right"></div>
-  </div>
+
+  <!-- Real WebGL 3D Liquid Pink Silk Ribbon Background -->
+  <canvas id="liquidSilkCanvas" class="studio-silk-webgl-canvas" aria-hidden="true"></canvas>
 
   <!-- Real WebGL 3D Studio Canvas (Floating 3dmodel/shirt.glb with Studio Lighting) -->
   <div class="studio-spotlight" aria-hidden="true"></div>
@@ -180,7 +132,7 @@
     <div class="apple-glass-nav px-5 py-3 flex items-center justify-center">
 
       <!-- Brand Minimal Logo -->
-      <a href="#" class="flex items-center space-x-3 group justify-center">
+      <a href="javascript:window.scrollTo({top:0,behavior:'smooth'})" class="flex items-center space-x-3 group justify-center">
         <img src="assets/images/school_crest.png" alt="ตราโรงเรียนสารคามพิทยาคม"
           class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition border border-white/40">
         <div class="flex items-center">
@@ -340,7 +292,7 @@
 
           <!-- 1. Email Address (Account Lookup) -->
           <div class="space-y-1.5">
-            <!-- ✅ เพิ่มคำแนะนำชัดเจน -->
+            <!-- คำแนะนำการใช้งาน -->
             <div class="onboarding-hint" style="margin-bottom: 12px;">
               <i class="fa-solid fa-arrow-down"></i>
               <strong>ขั้นตอนที่ 1:</strong> กรอกอีเมลเพื่อเริ่มจองเสื้อ
@@ -507,7 +459,7 @@
 
             <!-- Slip Preview Card (Shown when slip is chosen or synced from email) -->
             <div id="slipPreviewCard"
-              class="hidden apple-glass-card p-3 rounded-2xl border border-slate-200 bg-white/90 space-y-2">
+              class="hidden apple-glass-card p-3 rounded-2xl border border-white/60 bg-white/20 space-y-2">
               <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center space-x-2.5 overflow-hidden">
                   <div
@@ -841,7 +793,7 @@
       
       <div class="p-6 text-center space-y-4">
         <div class="bg-white border-4 border-slate-200 rounded-2xl p-4 inline-block">
-          <img id="qrPromptPayImage" src="qr-code.png" alt="QR PromptPay" class="w-64 h-64 mx-auto">
+          <img id="qrPromptPayImage" src="assets/images/qr-code.png" alt="QR PromptPay" class="w-64 h-64 mx-auto">
         </div>
         
         <div class="space-y-2">
@@ -865,26 +817,21 @@
     </div>
   </div>
 
-  <!-- Configuration (optional - for security) -->
-  <script>
-    // Try to load config.js and configUI.js if exists
-    (function() {
-      ['config.js', 'configUI.js'].forEach(function(src) {
-        var script = document.createElement('script');
-        script.src = src;
-        document.head.appendChild(script);
-      });
-    })();
-  </script>
+  <!-- Configuration -->
+  <script src="config.js?v=3"></script>
+  <script src="configUI.js?v=3"></script>
 
   <!-- Security Shield Protection -->
-  <script src="js/security.js"></script>
+  <script src="js/security.js?v=3"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=3"></script>
+
+  <!-- Real WebGL 3D Liquid Pink Silk Ribbon Background Engine -->
+  <script src="js/silk3d.js?v=7"></script>
 
   <!-- Real WebGL 3D Studio Engine -->
-  <script src="js/studio3d.js"></script>
+  <script src="js/studio3d.js?v=3"></script>
 </body>
 
 </html>

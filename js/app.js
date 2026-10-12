@@ -1,5 +1,5 @@
 // ========================================================
-// ⚙️ แผงตั้งค่าพิกัด & ขนาดสกรีนเสื้อ (สามารถปรับค่าที่นี่ได้โดยตรง)
+// แผงตั้งค่าพิกัด & ขนาดสกรีนเสื้อ (สามารถปรับค่าที่นี่ได้โดยตรง)
 // ========================================================
 const JERSEY_CONFIG = {
   // 1. เบอร์ด้านหลัง (Back Number)
@@ -211,10 +211,10 @@ function bindEvents() {
   });
 
   DOM.inputScreenNumber.addEventListener('input', (e) => {
-    let val = e.target.value.replace(/\D/g, '');
-    if (val.length > 2) val = val.slice(0, 2);
-    AppState.screenNumber = val;
-    e.target.value = val;
+    let numericDigits = e.target.value.replace(/\D/g, '');
+    if (numericDigits.length > 2) numericDigits = numericDigits.slice(0, 2);
+    AppState.screenNumber = numericDigits;
+    e.target.value = numericDigits;
     updateLivePreview();
   });
 
@@ -415,15 +415,28 @@ function initSlipUploadEvents() {
 // ==========================================
 // QR PROMPTPAY MODAL
 // ==========================================
+function getPromptPayDetails() {
+  const number = (typeof CONFIG !== 'undefined' && CONFIG.promptPayNumber)
+    ? CONFIG.promptPayNumber
+    : '0987654321';
+  const name = (typeof CONFIG !== 'undefined' && CONFIG.accountName)
+    ? CONFIG.accountName
+    : 'คณะสีชมพู สารคามพิทยาคม';
+  return { number, name };
+}
+
 function openQrPromptPayModal() {
-  const promptPayNumber = '0987654321'; // เลขพร้อมเพย์
-  const amount = ''; // ไม่ระบุจำนวนเงิน (ให้ผู้จ่ายกรอกเอง)
+  const account = getPromptPayDetails();
+  const amount = '390';
   
   // Generate QR Code using PromptPay API
-  const qrUrl = `https://promptpay.io/${promptPayNumber}${amount ? '/' + amount : ''}.png`;
+  const qrUrl = `https://promptpay.io/${account.number}${amount ? '/' + amount : ''}.png`;
   
   if (DOM.qrPromptPayImage) {
     DOM.qrPromptPayImage.src = qrUrl;
+  }
+  if (DOM.promptPayNumber) {
+    DOM.promptPayNumber.textContent = account.number;
   }
   
   if (DOM.qrPromptPayModal) {
@@ -452,10 +465,11 @@ if (DOM.qrPromptPayModal) {
 
 if (DOM.btnCopyPromptPay) {
   DOM.btnCopyPromptPay.addEventListener('click', () => {
-    navigator.clipboard.writeText('0987654321').then(() => {
-      showToast('คัดลอกเลขพร้อมเพย์ 08X-XXX-XXXX แล้ว!', 'success');
+    const account = getPromptPayDetails();
+    navigator.clipboard.writeText(account.number).then(() => {
+      showToast(`คัดลอกเลขพร้อมเพย์ ${account.number} แล้ว`, 'success');
     }).catch(() => {
-      showToast('เลขพร้อมเพย์: 08X-XXX-XXXX', 'info');
+      showToast(`เลขพร้อมเพย์: ${account.number}`, 'info');
     });
   });
 }
@@ -924,13 +938,13 @@ async function lookupEmailAndShowForm(email) {
         console.error('JSON parse error:', parseErr);
         console.error('Response is not JSON, probably HTML error page');
         
-        // ✅ FIX: แสดงฟอร์มแม้ว่า API ล้มเหลว
+        // FIX: แสดงฟอร์มแม้ว่า API ล้มเหลว
         DOM.emailLoadingSpinner.classList.add('hidden');
         resetToNewMode();
         showFormContent();
         DOM.emailStatusBadge.classList.remove('hidden');
         DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>ไม่สามารถตรวจสอบประวัติได้';
-        showToast('⚠️ ไม่สามารถเชื่อมต่อระบบได้ กรุณากรอกข้อมูลใหม่', 'warning');
+        showToast('ไม่สามารถเชื่อมต่อระบบได้ กรุณากรอกข้อมูลใหม่', 'warning');
         return;
       }
       
@@ -954,11 +968,11 @@ async function lookupEmailAndShowForm(email) {
         console.log('Found record, loading data...');
         switchToEditMode(gasRecord);
         showFormContent();
-        showToast('✅ พบข้อมูลเดิม! ดึงข้อมูลมาให้แล้ว', 'success');
+        showToast('พบข้อมูลเดิม ดึงข้อมูลมาให้เรียบร้อยแล้ว', 'success');
         return;
       } else {
         console.log('Email not found in Sheets');
-        // ✅ FIX: แสดงฟอร์มเสมอแม้ไม่พบข้อมูลเดิม
+        // FIX: แสดงฟอร์มเสมอแม้ไม่พบข้อมูลเดิม
         resetToNewMode();
         showFormContent();
         DOM.emailStatusBadge.classList.remove('hidden');
@@ -970,24 +984,24 @@ async function lookupEmailAndShowForm(email) {
       console.error('GAS lookup error:', err);
       DOM.emailLoadingSpinner.classList.add('hidden');
       
-      // ✅ FIX: แสดงฟอร์มแม้เกิด error และแจ้งเตือนชัดเจน
+      // FIX: แสดงฟอร์มแม้เกิด error และแจ้งเตือนชัดเจน
       resetToNewMode();
       showFormContent();
       DOM.emailStatusBadge.classList.remove('hidden');
       DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500 mr-1"></i>เกิดข้อผิดพลาด';
-      showToast('❌ ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง', 'error');
+      showToast('ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง', 'error');
       return;
     }
   } else {
     console.warn('No GAS URL configured');
     DOM.emailLoadingSpinner.classList.add('hidden');
     
-    // ✅ FIX: แสดงฟอร์มแม้ไม่มี GAS URL
+    // FIX: แสดงฟอร์มแม้ไม่มี GAS URL
     resetToNewMode();
     showFormContent();
     DOM.emailStatusBadge.classList.remove('hidden');
     DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>ระบบยังไม่พร้อม';
-    showToast('⚠️ ระบบยังไม่ได้ตั้งค่า กรุณากรอกข้อมูลใหม่', 'warning');
+    showToast('ระบบยังไม่ได้ตั้งค่า กรุณากรอกข้อมูลใหม่', 'warning');
   }
 }
 function loadOrdersDatabase() {
@@ -1206,14 +1220,25 @@ function validateForm() {
 
   // 4. Check if size is selected (should always have one, but double check)
   if (!AppState.size) {
-    showToast('⚠️ กรุณาเลือกไซส์เสื้อ', 'warning');
+    showToast('กรุณาเลือกไซส์เสื้อ', 'warning');
     isValid = false;
+  }
+
+  // 5. Require Slip for New Orders
+  if (AppState.mode === 'new' && !AppState.slipImage) {
+    if (DOM.slipDropzone) {
+      DOM.slipDropzone.style.borderColor = '#dc2626';
+      DOM.slipDropzone.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.15)';
+    }
+    showToast('กรุณาแนบสลิปการโอนเงินเพื่อยืนยันการสั่งจอง', 'warning');
+    isValid = false;
+    if (!firstErrorField && DOM.slipDropzone) firstErrorField = DOM.slipDropzone;
   }
 
   // Focus on first error field
   if (!isValid && firstErrorField) {
     firstErrorField.focus();
-    showToast('❌ กรุณาแก้ไขข้อมูลที่ไม่ถูกต้อง', 'error');
+    showToast('กรุณากรอกข้อมูลและแนบสลิปให้ครบถ้วน', 'error');
   }
 
   return isValid;
@@ -1245,14 +1270,14 @@ async function fetchDriveImageViaGAS(fileId) {
     const url = `${AppState.gasUrl}?action=getImage&fileId=${encodeURIComponent(fileId)}`;
     
     const response = await fetch(url);
-    const data = await response.json();
+    const driveResponse = await response.json();
     
-    if (data.status === 'success' && data.image) {
-      console.log('[GAS PROXY] Image fetched successfully, size:', data.image.length);
-      AppState.slipImage = data.image; // base64 data URL
+    if (driveResponse.status === 'success' && driveResponse.image) {
+      console.log('[GAS PROXY] Image fetched successfully, size:', driveResponse.image.length);
+      AppState.slipImage = driveResponse.image; // base64 data URL
       renderSlipPreview();
     } else {
-      console.error('[GAS PROXY] Failed:', data.message);
+      console.error('[GAS PROXY] Failed:', driveResponse.message);
       showToast('ไม่สามารถโหลดสลิปจาก Google Drive ได้', 'error');
     }
   } catch (err) {
@@ -1265,7 +1290,7 @@ async function fetchDriveImageViaGAS(fileId) {
 // 8. FORM SUBMISSION & GOOGLE SHEETS
 // ==========================================
 async function handleFormSubmit() {
-  // ✅ FIX: เพิ่ม Form Validation ที่เข้มงวดขึ้น
+  // FIX: เพิ่ม Form Validation ที่เข้มงวดขึ้น
   if (!validateForm()) {
     return; // Stop if validation fails
   }
@@ -1593,7 +1618,10 @@ function showCancelledOrderAlert() {
   
   // Contact support handler
   document.getElementById('btnContactSupport').addEventListener('click', () => {
-    window.open('https://line.me/ti/g2/your-openchat-url', '_blank');
+    const chatUrl = (typeof CONFIG !== 'undefined' && CONFIG.openChatUrl)
+      ? CONFIG.openChatUrl
+      : 'https://line.me/ti/g2/your-openchat-url';
+    window.open(chatUrl, '_blank');
     closeModal();
   });
   
