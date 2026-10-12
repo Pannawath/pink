@@ -52,9 +52,10 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Three.js & GLTFLoader for Real 3D Model -->
+  <!-- Three.js, GLTFLoader & OrbitControls for Real 3D Model -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css?v=8">
@@ -184,6 +185,7 @@
             <button type="button" id="btnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
             <button type="button" id="btnViewFront" class="apple-segmented-btn active">ด้านหน้า</button>
             <button type="button" id="btnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
+            <button type="button" id="btnView3D" class="apple-segmented-btn"><i class="fa-solid fa-cube mr-1"></i>3D 360°</button>
           </div>
         </div>
 
@@ -266,6 +268,17 @@
                   </svg>
                 </div>
               </div>
+            </div>
+
+            <!-- 4. Real 3D 360 Stage View -->
+            <div id="jerseyView3DEl" class="jersey-3d-stage-container hidden">
+              <canvas id="jersey3DCanvas"></canvas>
+              <div class="stage-3d-hint-badge">
+                <i class="fa-solid fa-arrows-rotate mr-1"></i>หมุนดูรอบทิศทาง 360°
+              </div>
+              <button type="button" id="btnReset3DView" class="stage-3d-reset-btn" title="รีเซ็ตมุมมอง">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </button>
             </div>
 
           </div>
@@ -830,8 +843,8 @@
   <!-- Main JS -->
   <script src="js/app.js?v=4"></script>
 
-  <!-- Real WebGL 3D Studio Engine -->
-  <script src="js/studio3d.js?v=4"></script>
+  <!-- Real WebGL 3D Jersey Stage Viewer -->
+  <script src="js/stage3d.js?v=1"></script>
 </body>
 
 </html>
