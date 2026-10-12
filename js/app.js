@@ -178,47 +178,45 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // 4. EVENT BINDINGS
 // ==========================================
-function bindEvents() {
-  // 1. Smart Email Sync
+function bindEmailSyncEvents() {
   let emailDebounceTimer;
-  let lastSearchedEmail = ''; // Track last searched email
-  
-  DOM.inputEmail.addEventListener('input', (e) => {
-    AppState.email = e.target.value.trim();
+  let lastSearchedEmail = '';
+
+  DOM.inputEmail.addEventListener('input', (event) => {
+    AppState.email = event.target.value.trim();
     clearTimeout(emailDebounceTimer);
-    
-    if (isValidEmail(AppState.email)) {
-      // Only search if email changed
-      if (AppState.email !== lastSearchedEmail) {
-        emailDebounceTimer = setTimeout(() => {
-          lastSearchedEmail = AppState.email;
-          lookupEmailAndShowForm(AppState.email);
-        }, 500);
-      }
-    } else {
-      // Clear form when email is invalid
+
+    if (!isValidEmail(AppState.email)) {
       lastSearchedEmail = '';
       resetToNewMode();
       hideFormContent();
       DOM.emailStatusBadge.classList.add('hidden');
+      return;
     }
-  });
 
-  // 2. Personalization inputs
-  DOM.inputScreenName.addEventListener('input', (e) => {
-    AppState.screenName = e.target.value;
+    if (AppState.email === lastSearchedEmail) return;
+
+    emailDebounceTimer = setTimeout(() => {
+      lastSearchedEmail = AppState.email;
+      lookupEmailAndShowForm(AppState.email);
+    }, 500);
+  });
+}
+
+function bindPersonalizationEvents() {
+  DOM.inputScreenName.addEventListener('input', (event) => {
+    AppState.screenName = event.target.value;
     updateLivePreview();
   });
 
-  DOM.inputScreenNumber.addEventListener('input', (e) => {
-    let numericDigits = e.target.value.replace(/\D/g, '');
+  DOM.inputScreenNumber.addEventListener('input', (event) => {
+    let numericDigits = event.target.value.replace(/\D/g, '');
     if (numericDigits.length > 2) numericDigits = numericDigits.slice(0, 2);
     AppState.screenNumber = numericDigits;
-    e.target.value = numericDigits;
+    event.target.value = numericDigits;
     updateLivePreview();
   });
 
-  // Quick Tools
   if (DOM.btnCapsName) {
     DOM.btnCapsName.addEventListener('click', () => {
       AppState.screenName = AppState.screenName.toUpperCase();
@@ -229,51 +227,51 @@ function bindEvents() {
 
   if (DOM.btnRandomNumber) {
     DOM.btnRandomNumber.addEventListener('click', () => {
-      const luckyNums = ['07', '09', '10', '11', '14', '20', '23', '26', '77', '99'];
-      const chosen = luckyNums[Math.floor(Math.random() * luckyNums.length)];
-      AppState.screenNumber = chosen;
-      DOM.inputScreenNumber.value = chosen;
+      const luckyList = ['07', '09', '10', '11', '14', '20', '23', '26', '77', '99'];
+      const chosenNumber = luckyList[Math.floor(Math.random() * luckyList.length)];
+      AppState.screenNumber = chosenNumber;
+      DOM.inputScreenNumber.value = chosenNumber;
       updateLivePreview();
     });
   }
+}
 
-  // Size pills
-  DOM.sizeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      DOM.sizeBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      AppState.size = btn.getAttribute('data-size');
+function bindSizeAndStatusEvents() {
+  DOM.sizeBtns.forEach(sizeElement => {
+    sizeElement.addEventListener('click', () => {
+      DOM.sizeBtns.forEach(btnItem => btnItem.classList.remove('active'));
+      sizeElement.classList.add('active');
+      AppState.size = sizeElement.getAttribute('data-size');
     });
   });
 
-  // Status pills
-  const statusBtns = document.querySelectorAll('.status-btn');
-  statusBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      statusBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      AppState.orderStatus = btn.getAttribute('data-status');
-      console.log('Status changed to:', AppState.orderStatus);
-      
-      // Disable slip upload if status is "ชำระเงินแล้ว" or later
+  DOM.quickSelectSizeBtns.forEach(quickElement => {
+    quickElement.addEventListener('click', () => {
+      const targetSize = quickElement.getAttribute('data-select-size');
+      AppState.size = targetSize;
+      DOM.sizeBtns.forEach(btnItem => {
+        btnItem.classList.toggle('active', btnItem.getAttribute('data-size') === targetSize);
+      });
+      if (DOM.modalSizeGuide) DOM.modalSizeGuide.classList.add('hidden');
+      showToast(`เลือกไซส์ ${targetSize} เรียบร้อยแล้ว`, 'success');
+    });
+  });
+
+  document.querySelectorAll('.status-btn').forEach(statusElement => {
+    statusElement.addEventListener('click', () => {
+      document.querySelectorAll('.status-btn').forEach(btnItem => btnItem.classList.remove('active'));
+      statusElement.classList.add('active');
+      AppState.orderStatus = statusElement.getAttribute('data-status');
       updateSlipUploadAccess();
     });
   });
+}
 
-  // Payment Slip Upload Events
-  DOM.quickSelectSizeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const sizeVal = btn.getAttribute('data-select-size');
-      AppState.size = sizeVal;
-      DOM.sizeBtns.forEach(b => {
-        b.classList.toggle('active', b.getAttribute('data-size') === sizeVal);
-      });
-      if (DOM.modalSizeGuide) DOM.modalSizeGuide.classList.add('hidden');
-      showToast(`เลือกไซส์ ${sizeVal} เรียบร้อยแล้ว`, 'success');
-    });
-  });
+function bindViewSwitcherEvents() {
+  if (DOM.btnViewBack) DOM.btnViewBack.addEventListener('click', () => setJerseyView('back'));
+  if (DOM.btnViewFront) DOM.btnViewFront.addEventListener('click', () => setJerseyView('front'));
+  if (DOM.btnViewBoth) DOM.btnViewBoth.addEventListener('click', () => setJerseyView('both'));
 
-  // Size Guide Modal Open/Close
   if (DOM.btnOpenSizeGuideNav) {
     DOM.btnOpenSizeGuideNav.addEventListener('click', () => DOM.modalSizeGuide.classList.remove('hidden'));
   }
@@ -283,99 +281,90 @@ function bindEvents() {
   if (DOM.btnCloseSizeGuide) {
     DOM.btnCloseSizeGuide.addEventListener('click', () => DOM.modalSizeGuide.classList.add('hidden'));
   }
+}
 
-  // View Switchers
-  if (DOM.btnViewBack) DOM.btnViewBack.addEventListener('click', () => setJerseyView('back'));
-  if (DOM.btnViewFront) DOM.btnViewFront.addEventListener('click', () => setJerseyView('front'));
-  if (DOM.btnViewBoth) DOM.btnViewBoth.addEventListener('click', () => setJerseyView('both'));
-
-  // Payment Slip Upload Events
-  initSlipUploadEvents();
-
-  // Reset Form
+function bindOrderActionEvents() {
   DOM.btnReset.addEventListener('click', () => {
-    if (confirm('คุณต้องการล้างข้อมูลในแบบฟอร์มใช่หรือไม่?')) {
-      resetForm();
-    }
+    if (confirm('คุณต้องการล้างข้อมูลในแบบฟอร์มใช่หรือไม่?')) resetForm();
   });
 
-  // Submit Order
   DOM.btnSubmit.addEventListener('click', handleFormSubmit);
 
-  // Download Jersey (optional - removed from UI)
   if (DOM.btnDownloadJersey) {
     DOM.btnDownloadJersey.addEventListener('click', downloadJerseyMockup);
   }
-
-  // Cancel edit mode
   if (DOM.btnCancelEditMode) {
     DOM.btnCancelEditMode.addEventListener('click', resetToNewMode);
   }
+}
 
-  // Modals
+function bindDatabaseModalEvents() {
   if (DOM.btnOpenDatabase) DOM.btnOpenDatabase.addEventListener('click', openDatabaseModal);
   if (DOM.btnCloseDatabase) DOM.btnCloseDatabase.addEventListener('click', closeDatabaseModal);
   if (DOM.btnCloseDatabaseFooter) DOM.btnCloseDatabaseFooter.addEventListener('click', closeDatabaseModal);
   if (DOM.btnExportCSV) DOM.btnExportCSV.addEventListener('click', exportOrdersToCSV);
+}
 
-  // Google Sheets Config Modals
+function bindConfigModalEvents() {
   if (DOM.btnOpenConfig) DOM.btnOpenConfig.addEventListener('click', openConfigModal);
   if (DOM.btnCloseConfig) DOM.btnCloseConfig.addEventListener('click', closeConfigModal);
   if (DOM.btnSaveConfig) DOM.btnSaveConfig.addEventListener('click', saveGasConfig);
   if (DOM.btnTestGas) DOM.btnTestGas.addEventListener('click', testGasConnection);
 }
 
+function bindActionModalEvents() {
+  bindOrderActionEvents();
+  bindDatabaseModalEvents();
+  bindConfigModalEvents();
+}
+
+function bindEvents() {
+  bindEmailSyncEvents();
+  bindPersonalizationEvents();
+  bindSizeAndStatusEvents();
+  bindViewSwitcherEvents();
+  bindActionModalEvents();
+  initSlipUploadEvents();
+}
+
 // ==========================================
 // 5. SLIP UPLOAD & PROCESSING
 // ==========================================
-function initSlipUploadEvents() {
-  // Open QR PromptPay Modal
-  if (DOM.btnCopyAccount) {
-    DOM.btnCopyAccount.addEventListener('click', () => {
-      openQrPromptPayModal();
-    });
-  }
-
-  // File Input Change
+function bindSlipDropzoneEvents() {
   if (DOM.inputSlipFile) {
-    DOM.inputSlipFile.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files.length > 0) {
-        processSlipFile(e.target.files[0]);
-      }
+    DOM.inputSlipFile.addEventListener('change', (event) => {
+      const selectedFiles = event.target.files;
+      if (selectedFiles && selectedFiles.length > 0) processSlipFile(selectedFiles[0]);
     });
   }
 
-  // Drag and Drop
-  if (DOM.slipDropzone) {
-    ['dragenter', 'dragover'].forEach(name => {
-      DOM.slipDropzone.addEventListener(name, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        DOM.slipDropzone.classList.add('dragover');
-      });
-    });
+  if (!DOM.slipDropzone) return;
 
-    ['dragleave', 'drop'].forEach(name => {
-      DOM.slipDropzone.addEventListener(name, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        DOM.slipDropzone.classList.remove('dragover');
-      });
+  ['dragenter', 'dragover'].forEach(eventName => {
+    DOM.slipDropzone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      DOM.slipDropzone.classList.add('dragover');
     });
+  });
 
-    DOM.slipDropzone.addEventListener('drop', (e) => {
-      const files = e.dataTransfer.files;
-      if (files && files.length > 0) {
-        processSlipFile(files[0]);
-      }
+  ['dragleave', 'drop'].forEach(eventName => {
+    DOM.slipDropzone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      DOM.slipDropzone.classList.remove('dragover');
     });
-  }
+  });
 
-  // Slip Action Buttons
+  DOM.slipDropzone.addEventListener('drop', (event) => {
+    const droppedFiles = event.dataTransfer.files;
+    if (droppedFiles && droppedFiles.length > 0) processSlipFile(droppedFiles[0]);
+  });
+}
+
+function bindSlipActionButtons() {
   if (DOM.btnChangeSlip) {
-    DOM.btnChangeSlip.addEventListener('click', () => {
-      DOM.inputSlipFile.click();
-    });
+    DOM.btnChangeSlip.addEventListener('click', () => DOM.inputSlipFile.click());
   }
 
   if (DOM.btnRemoveSlip) {
@@ -387,13 +376,14 @@ function initSlipUploadEvents() {
       showToast('ลบไฟล์สลิปแล้ว', 'info');
     });
   }
+}
 
+function bindSlipLightboxModalEvents() {
   if (DOM.btnViewSlipFullscreen) {
     DOM.btnViewSlipFullscreen.addEventListener('click', () => {
-      if (AppState.slipImage) {
-        DOM.slipFullImg.src = AppState.slipImage;
-        DOM.modalSlipLightbox.classList.remove('hidden');
-      }
+      if (!AppState.slipImage) return;
+      DOM.slipFullImg.src = AppState.slipImage;
+      DOM.modalSlipLightbox.classList.remove('hidden');
     });
   }
 
@@ -404,12 +394,23 @@ function initSlipUploadEvents() {
   }
 
   if (DOM.modalSlipLightbox) {
-    DOM.modalSlipLightbox.addEventListener('click', (e) => {
-      if (e.target === DOM.modalSlipLightbox) {
-        DOM.modalSlipLightbox.classList.add('hidden');
-      }
+    DOM.modalSlipLightbox.addEventListener('click', (event) => {
+      if (event.target === DOM.modalSlipLightbox) DOM.modalSlipLightbox.classList.add('hidden');
     });
   }
+}
+
+function bindSlipLightboxEvents() {
+  bindSlipActionButtons();
+  bindSlipLightboxModalEvents();
+}
+
+function initSlipUploadEvents() {
+  if (DOM.btnCopyAccount) {
+    DOM.btnCopyAccount.addEventListener('click', openQrPromptPayModal);
+  }
+  bindSlipDropzoneEvents();
+  bindSlipLightboxEvents();
 }
 
 // ==========================================
@@ -535,71 +536,48 @@ function compressSlipImage(dataUrl, callback) {
 // ==========================================
 // ORDER STATUS DISPLAY (READ-ONLY from Sheets)
 // ==========================================
+function getOrCreatePaymentNotice(parentContainer) {
+  let noticeElement = document.getElementById('paymentCompleteInfo');
+  if (noticeElement) return noticeElement;
+
+  noticeElement = document.createElement('div');
+  noticeElement.id = 'paymentCompleteInfo';
+  noticeElement.className = 'p-4 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-sm mt-3';
+  noticeElement.innerHTML = `
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+      </div>
+      <div>
+        <p class="font-bold text-green-800 mb-1">ชำระเงินเรียบร้อยแล้ว</p>
+        <p class="text-xs text-green-700">รอรับของได้เลย หากจะแก้ข้อมูล ชื่อ หมายเลข หรือ ไซส์ ก็แก้ไปเลย</p>
+      </div>
+    </div>
+  `;
+
+  if (parentContainer && parentContainer.parentNode) {
+    parentContainer.parentNode.insertBefore(noticeElement, parentContainer.nextSibling);
+  }
+  return noticeElement;
+}
+
 function updateSlipUploadAccess() {
   const lockedStatuses = ['ชำระเงินแล้ว', 'กำลังผลิต', 'จัดส่งแล้ว', 'เสร็จสิ้น'];
   const isLocked = lockedStatuses.includes(AppState.orderStatus);
-  
-  // สถานะ "ยกเลิก" ไม่ล็อค - อนุญาตให้อัปโหลดสลิปใหม่ได้
-  
   const slipSection = document.getElementById('slipUploadSection');
-  
-  console.log('[SLIP ACCESS] Status:', AppState.orderStatus);
-  console.log('[SLIP ACCESS] Has slip:', !!AppState.slipUrl || !!AppState.slipImage);
-  console.log('[SLIP ACCESS] isLocked:', isLocked);
-  console.log('[SLIP ACCESS] slipSection found:', !!slipSection);
-  
+
+  if (!slipSection) return;
+
   if (isLocked) {
-    // Hide entire slip upload section using inline style
-    if (slipSection) {
-      slipSection.style.display = 'none';
-      console.log('[SLIP ACCESS] Section hidden with display:none');
-    } else {
-      console.error('[SLIP ACCESS] slipUploadSection element not found!');
-    }
-    
-    // Show informational message instead
-    let infoMessage = document.getElementById('paymentCompleteInfo');
-    if (!infoMessage) {
-      infoMessage = document.createElement('div');
-      infoMessage.id = 'paymentCompleteInfo';
-      infoMessage.className = 'p-4 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-sm mt-3';
-      infoMessage.innerHTML = `
-        <div class="flex items-start gap-3">
-          <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-circle-check text-lg"></i>
-          </div>
-          <div>
-            <p class="font-bold text-green-800 mb-1">ชำระเงินเรียบร้อยแล้ว</p>
-            <p class="text-xs text-green-700">รอรับของได้เลย หากจะแก้ข้อมูล ชื่อ หมายเลข หรือ ไซส์ ก็แก้ไปเลย</p>
-          </div>
-        </div>
-      `;
-      // Insert after the slip section
-      if (slipSection && slipSection.parentNode) {
-        slipSection.parentNode.insertBefore(infoMessage, slipSection.nextSibling);
-        console.log('[SLIP ACCESS] Info message created');
-      }
-    } else {
-      infoMessage.style.display = 'block';
-      console.log('[SLIP ACCESS] Info message shown');
-    }
-    
-    console.log('[SLIP ACCESS] Slip upload LOCKED');
-  } else {
-    // Show slip upload section
-    if (slipSection) {
-      slipSection.style.display = '';
-      console.log('[SLIP ACCESS] Section shown');
-    }
-    
-    const infoMessage = document.getElementById('paymentCompleteInfo');
-    if (infoMessage) {
-      infoMessage.style.display = 'none';
-      console.log('[SLIP ACCESS] Info message hidden');
-    }
-    
-    console.log('[SLIP ACCESS] Slip upload UNLOCKED');
+    slipSection.style.display = 'none';
+    const noticeElement = getOrCreatePaymentNotice(slipSection);
+    noticeElement.style.display = 'block';
+    return;
   }
+
+  slipSection.style.display = '';
+  const existingNotice = document.getElementById('paymentCompleteInfo');
+  if (existingNotice) existingNotice.style.display = 'none';
 }
 
 function renderOrderStatus(statusText) {
@@ -628,67 +606,58 @@ function renderOrderStatus(statusText) {
   updateSlipUploadAccess();
 }
 
-// ==========================================
-// SLIP PREVIEW & UPLOAD
-// ==========================================
-function renderSlipPreview() {
-  console.log('[SLIP RENDER] Called with AppState.slipImage:', AppState.slipImage);
-  
-  if (AppState.slipImage) {
-    if (DOM.slipDropzone) DOM.slipDropzone.classList.add('hidden');
-    if (DOM.slipPreviewCard) DOM.slipPreviewCard.classList.remove('hidden');
-    
-    // Check if slipImage is a URL (from Drive) or base64
-    const isUrl = AppState.slipImage.indexOf('http') === 0;
-    console.log('[SLIP RENDER] Is URL:', isUrl);
-    
-    // Convert Drive URL to embeddable format if needed
-    let imageUrl = AppState.slipImage;
-    if (isUrl && imageUrl.indexOf('drive.google.com') > 0) {
-      // Extract file ID and convert to thumbnail URL
-      const fileIdMatch = imageUrl.match(/[?&]id=([^&]+)/);
-      console.log('[SLIP RENDER] File ID match:', fileIdMatch);
-      if (fileIdMatch && fileIdMatch[1]) {
-        imageUrl = `https://drive.google.com/thumbnail?id=${fileIdMatch[1]}&sz=w1000`;
-        console.log('[SLIP RENDER] Converted to thumbnail URL:', imageUrl);
-      }
-    }
-    
-    if (DOM.slipThumbnailImg) {
-      console.log('[SLIP RENDER] Setting thumbnail src to:', imageUrl);
-      DOM.slipThumbnailImg.src = imageUrl;
-    }
-    if (DOM.slipFullImg) {
-      DOM.slipFullImg.src = imageUrl;
-    }
-    if (DOM.slipFileName) DOM.slipFileName.textContent = AppState.slipFileName || 'slip_payment.jpg';
-    if (DOM.slipUploadTime) DOM.slipUploadTime.textContent = AppState.slipUploadedAt ? `อัปโหลดเมื่อ ${AppState.slipUploadedAt}` : 'มีสลิปในระบบ';
-
-    // Add error handler for image loading
-    if (DOM.slipThumbnailImg) {
-      DOM.slipThumbnailImg.onerror = function() {
-        console.log('Failed to load thumbnail, trying original URL');
-        this.src = AppState.slipImage; // Fallback to original URL
-      };
-    }
-
-    if (DOM.slipStatusBadge) {
-      console.log('[SLIP STATUS] Mode:', AppState.mode, 'isUrl:', isUrl);
-      if (AppState.mode === 'edit' && isUrl) {
-        DOM.slipStatusBadge.className = 'text-[10px] font-bold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded-md inline-block mb-0.5';
-        DOM.slipStatusBadge.innerHTML = '<i class="fa-solid fa-receipt mr-1"></i>สลิปเดิมที่เคยแนบไว้';
-      } else {
-        DOM.slipStatusBadge.className = 'text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md inline-block mb-0.5';
-        DOM.slipStatusBadge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>แนบสลิปเรียบร้อยแล้ว';
-      }
-    }
-  } else {
-    if (DOM.slipDropzone) DOM.slipDropzone.classList.remove('hidden');
-    if (DOM.slipPreviewCard) DOM.slipPreviewCard.classList.add('hidden');
-    if (DOM.slipThumbnailImg) DOM.slipThumbnailImg.src = '';
-    if (DOM.slipFullImg) DOM.slipFullImg.src = '';
-    if (DOM.inputSlipFile) DOM.inputSlipFile.value = '';
+function normalizeSlipImageUrl(sourceUrl) {
+  if (!sourceUrl || sourceUrl.indexOf('http') !== 0) return sourceUrl;
+  if (sourceUrl.indexOf('drive.google.com') === -1) return sourceUrl;
+  const fileIdMatch = sourceUrl.match(/[?&]id=([^&]+)/);
+  if (fileIdMatch && fileIdMatch[1]) {
+    return `https://drive.google.com/thumbnail?id=${fileIdMatch[1]}&sz=w1000`;
   }
+  return sourceUrl;
+}
+
+function updateSlipStatusBadge(isExternalUrl) {
+  if (!DOM.slipStatusBadge) return;
+  if (AppState.mode === 'edit' && isExternalUrl) {
+    DOM.slipStatusBadge.className = 'text-[10px] font-bold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded-md inline-block mb-0.5';
+    DOM.slipStatusBadge.innerHTML = '<i class="fa-solid fa-receipt mr-1"></i>สลิปเดิมที่เคยแนบไว้';
+  } else {
+    DOM.slipStatusBadge.className = 'text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md inline-block mb-0.5';
+    DOM.slipStatusBadge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>แนบสลิปเรียบร้อยแล้ว';
+  }
+}
+
+function clearSlipPreview() {
+  if (DOM.slipDropzone) DOM.slipDropzone.classList.remove('hidden');
+  if (DOM.slipPreviewCard) DOM.slipPreviewCard.classList.add('hidden');
+  if (DOM.slipThumbnailImg) DOM.slipThumbnailImg.src = '';
+  if (DOM.slipFullImg) DOM.slipFullImg.src = '';
+  if (DOM.inputSlipFile) DOM.inputSlipFile.value = '';
+}
+
+function renderSlipPreview() {
+  if (!AppState.slipImage) {
+    clearSlipPreview();
+    return;
+  }
+
+  if (DOM.slipDropzone) DOM.slipDropzone.classList.add('hidden');
+  if (DOM.slipPreviewCard) DOM.slipPreviewCard.classList.remove('hidden');
+
+  const isExternalUrl = AppState.slipImage.indexOf('http') === 0;
+  const imageUrl = normalizeSlipImageUrl(AppState.slipImage);
+
+  if (DOM.slipThumbnailImg) {
+    DOM.slipThumbnailImg.src = imageUrl;
+    DOM.slipThumbnailImg.onerror = function() {
+      this.src = AppState.slipImage;
+    };
+  }
+  if (DOM.slipFullImg) DOM.slipFullImg.src = imageUrl;
+  if (DOM.slipFileName) DOM.slipFileName.textContent = AppState.slipFileName || 'slip_payment.jpg';
+  if (DOM.slipUploadTime) DOM.slipUploadTime.textContent = AppState.slipUploadedAt ? `อัปโหลดเมื่อ ${AppState.slipUploadedAt}` : 'มีสลิปในระบบ';
+
+  updateSlipStatusBadge(isExternalUrl);
 }
 
 // ==========================================
@@ -725,83 +694,46 @@ function calculateDynamicNameTypography(nameText, baseSize) {
   return { dynamicSize, letterSpacing };
 }
 
-function updateLivePreview() {
-  const name = (AppState.screenName || '').toString().trim();
-  const number = (AppState.screenNumber || '10').toString().trim();
-  const displayName = name || 'YOUR NAME';
-  const displayNumber = number || '10';
-
-  const { backNumber, backName, frontNumber } = JERSEY_CONFIG;
-
-  // 1. Dynamic Curved Name Typography (Fewer characters = larger bold text)
-  const { dynamicSize, letterSpacing } = calculateDynamicNameTypography(name, backName.baseSize);
-
-  // Standard collar ends around Y = 270 at X=140 and X=640
-  const arcYEnd = 270;
-  if (DOM.nameArcPath) {
-    DOM.nameArcPath.setAttribute('d', `M 140 ${arcYEnd} Q 390 ${backName.arcCurveY} 640 ${arcYEnd}`);
+function syncCurvedSvgName(targetTextEl, targetPathEl, displayName, typographyConfig) {
+  if (targetPathEl) {
+    targetPathEl.setAttribute('d', `M 140 270 Q 390 ${JERSEY_CONFIG.backName.arcCurveY} 640 270`);
   }
-  if (DOM.nameArcPathBoth) {
-    DOM.nameArcPathBoth.setAttribute('d', `M 140 ${arcYEnd} Q 390 ${backName.arcCurveY} 640 ${arcYEnd}`);
-  }
-
-  // Name Text Content & Dynamic Font Size / Letter Spacing
-  if (DOM.svgCurvedNameText) {
-    DOM.svgCurvedNameText.textContent = displayName;
-    const parentText = DOM.svgCurvedNameText.parentElement;
+  if (targetTextEl) {
+    targetTextEl.textContent = displayName;
+    const parentText = targetTextEl.parentElement;
     if (parentText) {
-      parentText.setAttribute('font-size', dynamicSize.toString());
-      parentText.setAttribute('letter-spacing', letterSpacing);
+      parentText.setAttribute('font-size', typographyConfig.dynamicSize.toString());
+      parentText.setAttribute('letter-spacing', typographyConfig.letterSpacing);
       parentText.style.fill = '#ffffff';
       parentText.removeAttribute('filter');
     }
   }
+}
 
-  if (DOM.svgCurvedNameBoth) {
-    DOM.svgCurvedNameBoth.textContent = displayName;
-    const parentTextBoth = DOM.svgCurvedNameBoth.parentElement;
-    if (parentTextBoth) {
-      parentTextBoth.setAttribute('font-size', dynamicSize.toString());
-      parentTextBoth.setAttribute('letter-spacing', letterSpacing);
-      parentTextBoth.style.fill = '#ffffff';
-      parentTextBoth.removeAttribute('filter');
-    }
-  }
+function syncJerseySvgNumber(targetNumberEl, displayNumber, sizeConfig) {
+  if (!targetNumberEl) return;
+  targetNumberEl.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
+  targetNumberEl.setAttribute('font-size', sizeConfig.size.toString());
+  targetNumberEl.setAttribute('x', sizeConfig.x.toString());
+  targetNumberEl.setAttribute('y', sizeConfig.y.toString());
+  targetNumberEl.textContent = displayNumber;
+}
 
-  // 2. Number Position & Size (Bebas Neue Sports Font - Clean, No Shadows)
-  if (DOM.svgBackNumber) {
-    DOM.svgBackNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
-    DOM.svgBackNumber.setAttribute('font-size', backNumber.size.toString());
-    DOM.svgBackNumber.setAttribute('x', backNumber.x.toString());
-    DOM.svgBackNumber.setAttribute('y', backNumber.y.toString());
-    DOM.svgBackNumber.textContent = displayNumber;
-  }
+function updateLivePreview() {
+  const nameText = (AppState.screenName || '').toString().trim();
+  const numberText = (AppState.screenNumber || '10').toString().trim();
+  const displayName = nameText || 'YOUR NAME';
+  const displayNumber = numberText || '10';
 
-  // Front View Chest Number (Calibrated athletic chest size)
-  if (DOM.svgFrontNumber) {
-    DOM.svgFrontNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
-    DOM.svgFrontNumber.setAttribute('font-size', frontNumber.size.toString());
-    DOM.svgFrontNumber.setAttribute('x', frontNumber.x.toString());
-    DOM.svgFrontNumber.setAttribute('y', frontNumber.y.toString());
-    DOM.svgFrontNumber.textContent = displayNumber;
-  }
+  const typographyConfig = calculateDynamicNameTypography(nameText, JERSEY_CONFIG.backName.baseSize);
 
-  // Both Sides View: Back Number & Front Chest Number (Front on Left, Back on Right)
-  if (DOM.svgBothNumber) {
-    DOM.svgBothNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
-    DOM.svgBothNumber.setAttribute('font-size', backNumber.size.toString());
-    DOM.svgBothNumber.setAttribute('x', backNumber.x.toString());
-    DOM.svgBothNumber.setAttribute('y', backNumber.y.toString());
-    DOM.svgBothNumber.textContent = displayNumber;
-  }
+  syncCurvedSvgName(DOM.svgCurvedNameText, DOM.nameArcPath, displayName, typographyConfig);
+  syncCurvedSvgName(DOM.svgCurvedNameBoth, DOM.nameArcPathBoth, displayName, typographyConfig);
 
-  if (DOM.svgBothFrontNumber) {
-    DOM.svgBothFrontNumber.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
-    DOM.svgBothFrontNumber.setAttribute('font-size', frontNumber.size.toString());
-    DOM.svgBothFrontNumber.setAttribute('x', frontNumber.x.toString());
-    DOM.svgBothFrontNumber.setAttribute('y', frontNumber.y.toString());
-    DOM.svgBothFrontNumber.textContent = displayNumber;
-  }
+  syncJerseySvgNumber(DOM.svgBackNumber, displayNumber, JERSEY_CONFIG.backNumber);
+  syncJerseySvgNumber(DOM.svgFrontNumber, displayNumber, JERSEY_CONFIG.frontNumber);
+  syncJerseySvgNumber(DOM.svgBothNumber, displayNumber, JERSEY_CONFIG.backNumber);
+  syncJerseySvgNumber(DOM.svgBothFrontNumber, displayNumber, JERSEY_CONFIG.frontNumber);
 
   applyNumberStyle();
 }
@@ -816,77 +748,71 @@ function applyNumberStyle() {
 
 function updateSegmentedIndicator(side) {
   if (!DOM.segmentedIndicator) return;
-  let activeBtn = null;
-  if (side === 'back') activeBtn = DOM.btnViewBack;
-  else if (side === 'front') activeBtn = DOM.btnViewFront;
-  else if (side === 'both') activeBtn = DOM.btnViewBoth;
+  const buttonMap = {
+    back: DOM.btnViewBack,
+    front: DOM.btnViewFront,
+    both: DOM.btnViewBoth
+  };
+  const activeBtn = buttonMap[side];
 
   if (activeBtn) {
-    const leftPos = activeBtn.offsetLeft;
-    const btnWidth = activeBtn.offsetWidth;
-    DOM.segmentedIndicator.style.transform = `translateX(${leftPos}px)`;
-    DOM.segmentedIndicator.style.width = `${btnWidth}px`;
+    DOM.segmentedIndicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+    DOM.segmentedIndicator.style.width = `${activeBtn.offsetWidth}px`;
+  }
+}
+
+function transitionJerseyView(targetSide) {
+  const viewMap = {
+    back: { activeEl: DOM.jerseyViewBackEl, maxWidth: '440px' },
+    front: { activeEl: DOM.jerseyViewFrontEl, maxWidth: '440px' },
+    both: { activeEl: DOM.jerseyViewBothEl, maxWidth: '600px' }
+  };
+  const config = viewMap[targetSide];
+  if (!config) return;
+
+  [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl].forEach(element => {
+    if (element) element.classList.add('hidden');
+  });
+
+  if (DOM.jerseyCardWrapper) DOM.jerseyCardWrapper.style.maxWidth = config.maxWidth;
+  if (config.activeEl) {
+    config.activeEl.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      config.activeEl.style.opacity = '1';
+      config.activeEl.style.transform = 'scale(1)';
+    });
+  }
+}
+
+function updateJerseyViewButtons(selectedSide) {
+  const buttonMap = {
+    back: DOM.btnViewBack,
+    front: DOM.btnViewFront,
+    both: DOM.btnViewBoth
+  };
+  [DOM.btnViewBack, DOM.btnViewFront, DOM.btnViewBoth].forEach(btn => {
+    if (btn) btn.classList.remove('active');
+  });
+  if (buttonMap[selectedSide]) {
+    buttonMap[selectedSide].classList.add('active');
   }
 }
 
 function setJerseyView(side) {
   AppState.viewSide = side;
-  if (DOM.jerseyCardWrapper) {
-    DOM.jerseyCardWrapper.setAttribute('data-view', side);
-  }
+  if (DOM.jerseyCardWrapper) DOM.jerseyCardWrapper.setAttribute('data-view', side);
 
-  [DOM.btnViewBack, DOM.btnViewFront, DOM.btnViewBoth].forEach(btn => {
-    if (btn) btn.classList.remove('active');
-  });
-
-  if (side === 'back' && DOM.btnViewBack) DOM.btnViewBack.classList.add('active');
-  if (side === 'front' && DOM.btnViewFront) DOM.btnViewFront.classList.add('active');
-  if (side === 'both' && DOM.btnViewBoth) DOM.btnViewBoth.classList.add('active');
-
+  updateJerseyViewButtons(side);
   updateSegmentedIndicator(side);
 
-  // Fade out current views
-  const allViews = [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl];
-  allViews.forEach(view => {
+  [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl].forEach(view => {
     if (view && !view.classList.contains('hidden')) {
       view.style.opacity = '0';
       view.style.transform = 'scale(0.95)';
     }
   });
 
-  setTimeout(() => {
-    if (side === 'back') {
-      DOM.jerseyViewBackEl.classList.remove('hidden');
-      DOM.jerseyViewFrontEl.classList.add('hidden');
-      DOM.jerseyViewBothEl.classList.add('hidden');
-      DOM.jerseyCardWrapper.style.maxWidth = '440px';
-      
-      requestAnimationFrame(() => {
-        DOM.jerseyViewBackEl.style.opacity = '1';
-        DOM.jerseyViewBackEl.style.transform = 'scale(1)';
-      });
-    } else if (side === 'front') {
-      DOM.jerseyViewBackEl.classList.add('hidden');
-      DOM.jerseyViewFrontEl.classList.remove('hidden');
-      DOM.jerseyViewBothEl.classList.add('hidden');
-      DOM.jerseyCardWrapper.style.maxWidth = '440px';
-      
-      requestAnimationFrame(() => {
-        DOM.jerseyViewFrontEl.style.opacity = '1';
-        DOM.jerseyViewFrontEl.style.transform = 'scale(1)';
-      });
-    } else if (side === 'both') {
-      DOM.jerseyViewBackEl.classList.add('hidden');
-      DOM.jerseyViewFrontEl.classList.add('hidden');
-      DOM.jerseyViewBothEl.classList.remove('hidden');
-      DOM.jerseyCardWrapper.style.maxWidth = '600px';
-      
-      requestAnimationFrame(() => {
-        DOM.jerseyViewBothEl.style.opacity = '1';
-        DOM.jerseyViewBothEl.style.transform = 'scale(1)';
-      });
-    }
-  }, 150);
+  setTimeout(() => transitionJerseyView(side), 150);
 }
 
 window.addEventListener('resize', () => {
@@ -1022,85 +948,81 @@ async function lookupEmail(email) {
   await lookupEmailAndShowForm(email);
 }
 
-function switchToEditMode(record) {
+function populateEditModeFields(orderRecord) {
   AppState.mode = 'edit';
-  AppState.existingRecord = record;
+  AppState.existingRecord = orderRecord;
   AppState.slipChanged = false;
-  AppState.slipUrl = record.slipUrl || null;
+  AppState.slipUrl = orderRecord.slipUrl || null;
+  AppState.screenName = orderRecord.name || '';
+  AppState.screenNumber = orderRecord.number || '10';
+  AppState.size = orderRecord.size || 'L';
+  AppState.orderStatus = orderRecord.status || 'รอชำระเงิน';
 
-  AppState.screenName = record.name || '';
-  AppState.screenNumber = record.number || '10';
-  AppState.size = record.size || 'L';
-  AppState.orderStatus = record.status || 'รอชำระเงิน';
-
-  DOM.inputScreenName.value = record.name || '';
-  DOM.inputScreenNumber.value = record.number || '10';
+  DOM.inputScreenName.value = orderRecord.name || '';
+  DOM.inputScreenNumber.value = orderRecord.number || '10';
 
   DOM.sizeBtns.forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-size') === AppState.size);
   });
 
-  // Update status buttons
   const statusBtns = document.querySelectorAll('.status-btn');
   statusBtns.forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-status') === AppState.orderStatus);
   });
 
-  // Show order status from Sheets (read-only)
   renderOrderStatus(AppState.orderStatus);
+}
 
-  // Sync previous slip if present
-  if (record.slipImage || record.slipUrl) {
-    AppState.slipImage = record.slipImage || record.slipUrl;
-    AppState.slipUrl = record.slipUrl;
-    AppState.slipFileName = record.slipFileName || 'สลิปการโอนเงินเดิม.jpg';
-    AppState.slipUploadedAt = record.slipUploadedAt || record.timestamp || 'มีสลิปในระบบ';
-    console.log('[SLIP DEBUG] Loading slip from record');
-    console.log('[SLIP DEBUG] Has slipImage:', !!AppState.slipImage);
-    console.log('[SLIP DEBUG] Has slipUrl:', !!AppState.slipUrl);
-    console.log('[SLIP DEBUG] Full slipUrl:', AppState.slipUrl);
-    
-    // If it's a Drive URL, fetch via GAS proxy
+function syncEditModeSlip(orderRecord) {
+  if (orderRecord.slipImage || orderRecord.slipUrl) {
+    AppState.slipImage = orderRecord.slipImage || orderRecord.slipUrl;
+    AppState.slipUrl = orderRecord.slipUrl;
+    AppState.slipFileName = orderRecord.slipFileName || 'สลิปการโอนเงินเดิม.jpg';
+    AppState.slipUploadedAt = orderRecord.slipUploadedAt || orderRecord.timestamp || 'มีสลิปในระบบ';
+
     if (AppState.slipUrl && AppState.slipUrl.indexOf('drive.google.com') > 0) {
       const fileIdMatch = AppState.slipUrl.match(/[?&]id=([^&]+)/);
       if (fileIdMatch && fileIdMatch[1]) {
-        console.log('[SLIP DEBUG] Fetching image via GAS proxy for fileId:', fileIdMatch[1]);
         fetchDriveImageViaGAS(fileIdMatch[1]);
-      } else {
-        renderSlipPreview();
+        return;
       }
-    } else {
-      renderSlipPreview();
     }
-  } else {
-    console.log('No slip found for this record');
-    AppState.slipImage = null;
-    AppState.slipFileName = '';
-    AppState.slipUploadedAt = null;
     renderSlipPreview();
+    return;
   }
 
+  AppState.slipImage = null;
+  AppState.slipFileName = '';
+  AppState.slipUploadedAt = null;
+  renderSlipPreview();
+}
+
+function updateEditModeBanners(orderRecord) {
   DOM.modeStatusBanner.classList.remove('hidden');
   DOM.btnSubmitText.textContent = 'บันทึกการแก้ไขข้อมูล';
   DOM.btnSubmitIcon.className = 'fa-solid fa-floppy-disk mr-1.5';
 
-  // Show payment status if available
-  if (record.status) {
-    DOM.paymentStatusDisplay.classList.remove('hidden');
-    DOM.paymentStatusText.textContent = record.status;
-    
-    // Add color based on status
-    if (record.status.indexOf('ชำระเงินสำเร็จ') >= 0 || record.status.indexOf('ตรวจสอบแล้ว') >= 0) {
-      DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-200/70 text-emerald-900';
-    } else if (record.status.indexOf('รอตรวจสอบ') >= 0) {
-      DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-amber-200/70 text-amber-900';
-    } else {
-      DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-700';
-    }
-  } else {
+  if (!orderRecord.status) {
     DOM.paymentStatusDisplay.classList.add('hidden');
+    return;
   }
 
+  DOM.paymentStatusDisplay.classList.remove('hidden');
+  DOM.paymentStatusText.textContent = orderRecord.status;
+
+  if (orderRecord.status.indexOf('ชำระเงินสำเร็จ') >= 0 || orderRecord.status.indexOf('ตรวจสอบแล้ว') >= 0) {
+    DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-200/70 text-emerald-900';
+  } else if (orderRecord.status.indexOf('รอตรวจสอบ') >= 0) {
+    DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-amber-200/70 text-amber-900';
+  } else {
+    DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-700';
+  }
+}
+
+function switchToEditMode(orderRecord) {
+  populateEditModeFields(orderRecord);
+  syncEditModeSlip(orderRecord);
+  updateEditModeBanners(orderRecord);
   updateLivePreview();
 }
 
@@ -1289,80 +1211,67 @@ async function fetchDriveImageViaGAS(fileId) {
 // ==========================================
 // 8. FORM SUBMISSION & GOOGLE SHEETS
 // ==========================================
-async function handleFormSubmit() {
-  // FIX: เพิ่ม Form Validation ที่เข้มงวดขึ้น
-  if (!validateForm()) {
-    return; // Stop if validation fails
-  }
-
-  const email = DOM.inputEmail.value.trim();
-  const name = DOM.inputScreenName.value.trim();
-  const number = DOM.inputScreenNumber.value.trim();
-
-  AppState.isSubmitting = true;
-  DOM.btnSubmit.disabled = true;
-  DOM.btnSubmitText.textContent = 'กำลังบันทึกข้อมูล...';
-
-  const nowStr = new Date().toLocaleString('th-TH');
-  
-  // Prepare data to send to Google Sheets
-  // Only send slipImage if it's new or changed
+function buildOrderSubmissionRecord(email, name, number, nowTimestamp) {
   const shouldSendSlip = (AppState.mode === 'new' || AppState.slipChanged) && AppState.slipImage;
-  
-  console.log('[SUBMIT] Mode:', AppState.mode);
-  console.log('[SUBMIT] Slip changed:', AppState.slipChanged);
-  console.log('[SUBMIT] Has slipImage:', !!AppState.slipImage);
-  console.log('[SUBMIT] Has slipUrl:', !!AppState.slipUrl);
-  console.log('[SUBMIT] Should send slip:', shouldSendSlip);
-  
-  const orderData = {
+  return {
     email: email,
     productTitle: 'เสื้อแข่งขันทีมสีชมพู 2026',
     name: name.toUpperCase(),
     number: number,
     size: AppState.size,
     price: 390,
-    timestamp: nowStr,
+    timestamp: nowTimestamp,
     status: AppState.orderStatus || 'รอชำระเงิน',
     slipImage: shouldSendSlip ? AppState.slipImage : null,
     slipUrl: (!shouldSendSlip && AppState.slipUrl) ? AppState.slipUrl : null,
     slipFileName: AppState.slipFileName || null,
-    slipUploadedAt: AppState.slipUploadedAt || (AppState.slipImage ? nowStr : null)
+    slipUploadedAt: AppState.slipUploadedAt || (AppState.slipImage ? nowTimestamp : null)
   };
-  
-  console.log('[SUBMIT] Final orderData.slipImage:', orderData.slipImage ? 'YES (base64)' : 'NO');
-  console.log('[SUBMIT] Final orderData.slipUrl:', orderData.slipUrl || 'NO');
+}
 
-  // Sync with Google Sheets (no local storage)
-  if (AppState.gasUrl) {
-    try {
-      await fetch(AppState.gasUrl, {
-        method: 'POST',
-        mode: 'no-cors', // Use no-cors mode for Google Apps Script
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-      });
-      
-      // Note: no-cors mode doesn't return readable response
-      // We'll assume success if no error is thrown
-      
-    } catch (err) {
-      console.warn('Google Sheets sync warning:', err);
-      showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง', 'error');
-      AppState.isSubmitting = false;
-      DOM.btnSubmit.disabled = false;
-      DOM.btnSubmitText.textContent = AppState.mode === 'edit' ? 'บันทึกการแก้ไขข้อมูล' : 'ยืนยันการสั่งจองและส่งสลิป';
-      return;
-    }
+function updateFormSubmissionUI(isSubmitting) {
+  AppState.isSubmitting = isSubmitting;
+  DOM.btnSubmit.disabled = isSubmitting;
+  if (isSubmitting) {
+    DOM.btnSubmitText.textContent = 'กำลังบันทึกข้อมูล...';
+    return;
   }
-
-  AppState.isSubmitting = false;
-  DOM.btnSubmit.disabled = false;
   DOM.btnSubmitText.textContent = AppState.mode === 'edit' ? 'บันทึกการแก้ไขข้อมูล' : 'ยืนยันการสั่งจองและส่งสลิป';
-  
-  // Reset slip changed flag after successful submit
-  AppState.slipChanged = false;
+}
 
+async function sendOrderToGoogleSheets(submissionRecord) {
+  if (!AppState.gasUrl) return true;
+  try {
+    await fetch(AppState.gasUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(submissionRecord)
+    });
+    return true;
+  } catch (syncError) {
+    showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง', 'error');
+    return false;
+  }
+}
+
+async function handleFormSubmit() {
+  if (!validateForm()) return;
+
+  const email = DOM.inputEmail.value.trim();
+  const name = DOM.inputScreenName.value.trim();
+  const number = DOM.inputScreenNumber.value.trim();
+  const nowTimestamp = new Date().toLocaleString('th-TH');
+
+  updateFormSubmissionUI(true);
+
+  const submissionRecord = buildOrderSubmissionRecord(email, name, number, nowTimestamp);
+  const syncSuccess = await sendOrderToGoogleSheets(submissionRecord);
+
+  updateFormSubmissionUI(false);
+  if (!syncSuccess) return;
+
+  AppState.slipChanged = false;
   triggerConfetti();
   showToast(AppState.mode === 'edit' ? 'บันทึกการแก้ไขเรียบร้อยแล้ว!' : 'สั่งจองเสื้อและแนบสลิปสำเร็จ!', 'success');
 }
@@ -1506,12 +1415,14 @@ function testGasConnection() {
 }
 
 function checkGasConnection() {
-  if (AppState.gasUrl) {
-    if (DOM.gasStatusDot) DOM.gasStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-xs';
-    if (DOM.gasStatusText) DOM.gasStatusText.textContent = 'Sheets (เชื่อมแล้ว)';
-  } else {
-    if (DOM.gasStatusDot) DOM.gasStatusDot.className = 'w-2 h-2 rounded-full bg-slate-300';
-    if (DOM.gasStatusText) DOM.gasStatusText.textContent = 'Google Sheets';
+  const isConnected = Boolean(AppState.gasUrl);
+  if (DOM.gasStatusDot) {
+    DOM.gasStatusDot.className = isConnected
+      ? 'w-2 h-2 rounded-full bg-emerald-500 shadow-xs'
+      : 'w-2 h-2 rounded-full bg-slate-300';
+  }
+  if (DOM.gasStatusText) {
+    DOM.gasStatusText.textContent = isConnected ? 'Sheets (เชื่อมแล้ว)' : 'Google Sheets';
   }
 }
 
@@ -1546,26 +1457,20 @@ function triggerConfetti() {
   }
 }
 
-function showCancelledOrderAlert() {
-  // Create modal overlay
+function createCancelledModalElement() {
   const modal = document.createElement('div');
   modal.id = 'cancelledOrderModal';
   modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
   modal.innerHTML = `
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4 animate-scale-up">
-      <!-- Icon -->
       <div class="flex justify-center">
         <div class="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center">
           <i class="fa-solid fa-circle-exclamation text-3xl text-rose-600"></i>
         </div>
       </div>
-      
-      <!-- Title -->
       <h3 class="text-xl font-bold text-center text-slate-900">
         คำสั่งซื้อถูกยกเลิก
       </h3>
-      
-      <!-- Message -->
       <div class="space-y-2 text-sm text-slate-700">
         <p class="text-center font-semibold text-rose-700">
           <i class="fa-solid fa-hand-holding-heart mr-1"></i>
@@ -1586,8 +1491,6 @@ function showCancelledOrderAlert() {
           </ul>
         </div>
       </div>
-      
-      <!-- Actions -->
       <div class="flex gap-2">
         <button type="button" id="btnContactSupport" 
           class="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-indigo-600 text-white font-semibold text-sm hover:shadow-lg transition">
@@ -1602,30 +1505,39 @@ function showCancelledOrderAlert() {
       </div>
     </div>
   `;
-  
-  document.body.appendChild(modal);
-  
-  // Close modal handler
+  return modal;
+}
+
+function bindCancelledModalEvents(modal) {
   const closeModal = () => {
     modal.style.opacity = '0';
     setTimeout(() => modal.remove(), 200);
   };
-  
-  document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
+
+  const btnClose = modal.querySelector('#btnCloseModal');
+  const btnSupport = modal.querySelector('#btnContactSupport');
+
+  if (btnClose) btnClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) closeModal();
   });
-  
-  // Contact support handler
-  document.getElementById('btnContactSupport').addEventListener('click', () => {
-    const chatUrl = (typeof CONFIG !== 'undefined' && CONFIG.openChatUrl)
-      ? CONFIG.openChatUrl
-      : 'https://line.me/ti/g2/your-openchat-url';
-    window.open(chatUrl, '_blank');
-    closeModal();
-  });
-  
-  // Animate in
+
+  if (btnSupport) {
+    btnSupport.addEventListener('click', () => {
+      const chatUrl = (typeof CONFIG !== 'undefined' && CONFIG.openChatUrl)
+        ? CONFIG.openChatUrl
+        : 'https://line.me/ti/g2/your-openchat-url';
+      window.open(chatUrl, '_blank');
+      closeModal();
+    });
+  }
+}
+
+function showCancelledOrderAlert() {
+  const modal = createCancelledModalElement();
+  document.body.appendChild(modal);
+  bindCancelledModalEvents(modal);
+
   requestAnimationFrame(() => {
     modal.style.opacity = '1';
   });
