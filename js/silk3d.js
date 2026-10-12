@@ -50,23 +50,23 @@
 })();
 
 function setupStudioLights(targetScene) {
-  const primaryKeyLight = new THREE.DirectionalLight(0xfff8fa, 3.5);
+  const primaryKeyLight = new THREE.DirectionalLight(0xffffff, 4.2);
   primaryKeyLight.position.set(4.0, 5.0, 5.0);
   targetScene.add(primaryKeyLight);
 
-  const secondaryFillLight = new THREE.DirectionalLight(0xff4081, 2.2);
+  const secondaryFillLight = new THREE.DirectionalLight(0xfce7f3, 2.8);
   secondaryFillLight.position.set(-4.0, -2.0, 3.5);
   targetScene.add(secondaryFillLight);
 
-  const specularRimLight = new THREE.DirectionalLight(0xffffff, 4.0);
+  const specularRimLight = new THREE.DirectionalLight(0xffffff, 4.8);
   specularRimLight.position.set(-1.0, 4.0, 2.0);
   targetScene.add(specularRimLight);
 
-  const accentPointLight = new THREE.PointLight(0xff80ab, 3.0, 15);
+  const accentPointLight = new THREE.PointLight(0xf472b6, 2.2, 15);
   accentPointLight.position.set(0.0, 0.0, 3.0);
   targetScene.add(accentPointLight);
 
-  const ambientDome = new THREE.AmbientLight(0xffc4d8, 1.4);
+  const ambientDome = new THREE.AmbientLight(0xfff0f5, 2.0);
   targetScene.add(ambientDome);
 }
 
@@ -74,13 +74,13 @@ function createSatinMaterial(baseHue, emissiveHue) {
   return new THREE.MeshPhysicalMaterial({
     color: baseHue,
     emissive: emissiveHue,
-    roughness: 0.10,
-    metalness: 0.08,
+    roughness: 0.14,
+    metalness: 0.03,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.04,
-    transmission: 0.06,
+    clearcoatRoughness: 0.03,
+    transmission: 0.04,
     ior: 1.5,
-    reflectivity: 0.96,
+    reflectivity: 0.98,
     side: THREE.DoubleSide
   });
 }
@@ -155,7 +155,7 @@ function createRibbonCollection(targetScene) {
     new THREE.Vector3(4.8, 2.4, -0.5)
   ];
   const topRecord = buildCushionRibbonGeometry(topWavePoints, 1.8, 0.35, 72, 12);
-  const topMesh = new THREE.Mesh(topRecord.geometry, createSatinMaterial(0xff4081, 0x3d0317));
+  const topMesh = new THREE.Mesh(topRecord.geometry, createSatinMaterial(0xfbcfe8, 0x42132d));
   targetScene.add(topMesh);
   ribbonEntries.push({ mesh: topMesh, record: topRecord, motionRate: 0.70, waveIntensity: 0.18 });
 
@@ -166,7 +166,7 @@ function createRibbonCollection(targetScene) {
     new THREE.Vector3(-4.6, -1.8, 0.4)
   ];
   const diagonalRecord = buildCushionRibbonGeometry(diagonalFlowPoints, 2.2, 0.40, 72, 12);
-  const diagonalMesh = new THREE.Mesh(diagonalRecord.geometry, createSatinMaterial(0xff5c93, 0x380315));
+  const diagonalMesh = new THREE.Mesh(diagonalRecord.geometry, createSatinMaterial(0xf9a8d4, 0x4f1737));
   targetScene.add(diagonalMesh);
   ribbonEntries.push({ mesh: diagonalMesh, record: diagonalRecord, motionRate: 0.85, waveIntensity: 0.16 });
 
@@ -177,7 +177,7 @@ function createRibbonCollection(targetScene) {
     new THREE.Vector3(4.8, -1.9, -0.6)
   ];
   const bottomRecord = buildCushionRibbonGeometry(bottomWavePoints, 1.9, 0.36, 72, 12);
-  const bottomMesh = new THREE.Mesh(bottomRecord.geometry, createSatinMaterial(0xf43f5e, 0x3f0418));
+  const bottomMesh = new THREE.Mesh(bottomRecord.geometry, createSatinMaterial(0xf472b6, 0x5c1b40));
   targetScene.add(bottomMesh);
   ribbonEntries.push({ mesh: bottomMesh, record: bottomRecord, motionRate: 0.65, waveIntensity: 0.15 });
 
@@ -187,7 +187,7 @@ function createRibbonCollection(targetScene) {
     new THREE.Vector3(3.9, -2.2, -0.3)
   ];
   const sideRecord = buildCushionRibbonGeometry(sideSwirlPoints, 1.6, 0.32, 60, 12);
-  const sideMesh = new THREE.Mesh(sideRecord.geometry, createSatinMaterial(0xff6b9d, 0x330213));
+  const sideMesh = new THREE.Mesh(sideRecord.geometry, createSatinMaterial(0xfce7f3, 0x3a0f26));
   targetScene.add(sideMesh);
   ribbonEntries.push({ mesh: sideMesh, record: sideRecord, motionRate: 0.78, waveIntensity: 0.14 });
 
@@ -197,16 +197,16 @@ function createRibbonCollection(targetScene) {
 function createFloatingLiquidBubbles(targetScene) {
   const bubbleEntries = [];
   const bubbleConfigs = [
-    { radius: 0.36, origin: new THREE.Vector3(3.3, 1.9, 0.8), rate: 0.85, hue: 0xff6b9d },
-    { radius: 0.28, origin: new THREE.Vector3(-3.2, 2.0, 0.6), rate: 1.05, hue: 0xff4081 },
-    { radius: 0.42, origin: new THREE.Vector3(3.4, -1.8, 1.0), rate: 0.70, hue: 0xf43f5e },
-    { radius: 0.30, origin: new THREE.Vector3(-3.3, -1.9, 0.7), rate: 1.20, hue: 0xff80ab },
-    { radius: 0.22, origin: new THREE.Vector3(3.7, 0.2, 0.5), rate: 0.90, hue: 0xff5292 }
+    { radius: 0.36, origin: new THREE.Vector3(3.3, 1.9, 0.8), rate: 0.85, hue: 0xfdf2f8 },
+    { radius: 0.28, origin: new THREE.Vector3(-3.2, 2.0, 0.6), rate: 1.05, hue: 0xfce7f3 },
+    { radius: 0.42, origin: new THREE.Vector3(3.4, -1.8, 1.0), rate: 0.70, hue: 0xfbcfe8 },
+    { radius: 0.30, origin: new THREE.Vector3(-3.3, -1.9, 0.7), rate: 1.20, hue: 0xf9a8d4 },
+    { radius: 0.22, origin: new THREE.Vector3(3.7, 0.2, 0.5), rate: 0.90, hue: 0xffffff }
   ];
 
   bubbleConfigs.forEach((bubbleParam) => {
     const bubbleGeo = new THREE.SphereGeometry(bubbleParam.radius, 28, 28);
-    const bubbleMat = createSatinMaterial(bubbleParam.hue, 0x380415);
+    const bubbleMat = createSatinMaterial(bubbleParam.hue, 0x2a0d1c);
     const bubbleMesh = new THREE.Mesh(bubbleGeo, bubbleMat);
     bubbleMesh.position.copy(bubbleParam.origin);
     targetScene.add(bubbleMesh);
