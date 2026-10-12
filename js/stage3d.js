@@ -14,23 +14,23 @@ const Stage3DState = {
 };
 
 function setupStageLighting(scene) {
-  const keyLight = new THREE.DirectionalLight(0xfff8f2, 2.8);
+  const keyLight = new THREE.DirectionalLight(0xfff8f2, 1.25);
   keyLight.position.set(3.5, 4.5, 3.5);
   scene.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0xe8f0fe, 1.8);
+  const fillLight = new THREE.DirectionalLight(0xe8f0fe, 0.85);
   fillLight.position.set(-3.5, 2.5, 2.5);
   scene.add(fillLight);
 
-  const rimLight = new THREE.DirectionalLight(0xffe4e6, 3.2);
+  const rimLight = new THREE.DirectionalLight(0xffe4e6, 1.10);
   rimLight.position.set(-1.0, 4.0, -3.5);
   scene.add(rimLight);
 
-  const bounceLight = new THREE.DirectionalLight(0xf8fafc, 1.4);
+  const bounceLight = new THREE.DirectionalLight(0xf8fafc, 0.50);
   bounceLight.position.set(0, -4.0, 1.5);
   scene.add(bounceLight);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
   scene.add(ambientLight);
 }
 
@@ -159,7 +159,7 @@ function initJersey3DViewer() {
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.18;
+  renderer.toneMappingExposure = 0.90;
   renderer.outputEncoding = THREE.sRGBEncoding;
 
   const controls = configureStageControls(camera, canvasElement);
