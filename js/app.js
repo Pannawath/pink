@@ -839,11 +839,38 @@ window.addEventListener('resize', () => {
 function bindMobileScrollCollapse() {
   const mainEl = document.querySelector('main');
   if (!mainEl) return;
+
   const COLLAPSE_THRESHOLD = 60;
   mainEl.addEventListener('scroll', () => {
-    const collapsed = mainEl.scrollTop > COLLAPSE_THRESHOLD;
-    document.body.classList.toggle('mobile-scrolled-collapsed', collapsed);
+    document.body.classList.toggle('mobile-scrolled-collapsed', mainEl.scrollTop > COLLAPSE_THRESHOLD);
   }, { passive: true });
+
+  bindGlobalTouchScroll(mainEl);
+}
+
+function bindGlobalTouchScroll(mainEl) {
+  const SKIP_TAGS = new Set(['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'CANVAS', 'LABEL']);
+  let touchStartY = 0;
+  let touchStartScroll = 0;
+  let isDragging = false;
+
+  document.addEventListener('touchstart', (ev) => {
+    const target = ev.target;
+    if (SKIP_TAGS.has(target.tagName) || target.closest('.apple-glass-card')) return;
+    touchStartY = ev.touches[0].clientY;
+    touchStartScroll = mainEl.scrollTop;
+    isDragging = true;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (ev) => {
+    if (!isDragging) return;
+    const target = ev.target;
+    if (SKIP_TAGS.has(target.tagName)) return;
+    const deltaY = touchStartY - ev.touches[0].clientY;
+    mainEl.scrollTop = touchStartScroll + deltaY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
 }
 
 // ==========================================
