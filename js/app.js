@@ -435,7 +435,7 @@ function getPromptPayDetails() {
 
 function openQrPromptPayModal() {
   const account = getPromptPayDetails();
-  const amount = '390';
+  const amount = '275';
   
   // Generate QR Code using PromptPay API
   const qrUrl = `https://promptpay.io/${account.number}${amount ? '/' + amount : ''}.png`;
@@ -908,7 +908,7 @@ async function lookupEmailAndShowForm(email) {
           name: result.data.name || '',
           number: (result.data.number || '10').toString(),
           size: result.data.size || 'L',
-          price: 390,
+          price: 275,
           timestamp: result.data.timestamp || '',
           status: result.data.status || 'Confirmed',
           slipUrl: result.data.slipUrl || null,
@@ -1244,7 +1244,7 @@ function buildOrderSubmissionRecord(email, name, number, nowTimestamp) {
     name: name.toUpperCase(),
     number: number,
     size: AppState.size,
-    price: 390,
+    price: 275,
     timestamp: nowTimestamp,
     status: AppState.orderStatus || 'รอชำระเงิน',
     slipImage: shouldSendSlip ? AppState.slipImage : null,

@@ -185,69 +185,52 @@ body::after {
   }
 }
 
-/* ปรับตำแหน่ง jersey preview บนมือถือให้เห็นหัวเสื้อ */
+/* Mobile: Move view controls to bottom overlay bar */
 @media (max-width: 1023px) {
-  /* ล็อกความสูงของกรอบเสื้อ */
+  .w-full.flex.items-center.justify-between.px-2.mb-2 {
+    display: none !important;
+  }
+
+  .apple-segmented-control {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 999 !important;
+    margin: 0 !important;
+    padding: 12px 16px 20px 16px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .apple-segmented-btn {
+    flex: 1 !important;
+    max-width: 120px !important;
+    padding: 12px 8px !important;
+    font-size: 13px !important;
+  }
+
+  .apple-segmented-indicator {
+    bottom: 8px !important;
+  }
+
+  .apple-glass-card {
+    margin-bottom: 80px !important;
+  }
+
   .jersey-stage-container {
-    height: 70vh !important;
-    max-height: 70vh !important;
+    height: 75vh !important;
+    max-height: 75vh !important;
     overflow: hidden !important;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
     margin-top: 0 !important;
   }
-  
-  #jerseyCardWrapper {
-    height: 100% !important;
-    max-height: 100% !important;
-  }
-  
-  /* เลื่อนเสื้อขึ้นให้เห็นคอ */
+
   #jerseyView2DEl {
     transform: translateY(-20%) !important;
-  }
-  
-  /* ซ่อนปุ่มสลับมุมมองเมื่อ scroll (transition smooth) */
-  .apple-segmented-control {
-    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease, margin 0.3s ease !important;
-  }
-  
-  /* คลาส hidden-on-scroll จะถูกเพิ่มโดย JavaScript */
-  .apple-segmented-control.hidden-on-scroll {
-    opacity: 0 !important;
-    transform: translateY(-30px) !important;
-    height: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-  }
-  
-  /* Container ของปุ่มก็ต้องหดด้วย */
-  .w-full.flex.items-center.justify-between.px-2.mb-2 {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
-  
-  .w-full.flex.items-center.justify-between.px-2.mb-2:has(.apple-segmented-control.hidden-on-scroll) {
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-  }
-  
-  /* เมื่อปุ่มหายไป ให้ jersey-stage-container ขยายขึ้นมาเต็มพื้นที่ */
-  body:has(.apple-segmented-control.hidden-on-scroll) .jersey-stage-container {
-    height: 75vh !important;
-    margin-top: -8px !important;
-  }
-}           <div id="segmentedIndicator" class="apple-segmented-indicator" style="transform: translateX(115px); width: 109px;"></div>
-            <button type="button" id="btnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
-            <button type="button" id="btnViewFront" class="apple-segmented-btn active">ด้านหน้า</button>
-            <button type="button" id="btnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
-          </div>
-          <!-- Mobile Floating Circular View Switcher (Visible when scrolled) -->
-          <button type="button" id="mobileFloatingViewBtn" class="mobile-floating-view-btn" aria-label="สลับมุมมองเสื้อ" style="display: none;">
-            <i id="mobileFloatingViewIcon" class="fa-solid fa-shirt"></i>
-            <span id="mobileFloatingViewBadge" class="mobile-floating-view-badge">หน้า</span>
-          </button>
-        </div>%) !important;
   }
 }
