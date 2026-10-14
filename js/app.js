@@ -4,9 +4,9 @@
 const JERSEY_CONFIG = {
   // 1. เบอร์ด้านหลัง (Back Number)
   backNumber: {
-    x: 400,        // แนวนอน (390 = กึ่งกลางเสื้อพอดี)
+    x: 390,        // แนวนอน (390 = กึ่งกลางเสื้อพอดี)
     y: 470,        // แนวตั้ง (ความสูงของเบอร์หลัง)
-    size: 400      // ขนาดตัวเลขด้านหลัง
+    size: 350      // ขนาดตัวเลขด้านหลัง
   },
 
   // 2. ชื่อด้านหลัง (Back Name)
@@ -27,7 +27,7 @@ const AppState = {
   email: '',
   size: 'L',
   screenName: '',
-  screenNumber: '00',
+  screenNumber: '70',
   paymentStatus: 'pending', // legacy
   orderStatus: 'รอชำระเงิน', // ค่าสถานะหลักที่บันทึกลง Sheets
   slipImage: null, // Base64 data URL
