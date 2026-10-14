@@ -110,7 +110,6 @@ const DOM = {
   jerseyViewBackEl: document.getElementById('jerseyViewBackEl'),
   jerseyViewFrontEl: document.getElementById('jerseyViewFrontEl'),
   jerseyViewBothEl: document.getElementById('jerseyViewBothEl'),
-  jerseyView3DEl: document.getElementById('jerseyView3DEl'),
 
   // SVG Text & Paths
   nameArcPath: document.getElementById('nameArcPath'),
@@ -127,7 +126,6 @@ const DOM = {
   btnViewBack: document.getElementById('btnViewBack'),
   btnViewFront: document.getElementById('btnViewFront'),
   btnViewBoth: document.getElementById('btnViewBoth'),
-  btnView3D: document.getElementById('btnView3D'),
   mobileFloatingViewBtn: document.getElementById('mobileFloatingViewBtn'),
   mobileFloatingViewIcon: document.getElementById('mobileFloatingViewIcon'),
   mobileFloatingViewBadge: document.getElementById('mobileFloatingViewBadge'),
@@ -268,7 +266,7 @@ function bindSizeAndStatusEvents() {
 }
 
 function cycleJerseyView() {
-  const sequence = ['front', 'back', '3d', 'both'];
+  const sequence = ['front', 'back', 'both'];
   const currentIndex = sequence.indexOf(AppState.viewSide || 'front');
   const nextSide = sequence[(currentIndex + 1) % sequence.length];
   setJerseyView(nextSide);
@@ -278,7 +276,6 @@ function bindViewSwitcherEvents() {
   if (DOM.btnViewBack) DOM.btnViewBack.addEventListener('click', () => setJerseyView('back'));
   if (DOM.btnViewFront) DOM.btnViewFront.addEventListener('click', () => setJerseyView('front'));
   if (DOM.btnViewBoth) DOM.btnViewBoth.addEventListener('click', () => setJerseyView('both'));
-  if (DOM.btnView3D) DOM.btnView3D.addEventListener('click', () => setJerseyView('3d'));
   if (DOM.mobileFloatingViewBtn) DOM.mobileFloatingViewBtn.addEventListener('click', cycleJerseyView);
 
   if (DOM.btnOpenSizeGuideNav) {
@@ -747,11 +744,6 @@ function updateLivePreview() {
   syncJerseySvgNumber(DOM.svgBothNumber, displayNumber, JERSEY_CONFIG.backNumber);
 
   applyNumberStyle();
-  
-  // Update 3D model if function exists
-  if (typeof window.update3DJerseyText === 'function') {
-    window.update3DJerseyText(displayNumber, displayName);
-  }
 }
 
 function applyNumberStyle() {
@@ -765,8 +757,7 @@ function updateSegmentedIndicator(side) {
   const buttonMap = {
     back: DOM.btnViewBack,
     front: DOM.btnViewFront,
-    both: DOM.btnViewBoth,
-    '3d': DOM.btnView3D
+    both: DOM.btnViewBoth
   };
   const activeBtn = buttonMap[side];
 
@@ -780,13 +771,12 @@ function transitionJerseyView(targetSide) {
   const viewMap = {
     back: { activeEl: DOM.jerseyViewBackEl, maxWidth: '440px' },
     front: { activeEl: DOM.jerseyViewFrontEl, maxWidth: '440px' },
-    both: { activeEl: DOM.jerseyViewBothEl, maxWidth: '600px' },
-    '3d': { activeEl: DOM.jerseyView3DEl, maxWidth: '480px' }
+    both: { activeEl: DOM.jerseyViewBothEl, maxWidth: '600px' }
   };
   const config = viewMap[targetSide];
   if (!config) return;
 
-  [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl, DOM.jerseyView3DEl].forEach(element => {
+  [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl].forEach(element => {
     if (element) element.classList.add('hidden');
   });
 
@@ -796,9 +786,6 @@ function transitionJerseyView(targetSide) {
     requestAnimationFrame(() => {
       config.activeEl.style.opacity = '1';
       config.activeEl.style.transform = 'scale(1)';
-      if (targetSide === '3d' && typeof window.onJersey3DVisible === 'function') {
-        window.onJersey3DVisible();
-      }
     });
   }
 }
@@ -807,10 +794,9 @@ function updateJerseyViewButtons(selectedSide) {
   const buttonMap = {
     back: DOM.btnViewBack,
     front: DOM.btnViewFront,
-    both: DOM.btnViewBoth,
-    '3d': DOM.btnView3D
+    both: DOM.btnViewBoth
   };
-  [DOM.btnViewBack, DOM.btnViewFront, DOM.btnViewBoth, DOM.btnView3D].forEach(btn => {
+  [DOM.btnViewBack, DOM.btnViewFront, DOM.btnViewBoth].forEach(btn => {
     if (btn) btn.classList.remove('active');
   });
   if (buttonMap[selectedSide]) {
@@ -834,7 +820,7 @@ function setJerseyView(side) {
     DOM.mobileFloatingViewBadge.textContent = BADGE_MAP[side] || side;
   }
 
-  [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl, DOM.jerseyView3DEl].forEach(view => {
+  [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl].forEach(view => {
     if (view && !view.classList.contains('hidden')) {
       view.style.opacity = '0';
       view.style.transform = 'scale(0.95)';
