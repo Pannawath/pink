@@ -25,6 +25,7 @@ const AppState = {
   mode: 'new', // 'new' | 'edit'
   viewSide: 'front', // 'back' | 'front' | 'both'
   email: '',
+  classroom: '',
   size: 'L',
   screenName: '',
   screenNumber: '70',
@@ -64,6 +65,7 @@ const DOM = {
   submitButtonSection: document.getElementById('submitButtonSection'),
   inputScreenName: document.getElementById('inputScreenName'),
   inputScreenNumber: document.getElementById('inputScreenNumber'),
+  selectClassroom: document.getElementById('selectClassroom'),
   btnSubmit: document.getElementById('btnSubmit'),
   btnSubmitText: document.getElementById('btnSubmitText'),
   btnSubmitIcon: document.getElementById('btnSubmitIcon'),
@@ -242,6 +244,12 @@ function bindPersonalizationEvents() {
       AppState.screenNumber = chosenNumber;
       DOM.inputScreenNumber.value = chosenNumber;
       updateLivePreview();
+    });
+  }
+
+  if (DOM.selectClassroom) {
+    DOM.selectClassroom.addEventListener('change', (event) => {
+      AppState.classroom = event.target.value;
     });
   }
 }
@@ -1118,6 +1126,7 @@ async function lookupEmailAndShowForm(email) {
         const gasRecord = {
           email: result.data.email || email,
           name: result.data.name || '',
+          classroom: result.data.classroom || '',
           number: (result.data.number || '10').toString(),
           size: result.data.size || 'L',
           price: 275,
@@ -1191,11 +1200,13 @@ function populateEditModeFields(orderRecord) {
   AppState.slipChanged = false;
   AppState.slipUrl = orderRecord.slipUrl || null;
   AppState.screenName = orderRecord.name || '';
+  AppState.classroom = orderRecord.classroom || '';
   AppState.screenNumber = orderRecord.number || '10';
   AppState.size = orderRecord.size || 'L';
   AppState.orderStatus = orderRecord.status || 'รอชำระเงิน';
 
   DOM.inputScreenName.value = orderRecord.name || '';
+  if (DOM.selectClassroom) DOM.selectClassroom.value = orderRecord.classroom || '';
   DOM.inputScreenNumber.value = orderRecord.number || '10';
 
   DOM.sizeBtns.forEach(btn => {
@@ -1275,10 +1286,12 @@ function resetToNewMode() {
   
   // Clear form fields
   AppState.screenName = '';
+  AppState.classroom = '';
   AppState.screenNumber = '10';
   AppState.size = 'L';
   
   DOM.inputScreenName.value = '';
+  if (DOM.selectClassroom) DOM.selectClassroom.value = '';
   DOM.inputScreenNumber.value = '10';
   
   // Reset size buttons
@@ -1309,6 +1322,7 @@ function resetToNewMode() {
 
 function resetForm() {
   AppState.screenName = '';
+  AppState.classroom = '';
   AppState.screenNumber = '10';
   AppState.size = 'L';
   AppState.email = '';
@@ -1318,6 +1332,7 @@ function resetForm() {
 
   DOM.inputEmail.value = '';
   DOM.inputScreenName.value = '';
+  if (DOM.selectClassroom) DOM.selectClassroom.value = '';
   DOM.inputScreenNumber.value = '10';
   DOM.emailStatusBadge.classList.add('hidden');
 
@@ -1381,13 +1396,21 @@ function validateForm() {
     }
   }
 
-  // 4. Check if size is selected (should always have one, but double check)
+  // 4. Validate Classroom
+  const classroom = DOM.selectClassroom ? DOM.selectClassroom.value : '';
+  if (!classroom) {
+    if (DOM.selectClassroom) showFieldError(DOM.selectClassroom, 'กรุณาเลือกระดับชั้น / ห้องเรียน');
+    isValid = false;
+    if (!firstErrorField && DOM.selectClassroom) firstErrorField = DOM.selectClassroom;
+  }
+
+  // 5. Check if size is selected (should always have one, but double check)
   if (!AppState.size) {
     showToast('กรุณาเลือกไซส์เสื้อ', 'warning');
     isValid = false;
   }
 
-  // 5. Require Slip for New Orders
+  // 6. Require Slip for New Orders
   if (AppState.mode === 'new' && !AppState.slipImage) {
     if (DOM.slipDropzone) {
       DOM.slipDropzone.style.borderColor = '#dc2626';
@@ -1452,13 +1475,14 @@ async function fetchDriveImageViaGAS(fileId) {
 // ==========================================
 // 8. FORM SUBMISSION & GOOGLE SHEETS
 // ==========================================
-function buildOrderSubmissionRecord(email, name, number, nowTimestamp) {
+function buildOrderSubmissionRecord(email, name, number, classroom, nowTimestamp) {
   const shouldSendSlip = (AppState.mode === 'new' || AppState.slipChanged) && AppState.slipImage;
   return {
     email: email,
     productTitle: 'เสื้อแข่งขันทีมสีชมพู 2026',
     name: name.toUpperCase(),
     number: number,
+    classroom: classroom,
     size: AppState.size,
     price: 275,
     timestamp: nowTimestamp,
@@ -1502,11 +1526,12 @@ async function handleFormSubmit() {
   const email = DOM.inputEmail.value.trim();
   const name = DOM.inputScreenName.value.trim();
   const number = DOM.inputScreenNumber.value.trim();
+  const classroom = DOM.selectClassroom ? DOM.selectClassroom.value : '';
   const nowTimestamp = new Date().toLocaleString('th-TH');
 
   updateFormSubmissionUI(true);
 
-  const submissionRecord = buildOrderSubmissionRecord(email, name, number, nowTimestamp);
+  const submissionRecord = buildOrderSubmissionRecord(email, name, number, classroom, nowTimestamp);
   const syncSuccess = await sendOrderToGoogleSheets(submissionRecord);
 
   updateFormSubmissionUI(false);
@@ -1556,6 +1581,7 @@ function renderOrdersList() {
             <span class="font-black text-slate-900 text-sm font-sport-bold">${o.name}</span>
             <span class="px-2 py-0.5 rounded-md bg-pink-100 text-pink-700 font-mono font-bold text-xs">#${o.number}</span>
             <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs">Size ${o.size}</span>
+            ${o.classroom ? `<span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 font-bold text-xs">ห้อง ${o.classroom}</span>` : ''}
           </div>
           <p class="text-[11px] text-slate-500 font-mono">${o.email} &bull; ฿${o.price}</p>
         </div>
@@ -1604,9 +1630,9 @@ function exportOrdersToCSV() {
     return;
   }
 
-  let csv = 'Timestamp,Email,Name,Number,Size,Style,Price,Status,HasSlip\n';
+  let csv = 'Timestamp,Email,Name,Classroom,Number,Size,Style,Price,Status,HasSlip\n';
   AppState.orders.forEach(o => {
-    csv += `"${o.timestamp}","${o.email}","${o.name}","${o.number}","${o.size}","${o.style}","${o.price}","${o.status || 'Confirmed'}","${o.slipImage ? 'YES' : 'NO'}"\n`;
+    csv += `"${o.timestamp}","${o.email}","${o.name}","${o.classroom || ''}","${o.number}","${o.size}","${o.style}","${o.price}","${o.status || 'Confirmed'}","${o.slipImage ? 'YES' : 'NO'}"\n`;
   });
 
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });

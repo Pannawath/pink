@@ -457,6 +457,12 @@
   letter-spacing: 0.08em;
 }
 
+.font-cmu-name {
+  font-family: 'Computer Modern Serif', 'CMU Serif', serif !important;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
 .font-sport-bold {
   font-family: 'Prompt', 'Kanit', sans-serif;
   font-weight: 700;
