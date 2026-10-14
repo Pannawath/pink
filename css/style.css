@@ -1099,6 +1099,7 @@ main.max-w-5xl {
     padding-top: 18px !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    padding-bottom: 90px !important;
     scrollbar-gutter: stable both-edges;
   }
 
@@ -1121,11 +1122,11 @@ main.max-w-5xl {
   }
 
   .grid.lg\:grid-cols-12 > div:nth-child(2) {
-    position: sticky;
-    top: calc(18px + 175px);
+    position: relative;
     z-index: 20;
     width: 100%;
     max-width: 440px;
+    margin-top: -240px;
   }
 
   .jersey-stage-container {
@@ -1178,18 +1179,16 @@ main.max-w-5xl {
 
   .apple-glass-card {
     border-radius: 28px;
-    position: sticky;
-    top: calc(18px + 175px);
+    position: static;
     z-index: 20;
-    max-height: calc(100vh - 190px);
-    max-height: calc(100dvh - 190px);
-    overflow-y: auto;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
     box-sizing: border-box;
     width: 100%;
-    transition: top 0.28s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-bottom: 60px;
   }
 
   #modeStatusBanner {

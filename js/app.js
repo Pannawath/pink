@@ -985,11 +985,7 @@ function shouldBypassTouchDrag(touchEvent) {
   if (document.body.classList.contains('overflow-hidden')) return true;
 
   const targetElement = touchEvent.target;
-  if (targetElement.closest('button, a, input, textarea, select, canvas, label')) return true;
-
-  const isPullHandle = Boolean(targetElement.closest('.mobile-sheet-handle-container'));
-  const isInsideCard = Boolean(targetElement.closest('#configuratorCard, .apple-glass-card'));
-  return !isPullHandle && isInsideCard;
+  return Boolean(targetElement.closest('button, a, input, textarea, select, canvas, label'));
 }
 
 function bindGlobalTouchScroll(mainElement) {
