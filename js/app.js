@@ -27,7 +27,7 @@ const AppState = {
   email: '',
   size: 'L',
   screenName: '',
-  screenNumber: '70',
+  screenNumber: '00',
   paymentStatus: 'pending', // legacy
   orderStatus: 'รอชำระเงิน', // ค่าสถานะหลักที่บันทึกลง Sheets
   slipImage: null, // Base64 data URL
