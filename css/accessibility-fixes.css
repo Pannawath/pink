@@ -187,7 +187,20 @@ body::after {
 
 /* ปรับตำแหน่ง jersey preview บนมือถือให้เห็นหัวเสื้อ */
 @media (max-width: 1023px) {
+  /* ล็อกความสูงของกรอบเสื้อ */
+  .jersey-stage-container {
+    height: 70vh !important;
+    max-height: 70vh !important;
+    overflow: hidden !important;
+  }
+  
+  #jerseyCardWrapper {
+    height: 100% !important;
+    max-height: 100% !important;
+  }
+  
+  /* เลื่อนเสื้อขึ้นให้เห็นคอ */
   #jerseyView2DEl {
-    transform: translateY(-10%) !important;
+    transform: translateY(-20%) !important;
   }
 }
