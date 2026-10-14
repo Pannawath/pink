@@ -192,7 +192,8 @@ body::after {
     height: 70vh !important;
     max-height: 70vh !important;
     overflow: hidden !important;
-    transition: transform 0.3s ease, margin-top 0.3s ease !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    margin-top: 0 !important;
   }
   
   #jerseyCardWrapper {
@@ -213,7 +214,7 @@ body::after {
   /* คลาส hidden-on-scroll จะถูกเพิ่มโดย JavaScript */
   .apple-segmented-control.hidden-on-scroll {
     opacity: 0 !important;
-    transform: translateY(-20px) !important;
+    transform: translateY(-30px) !important;
     height: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
@@ -221,6 +222,10 @@ body::after {
   }
   
   /* Container ของปุ่มก็ต้องหดด้วย */
+  .w-full.flex.items-center.justify-between.px-2.mb-2 {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
   .w-full.flex.items-center.justify-between.px-2.mb-2:has(.apple-segmented-control.hidden-on-scroll) {
     height: 0 !important;
     margin: 0 !important;
@@ -228,10 +233,10 @@ body::after {
     overflow: hidden !important;
   }
   
-  /* เมื่อปุ่มหายไป ให้ jersey-stage-container เลื่อนขึ้นมาปิดช่องว่าง */
+  /* เมื่อปุ่มหายไป ให้ jersey-stage-container ขยายขึ้นมาเต็มพื้นที่ */
   body:has(.apple-segmented-control.hidden-on-scroll) .jersey-stage-container {
-    transform: translateY(-60px) !important;
-    margin-top: -60px !important;
+    height: 75vh !important;
+    margin-top: -8px !important;
   }
 }           <div id="segmentedIndicator" class="apple-segmented-indicator" style="transform: translateX(115px); width: 109px;"></div>
             <button type="button" id="btnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
