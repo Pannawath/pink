@@ -58,6 +58,7 @@ const DOM = {
   inputEmail: document.getElementById('inputEmail'),
   emailLoadingSpinner: document.getElementById('emailLoadingSpinner'),
   emailStatusBadge: document.getElementById('emailStatusBadge'),
+  onboardingHintStep1: document.getElementById('onboardingHintStep1'),
   formContentSection: document.getElementById('formContentSection'),
   submitButtonSection: document.getElementById('submitButtonSection'),
   inputScreenName: document.getElementById('inputScreenName'),
@@ -188,7 +189,13 @@ function bindEmailSyncEvents() {
       lastSearchedEmail = '';
       resetToNewMode();
       hideFormContent();
-      DOM.emailStatusBadge.classList.add('hidden');
+      if (AppState.email.length > 0) {
+        DOM.emailStatusBadge.className = 'text-[11px] font-semibold text-amber-700';
+        DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>รูปแบบอีเมลไม่ถูกต้อง';
+        DOM.emailStatusBadge.classList.remove('hidden');
+      } else {
+        DOM.emailStatusBadge.classList.add('hidden');
+      }
       return;
     }
 
@@ -332,6 +339,7 @@ function bindEvents() {
   bindActionModalEvents();
   initSlipUploadEvents();
   bindMobileScrollCollapse();
+  bindModalAccessibilityEvents();
 }
 
 // ==========================================
@@ -873,18 +881,53 @@ function bindGlobalTouchScroll(mainEl) {
   document.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
 }
 
+function getActiveModalElements() {
+  return [
+    DOM.modalSizeGuide,
+    DOM.qrPromptPayModal,
+    DOM.modalSlipLightbox,
+    DOM.modalConfig,
+    DOM.modalDatabase
+  ].filter(Boolean);
+}
+
+function syncModalScrollLock() {
+  const isAnyModalOpen = getActiveModalElements().some(el => !el.classList.contains('hidden'));
+  document.body.classList.toggle('overflow-hidden', isAnyModalOpen);
+}
+
+function closeAllActiveModals() {
+  getActiveModalElements().forEach(el => el.classList.add('hidden'));
+  document.body.classList.remove('overflow-hidden');
+}
+
+function bindModalAccessibilityEvents() {
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeAllActiveModals();
+    }
+  });
+
+  getActiveModalElements().forEach(modalElement => {
+    const observer = new MutationObserver(() => syncModalScrollLock());
+    observer.observe(modalElement, { attributes: true, attributeFilter: ['class'] });
+  });
+}
+
 // ==========================================
 // 7. SMART EMAIL LOOKUP & DATABASE
 // ==========================================
 function hideFormContent() {
   if (DOM.formContentSection) DOM.formContentSection.classList.add('hidden');
   if (DOM.submitButtonSection) DOM.submitButtonSection.classList.add('hidden');
+  if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.remove('hidden');
 }
 
 function showFormContent() {
   if (DOM.formContentSection) DOM.formContentSection.classList.remove('hidden');
   if (DOM.paymentStatusSection) DOM.paymentStatusSection.classList.remove('hidden');
   if (DOM.submitButtonSection) DOM.submitButtonSection.classList.remove('hidden');
+  if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.add('hidden');
 }
 
 async function lookupEmailAndShowForm(email) {
@@ -1113,6 +1156,7 @@ function resetToNewMode() {
   DOM.paymentStatusDisplay.classList.add('hidden');
   DOM.btnSubmitText.textContent = 'ยืนยันการสั่งจองและส่งสลิป';
   DOM.btnSubmitIcon.className = 'fa-solid fa-check mr-1.5';
+  if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.remove('hidden');
   
   // Update live preview
   updateLivePreview();

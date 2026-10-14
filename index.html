@@ -66,7 +66,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=13">
+  <link rel="stylesheet" href="css/style.css?v=14">
   
   <!-- Accessibility Fixes CSS -->
   <link rel="stylesheet" href="css/accessibility-fixes.css?v=6">
@@ -195,7 +195,7 @@
             <button type="button" id="btnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
           </div>
           <!-- Mobile Floating Circular View Switcher (Visible when scrolled) -->
-          <button type="button" id="mobileFloatingViewBtn" class="mobile-floating-view-btn" aria-label="สลับมุมมองเสื้อ" style="display: none;">
+          <button type="button" id="mobileFloatingViewBtn" class="mobile-floating-view-btn" aria-label="สลับมุมมองเสื้อ">
             <i id="mobileFloatingViewIcon" class="fa-solid fa-shirt"></i>
             <span id="mobileFloatingViewBadge" class="mobile-floating-view-badge">หน้า</span>
           </button>
@@ -306,7 +306,7 @@
           <!-- 1. Email Address (Account Lookup) -->
           <div class="space-y-1.5">
             <!-- คำแนะนำการใช้งาน -->
-            <div class="onboarding-hint" style="margin-bottom: 12px;">
+            <div id="onboardingHintStep1" class="onboarding-hint" style="margin-bottom: 12px;">
               <i class="fa-solid fa-arrow-down"></i>
               <strong>ขั้นตอนที่ 1:</strong> กรอกอีเมลเพื่อเริ่มจองเสื้อ
             </div>
@@ -850,7 +850,7 @@
   <script src="js/security.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=7"></script>
+  <script src="js/app.js?v=8"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>

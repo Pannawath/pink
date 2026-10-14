@@ -1231,7 +1231,7 @@ main.max-w-5xl {
   }
 
   .mobile-scrolled-collapsed .mobile-floating-view-btn {
-    display: flex;
+    display: flex !important;
     animation: popInFloat 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -1289,4 +1289,20 @@ main.max-w-5xl {
     font-size: 14px;
     padding: 11px 14px;
   }
+}
+
+/* Accessibility & Contrast Enhancements */
+.apple-glass-card .text-slate-500 {
+  color: #334155 !important;
+}
+
+.apple-glass-input:focus-visible {
+  outline: 2px solid #db2777 !important;
+  outline-offset: 1px !important;
+  border-color: #db2777 !important;
+}
+
+.apple-btn-primary:focus-visible {
+  outline: 3px solid #db2777 !important;
+  outline-offset: 2px !important;
 }
