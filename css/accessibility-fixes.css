@@ -203,4 +203,39 @@ body::after {
   #jerseyView2DEl {
     transform: translateY(-20%) !important;
   }
+  
+  /* ซ่อนปุ่มสลับมุมมองเมื่อ scroll (transition smooth) */
+  .apple-segmented-control {
+    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease, margin 0.3s ease !important;
+  }
+  
+  /* คลาส hidden-on-scroll จะถูกเพิ่มโดย JavaScript */
+  .apple-segmented-control.hidden-on-scroll {
+    opacity: 0 !important;
+    transform: translateY(-20px) !important;
+    height: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  /* Container ของปุ่มก็ต้องหดด้วย */
+  .w-full.flex.items-center.justify-between.px-2.mb-2:has(.apple-segmented-control.hidden-on-scroll) {
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+}           <div id="segmentedIndicator" class="apple-segmented-indicator" style="transform: translateX(115px); width: 109px;"></div>
+            <button type="button" id="btnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
+            <button type="button" id="btnViewFront" class="apple-segmented-btn active">ด้านหน้า</button>
+            <button type="button" id="btnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
+          </div>
+          <!-- Mobile Floating Circular View Switcher (Visible when scrolled) -->
+          <button type="button" id="mobileFloatingViewBtn" class="mobile-floating-view-btn" aria-label="สลับมุมมองเสื้อ" style="display: none;">
+            <i id="mobileFloatingViewIcon" class="fa-solid fa-shirt"></i>
+            <span id="mobileFloatingViewBadge" class="mobile-floating-view-badge">หน้า</span>
+          </button>
+        </div>%) !important;
+  }
 }

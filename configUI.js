@@ -184,3 +184,54 @@ document.addEventListener('DOMContentLoaded', () => {
   applyViewControlLabels();
   applyProductDetails();
 });
+
+// =========================================================================
+// Mobile: ซ่อนปุ่มสลับมุมมองเมื่อ scroll ลง (เฉพาะมือถือ)
+// =========================================================================
+function initMobileViewControlHide() {
+  // เช็คว่าอยู่บนมือถือหรือไม่ (breakpoint: 1024px)
+  if (window.innerWidth >= 1024) return;
+  
+  const segmentedControl = document.querySelector('.apple-segmented-control');
+  if (!segmentedControl) return;
+  
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  
+  function updateSegmentedVisibility() {
+    const currentScrollY = window.scrollY;
+    
+    // ถ้า scroll ลงเกิน 50px จากตำแหน่งเริ่มต้น -> ซ่อน
+    if (currentScrollY > 50 && currentScrollY > lastScrollY) {
+      segmentedControl.classList.add('hidden-on-scroll');
+    } 
+    // ถ้า scroll กลับขึ้นมา -> แสดง
+    else if (currentScrollY < lastScrollY || currentScrollY <= 50) {
+      segmentedControl.classList.remove('hidden-on-scroll');
+    }
+    
+    lastScrollY = currentScrollY;
+    ticking = false;
+  }
+  
+  function requestTick() {
+    if (!ticking) {
+      requestAnimationFrame(updateSegmentedVisibility);
+      ticking = true;
+    }
+  }
+  
+  window.addEventListener('scroll', requestTick, { passive: true });
+  
+  // เช็คอีกครั้งเมื่อ resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024) {
+      segmentedControl.classList.remove('hidden-on-scroll');
+    }
+  });
+}
+
+// เรียกใช้เมื่อหน้าเว็บโหลดเสร็จ
+document.addEventListener('DOMContentLoaded', () => {
+  initMobileViewControlHide();
+});
