@@ -122,11 +122,17 @@ const DOM = {
   svgBothNumber: document.getElementById('svgBothNumber'),
   svgBothFrontNumber: document.getElementById('svgBothFrontNumber'),
 
-  // View Switchers
-  segmentedIndicator: document.getElementById('segmentedIndicator'),
-  btnViewBack: document.getElementById('btnViewBack'),
-  btnViewFront: document.getElementById('btnViewFront'),
-  btnViewBoth: document.getElementById('btnViewBoth'),
+  // View Switchers (Dual: Header + Stage)
+  headerSegmentedControl: document.getElementById('headerSegmentedControl'),
+  headerSegmentedIndicator: document.getElementById('headerSegmentedIndicator'),
+  headerBtnViewBack: document.getElementById('headerBtnViewBack'),
+  headerBtnViewFront: document.getElementById('headerBtnViewFront'),
+  headerBtnViewBoth: document.getElementById('headerBtnViewBoth'),
+  stageSegmentedControl: document.getElementById('stageSegmentedControl'),
+  stageSegmentedIndicator: document.getElementById('stageSegmentedIndicator'),
+  stageBtnViewBack: document.getElementById('stageBtnViewBack'),
+  stageBtnViewFront: document.getElementById('stageBtnViewFront'),
+  stageBtnViewBoth: document.getElementById('stageBtnViewBoth'),
   btnToggleRotation: null,
   btnDownloadJersey: document.getElementById('btnDownloadJersey'),
 
@@ -270,9 +276,17 @@ function bindSizeAndStatusEvents() {
 }
 
 function bindViewSwitcherEvents() {
-  if (DOM.btnViewBack) DOM.btnViewBack.addEventListener('click', () => setJerseyView('back'));
-  if (DOM.btnViewFront) DOM.btnViewFront.addEventListener('click', () => setJerseyView('front'));
-  if (DOM.btnViewBoth) DOM.btnViewBoth.addEventListener('click', () => setJerseyView('both'));
+  const pairs = [
+    { btn: DOM.headerBtnViewBack, side: 'back' },
+    { btn: DOM.headerBtnViewFront, side: 'front' },
+    { btn: DOM.headerBtnViewBoth, side: 'both' },
+    { btn: DOM.stageBtnViewBack, side: 'back' },
+    { btn: DOM.stageBtnViewFront, side: 'front' },
+    { btn: DOM.stageBtnViewBoth, side: 'both' }
+  ];
+  pairs.forEach(({ btn, side }) => {
+    if (btn) btn.addEventListener('click', () => setJerseyView(side));
+  });
 
   if (DOM.btnOpenSizeGuideNav) {
     DOM.btnOpenSizeGuideNav.addEventListener('click', () => DOM.modalSizeGuide.classList.remove('hidden'));
@@ -750,18 +764,33 @@ function applyNumberStyle() {
 }
 
 function updateSegmentedIndicator(side) {
-  if (!DOM.segmentedIndicator) return;
-  const buttonMap = {
-    back: DOM.btnViewBack,
-    front: DOM.btnViewFront,
-    both: DOM.btnViewBoth
-  };
-  const activeBtn = buttonMap[side];
+  const configs = [
+    {
+      indicator: DOM.headerSegmentedIndicator,
+      map: {
+        back: DOM.headerBtnViewBack,
+        front: DOM.headerBtnViewFront,
+        both: DOM.headerBtnViewBoth
+      }
+    },
+    {
+      indicator: DOM.stageSegmentedIndicator,
+      map: {
+        back: DOM.stageBtnViewBack,
+        front: DOM.stageBtnViewFront,
+        both: DOM.stageBtnViewBoth
+      }
+    }
+  ];
 
-  if (activeBtn) {
-    DOM.segmentedIndicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
-    DOM.segmentedIndicator.style.width = `${activeBtn.offsetWidth}px`;
-  }
+  configs.forEach(({ indicator, map }) => {
+    if (!indicator) return;
+    const activeBtn = map[side];
+    if (activeBtn) {
+      indicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+      indicator.style.width = `${activeBtn.offsetWidth}px`;
+    }
+  });
 }
 
 function transitionJerseyView(targetSide) {
@@ -788,17 +817,27 @@ function transitionJerseyView(targetSide) {
 }
 
 function updateJerseyViewButtons(selectedSide) {
-  const buttonMap = {
-    back: DOM.btnViewBack,
-    front: DOM.btnViewFront,
-    both: DOM.btnViewBoth
-  };
-  [DOM.btnViewBack, DOM.btnViewFront, DOM.btnViewBoth].forEach(btn => {
+  const allButtons = [
+    DOM.headerBtnViewBack,
+    DOM.headerBtnViewFront,
+    DOM.headerBtnViewBoth,
+    DOM.stageBtnViewBack,
+    DOM.stageBtnViewFront,
+    DOM.stageBtnViewBoth
+  ];
+  allButtons.forEach(btn => {
     if (btn) btn.classList.remove('active');
   });
-  if (buttonMap[selectedSide]) {
-    buttonMap[selectedSide].classList.add('active');
-  }
+
+  const activeButtons = {
+    back: [DOM.headerBtnViewBack, DOM.stageBtnViewBack],
+    front: [DOM.headerBtnViewFront, DOM.stageBtnViewFront],
+    both: [DOM.headerBtnViewBoth, DOM.stageBtnViewBoth]
+  };
+
+  (activeButtons[selectedSide] || []).forEach(btn => {
+    if (btn) btn.classList.add('active');
+  });
 }
 
 function setJerseyView(side) {
@@ -828,10 +867,19 @@ function bindMobileScrollCollapse() {
   const mainEl = document.querySelector('main');
   if (!mainEl) return;
 
-  const COLLAPSE_THRESHOLD = 60;
-  mainEl.addEventListener('scroll', () => {
-    document.body.classList.toggle('mobile-scrolled-collapsed', mainEl.scrollTop > COLLAPSE_THRESHOLD);
-  }, { passive: true });
+  const COLLAPSE_THRESHOLD = 30;
+  const updateCollapsedState = () => {
+    const cardEl = document.querySelector('.apple-glass-card');
+    const mainScrolled = mainEl.scrollTop > COLLAPSE_THRESHOLD;
+    const cardScrolled = cardEl && cardEl.scrollTop > COLLAPSE_THRESHOLD;
+    document.body.classList.toggle('mobile-scrolled-collapsed', mainScrolled || cardScrolled);
+  };
+
+  mainEl.addEventListener('scroll', updateCollapsedState, { passive: true });
+  const cardEl = document.querySelector('.apple-glass-card');
+  if (cardEl) {
+    cardEl.addEventListener('scroll', updateCollapsedState, { passive: true });
+  }
 
   bindGlobalTouchScroll(mainEl);
 }

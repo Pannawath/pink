@@ -66,7 +66,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=17">
+  <link rel="stylesheet" href="css/style.css?v=19">
   
   <!-- Accessibility Fixes CSS -->
   <link rel="stylesheet" href="css/accessibility-fixes.css?v=6">
@@ -152,12 +152,12 @@
         </div>
       </a>
 
-      <!-- View mode controls integrated into header -->
-      <div class="apple-segmented-control relative flex-1 sm:flex-initial min-w-0">
-        <div id="segmentedIndicator" class="apple-segmented-indicator"></div>
-        <button type="button" id="btnViewBack" class="apple-segmented-btn text-xs sm:text-sm">ด้านหลัง</button>
-        <button type="button" id="btnViewFront" class="apple-segmented-btn active text-xs sm:text-sm">ด้านหน้า</button>
-        <button type="button" id="btnViewBoth" class="apple-segmented-btn text-xs sm:text-sm">คู่หน้า-หลัง</button>
+      <!-- View mode controls integrated into header (Mobile Scrolled Only) -->
+      <div id="headerSegmentedControl" class="apple-segmented-control relative flex-1 sm:flex-initial min-w-0 transition-all duration-300">
+        <div id="headerSegmentedIndicator" class="apple-segmented-indicator"></div>
+        <button type="button" id="headerBtnViewBack" class="apple-segmented-btn text-xs sm:text-sm">ด้านหลัง</button>
+        <button type="button" id="headerBtnViewFront" class="apple-segmented-btn active text-xs sm:text-sm">ด้านหน้า</button>
+        <button type="button" id="headerBtnViewBoth" class="apple-segmented-btn text-xs sm:text-sm">คู่หน้า-หลัง</button>
       </div>
     </div>
   </header>
@@ -192,7 +192,17 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
       <!-- ================= LEFT: PURE TRANSPARENT PRODUCT STAGE ================= -->
-      <div class="lg:col-span-6 flex flex-col items-center justify-center">
+      <div class="lg:col-span-6 flex flex-col items-center justify-center space-y-3">
+
+        <!-- Stage View Mode Controls (Primary, sits directly above jersey stage) -->
+        <div id="stageSegmentedWrapper" class="w-full flex items-center justify-center px-2">
+          <div id="stageSegmentedControl" class="apple-segmented-control relative">
+            <div id="stageSegmentedIndicator" class="apple-segmented-indicator"></div>
+            <button type="button" id="stageBtnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
+            <button type="button" id="stageBtnViewFront" class="apple-segmented-btn active">ด้านหน้า</button>
+            <button type="button" id="stageBtnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
+          </div>
+        </div>
 
         <!-- Floating Transparent Jersey Canvas -->
         <div class="jersey-stage-container w-full flex items-center justify-center">
@@ -843,7 +853,7 @@
   <script src="js/security.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=9"></script>
+  <script src="js/app.js?v=10"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>
