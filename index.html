@@ -45,6 +45,14 @@
     }
   </script>
 
+  <!-- Google Fonts: Lobster (jersey number) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+
+  <!-- CMU Serif (Computer Modern) for jersey name -->
+  <link href="https://cdn.jsdelivr.net/gh/vsalvino/computer-modern@main/fonts/serif.css" rel="stylesheet">
+
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -58,7 +66,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=11">
+  <link rel="stylesheet" href="css/style.css?v=12">
   
   <!-- Accessibility Fixes CSS -->
   <link rel="stylesheet" href="css/accessibility-fixes.css?v=5">
@@ -179,7 +187,7 @@
       <div class="lg:col-span-6 flex flex-col items-center justify-center space-y-4">
 
         <!-- View mode controls -->
-        <div class="w-full flex items-center justify-between px-2 mb-2">
+        <div class="w-full flex items-center justify-between px-2 mb-2 relative">
           <div class="apple-segmented-control relative">
             <div id="segmentedIndicator" class="apple-segmented-indicator"></div>
             <button type="button" id="btnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
@@ -187,6 +195,11 @@
             <button type="button" id="btnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
             <button type="button" id="btnView3D" class="apple-segmented-btn"><i class="fa-solid fa-cube mr-1"></i>3D 360°</button>
           </div>
+          <!-- Mobile Floating Circular View Switcher (Visible when scrolled) -->
+          <button type="button" id="mobileFloatingViewBtn" class="mobile-floating-view-btn" aria-label="สลับมุมมองเสื้อ">
+            <i id="mobileFloatingViewIcon" class="fa-solid fa-shirt"></i>
+            <span id="mobileFloatingViewBadge" class="mobile-floating-view-badge">หน้า</span>
+          </button>
         </div>
 
         <!-- Floating Transparent Jersey Canvas -->
@@ -203,7 +216,7 @@
 
                 <!-- Curved Name (Solid Print - No Drop Shadow) -->
                 <g id="svgCurvedNameGroup">
-                  <text font-family="'JerseyMiami', sans-serif" font-weight="normal" font-size="70" fill="#451a03"
+                  <text font-family="'Computer Modern Serif', 'CMU Serif', serif" font-weight="normal" font-size="70" fill="#5C3C2B"
                     letter-spacing="4">
                     <textPath id="svgCurvedNameText" href="#nameArcPath" startOffset="50%" text-anchor="middle">
                       YOUR NAME
@@ -212,19 +225,16 @@
                 </g>
 
                 <!-- Back Number (Solid Print - No Drop Shadow) -->
-                <text id="svgBackNumber" x="390" y="505" font-family="'JerseyMiami', sans-serif" font-weight="normal"
+                <text id="svgBackNumber" x="390" y="505" font-family="'Lobster', cursive" font-weight="normal"
                   font-size="380" letter-spacing="0.02em" text-anchor="middle" class="number-style-clean"
                   dominant-baseline="central"></text>
               </svg>
             </div>
 
-            <!-- 2. Front View HD (With Front Chest Number) -->
+            <!-- 2. Front View HD -->
             <div id="jerseyViewFrontEl" class="jersey-hd-front hidden">
               <svg id="svgJerseyFront" class="jersey-svg-overlay" viewBox="0 0 780 1019" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
-                <text id="svgFrontNumber" x="285" y="300" font-family="'JerseyMiami', sans-serif" font-weight="normal"
-                  font-size="85" letter-spacing="0.02em" text-anchor="middle" class="number-style-clean"
-                  dominant-baseline="central"></text>
               </svg>
             </div>
 
@@ -235,9 +245,6 @@
                 <div class="jersey-hd-front-inner">
                   <svg id="svgJerseyBothFront" class="jersey-svg-overlay" viewBox="0 0 780 1019" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
-                    <text id="svgBothFrontNumber" x="285" y="300" font-family="'JerseyMiami', sans-serif" font-weight="normal"
-                      font-size="85" letter-spacing="0.02em" text-anchor="middle" class="number-style-clean"
-                      dominant-baseline="central"></text>
                   </svg>
                 </div>
               </div>
@@ -253,7 +260,7 @@
 
                     <!-- Curved Name -->
                     <g id="svgCurvedNameGroupBoth">
-                      <text font-family="'JerseyMiami', sans-serif" font-weight="normal" font-size="70" fill="#451a03"
+                      <text font-family="'Computer Modern Serif', 'CMU Serif', serif" font-weight="normal" font-size="70" fill="#5C3C2B"
                         letter-spacing="4">
                         <textPath id="svgCurvedNameBoth" href="#nameArcPathBoth" startOffset="50%" text-anchor="middle">
                           YOUR NAME
@@ -262,7 +269,7 @@
                     </g>
 
                     <!-- Back Number -->
-                    <text id="svgBothNumber" x="390" y="505" font-family="'JerseyMiami', sans-serif" font-weight="normal"
+                    <text id="svgBothNumber" x="390" y="505" font-family="'Lobster', cursive" font-weight="normal"
                       font-size="380" letter-spacing="0.02em" text-anchor="middle" class="number-style-clean"
                       dominant-baseline="central"></text>
                   </svg>
@@ -844,7 +851,7 @@
   <script src="js/security.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=4"></script>
+  <script src="js/app.js?v=5"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>

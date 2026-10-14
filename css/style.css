@@ -1169,6 +1169,91 @@ main.max-w-5xl {
     overscroll-behavior: contain;
     box-sizing: border-box;
     width: 100%;
+    transition: top 0.28s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Floating Circular View Switcher on Mobile */
+  .mobile-floating-view-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    z-index: 45;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.45) 100%),
+      rgba(255, 255, 255, 0.30);
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    box-shadow:
+      0 4px 18px rgba(239, 79, 163, 0.35),
+      inset 0 1px 2px rgba(255, 255, 255, 1);
+    backdrop-filter: blur(16px) saturate(190%);
+    -webkit-backdrop-filter: blur(16px) saturate(190%);
+    color: #db2777;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-floating-view-btn:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-floating-view-badge {
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    background: linear-gradient(135deg, #ec4899, #db2777);
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+
+  /* Collapsed Mobile Scrolled State (When user scrolls deep into form) */
+  .mobile-scrolled-collapsed .apple-segmented-control {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.92);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+  }
+
+  .apple-segmented-control {
+    transition: opacity 0.22s ease, transform 0.22s ease;
+  }
+
+  .mobile-scrolled-collapsed .mobile-floating-view-btn {
+    display: flex;
+    animation: popInFloat 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-scrolled-collapsed .grid.lg\:grid-cols-12 > div:nth-child(2) {
+    top: 8px !important;
+  }
+
+  .mobile-scrolled-collapsed .apple-glass-card {
+    top: 8px !important;
+    max-height: calc(100vh - 75px) !important;
+    max-height: calc(100dvh - 75px) !important;
+  }
+}
+
+@keyframes popInFloat {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 

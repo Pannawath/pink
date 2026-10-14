@@ -5,22 +5,17 @@ const JERSEY_CONFIG = {
   // 1. เบอร์ด้านหลัง (Back Number)
   backNumber: {
     x: 400,        // แนวนอน (390 = กึ่งกลางเสื้อพอดี)
-    y: 505,        // แนวตั้ง (ความสูงของเบอร์หลัง)
-    size: 380      // ขนาดตัวเลขด้านหลัง
+    y: 470,        // แนวตั้ง (ความสูงของเบอร์หลัง)
+    size: 400      // ขนาดตัวเลขด้านหลัง
   },
 
   // 2. ชื่อด้านหลัง (Back Name)
   backName: {
     arcCurveY: 235, // ระดับความโค้งของชื่อแนวตั้ง (Y)
-    baseSize: 70   // ขนาดตัวอักษรชื่อเริ่มต้น
+    baseSize: 100   // ขนาดตัวอักษรชื่อเริ่มต้น
   },
 
-  // 3. เบอร์ด้านหน้าอก (Front Chest Number)
-  frontNumber: {
-    x: 285,        // แนวนอน (285 = อกขวา)
-    y: 300,        // แนวตั้ง (ความสูงของเบอร์หน้าอก)
-    size: 85       // ขนาดตัวเลขด้านหน้า
-  }
+
 };
 
 // ==========================================
@@ -32,7 +27,7 @@ const AppState = {
   email: '',
   size: 'L',
   screenName: '',
-  screenNumber: '10',
+  screenNumber: '70',
   paymentStatus: 'pending', // legacy
   orderStatus: 'รอชำระเงิน', // ค่าสถานะหลักที่บันทึกลง Sheets
   slipImage: null, // Base64 data URL
@@ -133,6 +128,9 @@ const DOM = {
   btnViewFront: document.getElementById('btnViewFront'),
   btnViewBoth: document.getElementById('btnViewBoth'),
   btnView3D: document.getElementById('btnView3D'),
+  mobileFloatingViewBtn: document.getElementById('mobileFloatingViewBtn'),
+  mobileFloatingViewIcon: document.getElementById('mobileFloatingViewIcon'),
+  mobileFloatingViewBadge: document.getElementById('mobileFloatingViewBadge'),
   btnToggleRotation: null,
   btnDownloadJersey: document.getElementById('btnDownloadJersey'),
 
@@ -269,11 +267,19 @@ function bindSizeAndStatusEvents() {
   });
 }
 
+function cycleJerseyView() {
+  const sequence = ['front', 'back', '3d', 'both'];
+  const currentIndex = sequence.indexOf(AppState.viewSide || 'front');
+  const nextSide = sequence[(currentIndex + 1) % sequence.length];
+  setJerseyView(nextSide);
+}
+
 function bindViewSwitcherEvents() {
   if (DOM.btnViewBack) DOM.btnViewBack.addEventListener('click', () => setJerseyView('back'));
   if (DOM.btnViewFront) DOM.btnViewFront.addEventListener('click', () => setJerseyView('front'));
   if (DOM.btnViewBoth) DOM.btnViewBoth.addEventListener('click', () => setJerseyView('both'));
   if (DOM.btnView3D) DOM.btnView3D.addEventListener('click', () => setJerseyView('3d'));
+  if (DOM.mobileFloatingViewBtn) DOM.mobileFloatingViewBtn.addEventListener('click', cycleJerseyView);
 
   if (DOM.btnOpenSizeGuideNav) {
     DOM.btnOpenSizeGuideNav.addEventListener('click', () => DOM.modalSizeGuide.classList.remove('hidden'));
@@ -328,6 +334,7 @@ function bindEvents() {
   bindViewSwitcherEvents();
   bindActionModalEvents();
   initSlipUploadEvents();
+  bindMobileScrollCollapse();
 }
 
 // ==========================================
@@ -707,7 +714,9 @@ function syncCurvedSvgName(targetTextEl, targetPathEl, displayName, typographyCo
     if (parentText) {
       parentText.setAttribute('font-size', typographyConfig.dynamicSize.toString());
       parentText.setAttribute('letter-spacing', typographyConfig.letterSpacing);
-      parentText.style.fill = '#ffffff';
+      parentText.setAttribute('font-family', "'Computer Modern Serif', 'CMU Serif', serif");
+      parentText.setAttribute('font-weight', '900');
+      parentText.style.fill = '#5C3C2B';
       parentText.removeAttribute('filter');
     }
   }
@@ -715,7 +724,8 @@ function syncCurvedSvgName(targetTextEl, targetPathEl, displayName, typographyCo
 
 function syncJerseySvgNumber(targetNumberEl, displayNumber, sizeConfig) {
   if (!targetNumberEl) return;
-  targetNumberEl.style.fontFamily = "'BebasNeue', 'JerseyMiami', sans-serif";
+  targetNumberEl.style.fontFamily = "'Lobster', 'BebasNeue', cursive";
+  targetNumberEl.style.fill = '#5C3C2B';
   targetNumberEl.setAttribute('font-size', sizeConfig.size.toString());
   targetNumberEl.setAttribute('x', sizeConfig.x.toString());
   targetNumberEl.setAttribute('y', sizeConfig.y.toString());
@@ -725,7 +735,7 @@ function syncJerseySvgNumber(targetNumberEl, displayNumber, sizeConfig) {
 function updateLivePreview() {
   const nameText = (AppState.screenName || '').toString().trim();
   const numberText = (AppState.screenNumber || '10').toString().trim();
-  const displayName = nameText || 'YOUR NAME';
+  const displayName = nameText || 'NAME';
   const displayNumber = numberText || '10';
 
   const typographyConfig = calculateDynamicNameTypography(nameText, JERSEY_CONFIG.backName.baseSize);
@@ -734,9 +744,7 @@ function updateLivePreview() {
   syncCurvedSvgName(DOM.svgCurvedNameBoth, DOM.nameArcPathBoth, displayName, typographyConfig);
 
   syncJerseySvgNumber(DOM.svgBackNumber, displayNumber, JERSEY_CONFIG.backNumber);
-  syncJerseySvgNumber(DOM.svgFrontNumber, displayNumber, JERSEY_CONFIG.frontNumber);
   syncJerseySvgNumber(DOM.svgBothNumber, displayNumber, JERSEY_CONFIG.backNumber);
-  syncJerseySvgNumber(DOM.svgBothFrontNumber, displayNumber, JERSEY_CONFIG.frontNumber);
 
   applyNumberStyle();
 }
@@ -744,9 +752,7 @@ function updateLivePreview() {
 function applyNumberStyle() {
   const cls = 'number-style-clean';
   if (DOM.svgBackNumber) DOM.svgBackNumber.setAttribute('class', cls);
-  if (DOM.svgFrontNumber) DOM.svgFrontNumber.setAttribute('class', cls);
   if (DOM.svgBothNumber) DOM.svgBothNumber.setAttribute('class', cls);
-  if (DOM.svgBothFrontNumber) DOM.svgBothFrontNumber.setAttribute('class', cls);
 }
 
 function updateSegmentedIndicator(side) {
@@ -814,6 +820,15 @@ function setJerseyView(side) {
   updateJerseyViewButtons(side);
   updateSegmentedIndicator(side);
 
+  const ICON_MAP = { front: 'fa-shirt', back: 'fa-shirt', '3d': 'fa-cube', both: 'fa-shirt' };
+  const BADGE_MAP = { front: 'หน้า', back: 'หลัง', '3d': '3D', both: 'คู่' };
+  if (DOM.mobileFloatingViewIcon) {
+    DOM.mobileFloatingViewIcon.className = `fa-solid ${ICON_MAP[side] || 'fa-shirt'}`;
+  }
+  if (DOM.mobileFloatingViewBadge) {
+    DOM.mobileFloatingViewBadge.textContent = BADGE_MAP[side] || side;
+  }
+
   [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl, DOM.jerseyView3DEl].forEach(view => {
     if (view && !view.classList.contains('hidden')) {
       view.style.opacity = '0';
@@ -829,6 +844,16 @@ window.addEventListener('resize', () => {
     updateSegmentedIndicator(AppState.viewSide);
   }
 });
+
+function bindMobileScrollCollapse() {
+  const mainEl = document.querySelector('main');
+  if (!mainEl) return;
+  const COLLAPSE_THRESHOLD = 60;
+  mainEl.addEventListener('scroll', () => {
+    const collapsed = mainEl.scrollTop > COLLAPSE_THRESHOLD;
+    document.body.classList.toggle('mobile-scrolled-collapsed', collapsed);
+  }, { passive: true });
+}
 
 // ==========================================
 // 7. SMART EMAIL LOOKUP & DATABASE
