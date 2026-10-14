@@ -188,6 +188,6 @@ body::after {
 /* ปรับตำแหน่ง jersey preview บนมือถือให้เห็นหัวเสื้อ */
 @media (max-width: 1023px) {
   #jerseyView2DEl {
-    transform: translateY(-20%) !important;
+    transform: translateY(-10%) !important;
   }
 }
