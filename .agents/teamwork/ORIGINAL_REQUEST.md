@@ -31,3 +31,39 @@ The desktop experience (>= 1024px) must remain 100% untouched as a side-by-side 
 - [ ] 3D canvas and OrbitControls remain draggable and interactive in the exposed top half.
 - [ ] On desktop (>= 1024px), the side-by-side grid is completely preserved.
 - [ ] Passes Gatekeeper scan (gk_gatekeeper_scan) with zero invariant violations, complexity <= 7, span <= 50 lines, and strictly zero emojis.
+
+
+## Follow-up — 2026-10-14T15:24:18Z
+
+This is a single self-contained fix; keep it small and focused.
+
+Working directory: d:\antigravity\pink
+Integrity mode: development
+
+## Problem Analysis
+When the user scrolls on mobile viewports (< 1024px):
+1. **Flicker/Jitter Loop**: Collapsing `#stageSegmentedWrapper` (`height: 0px !important`, `margin-bottom: -12px !important`) reduces the scrollable height of `<main>`, which abruptly lowers `main.scrollTop`. This causes `main.scrollTop <= COLLAPSE_THRESHOLD`, removing `.mobile-scrolled-collapsed`. Once removed, the height expands back, `main.scrollTop` increases again, re-triggering the class in an infinite layout thrashing/jitter loop.
+2. **Header Switcher Not Showing**: Because of the flickering oscillation, `#headerSegmentedControl` never stays visible or stable in the navbar.
+
+## Requirements
+
+### R1. Jitter-Free Mobile Scroll Transition
+Eliminate layout-induced scroll bounce and infinite toggle loops. Transitions must rely strictly on non-layout-shifting properties (e.g., `transform: translateY(...)`, `opacity`, or pinning with CSS `position: sticky` and `IntersectionObserver` / threshold hysteresis with a debounce/buffer) so that toggling classes does not alter `main.scrollTop` or the container scroll height.
+
+### R2. Rock-Solid Header View Switcher Reveal
+When scrolling down past the threshold (e.g. 40px), the header view switcher (`#headerSegmentedControl`) must smoothly fade in/slide into the top navbar alongside the brand logo, with opacity 1 and pointer-events auto. The stage switcher (`#stageSegmentedWrapper`) must cleanly yield its space without leaving an empty ghost gap or jumping.
+
+### R3. Smooth Reversion on Scroll Back Up
+When scrolling back to the top (scrollTop = 0), restore the stage switcher smoothly and hide the header switcher without flickering or hitching.
+
+### R4. Zero Regressions on Desktop and Interactions
+Desktop layout (>= 1024px) remains untouched (header switcher hidden, stage switcher visible). All button clicks (front / back / both) and form interactions must work without error.
+
+## Acceptance Criteria
+
+### Verification Guardrails
+- [ ] On mobile viewport (390px - 430px), scrolling down causes zero visual jitter, layout bounce, or infinite flicker loops.
+- [ ] `#headerSegmentedControl` becomes clearly visible (opacity: 1, pointer-events: auto) inside the navbar when scrolled past the threshold.
+- [ ] Buttons in the header switcher remain clickable and sync state with preview.
+- [ ] Scrolling back to top restores `#stageSegmentedWrapper` seamlessly.
+- [ ] Passes `gk_gatekeeper_scan` with zero invariant violations, complexity <= 7, span <= 50 lines, and strictly zero emojis.

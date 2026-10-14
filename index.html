@@ -66,7 +66,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=22">
+  <link rel="stylesheet" href="css/style.css?v=26">
   
   <!-- Accessibility Fixes CSS -->
   <link rel="stylesheet" href="css/accessibility-fixes.css?v=6">
@@ -110,6 +110,7 @@
       overflow-y: auto !important;
       overflow-x: hidden !important;
       height: calc(100vh - 60px) !important;
+      height: calc(100dvh - 60px) !important;
       touch-action: pan-y !important;
     }
 
@@ -142,7 +143,7 @@
     <div class="apple-glass-nav px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
 
       <!-- Brand Minimal Logo -->
-      <a href="javascript:window.scrollTo({top:0,behavior:'smooth'})" class="flex items-center space-x-2.5 shrink-0 group">
+      <a href="javascript:(document.querySelector('main')?.scrollTo({top:0,behavior:'smooth'}),document.getElementById('configuratorCard')?.scrollTo({top:0,behavior:'smooth'}),window.scrollTo({top:0,behavior:'smooth'}))" class="flex items-center space-x-2.5 shrink-0 group">
         <img src="assets/images/school_crest.png" alt="ตราโรงเรียนสารคามพิทยาคม"
           class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition border border-white/40">
         <div class="flex items-center">
@@ -153,11 +154,11 @@
       </a>
 
       <!-- View mode controls integrated into header (Mobile Scrolled Only) -->
-      <div id="headerSegmentedControl" class="apple-segmented-control relative flex-1 sm:flex-initial min-w-0 transition-all duration-300">
+      <div id="headerSegmentedControl" class="apple-segmented-control relative flex-1 sm:flex-initial min-w-0 transition-all duration-300" role="group" aria-label="มุมมองเสื้อด้านบน" aria-hidden="true">
         <div id="headerSegmentedIndicator" class="apple-segmented-indicator"></div>
-        <button type="button" id="headerBtnViewBack" class="apple-segmented-btn text-xs sm:text-sm">ด้านหลัง</button>
-        <button type="button" id="headerBtnViewFront" class="apple-segmented-btn active text-xs sm:text-sm">ด้านหน้า</button>
-        <button type="button" id="headerBtnViewBoth" class="apple-segmented-btn text-xs sm:text-sm">คู่หน้า-หลัง</button>
+        <button type="button" id="headerBtnViewBack" class="apple-segmented-btn text-xs sm:text-sm" aria-pressed="false" tabindex="-1">ด้านหลัง</button>
+        <button type="button" id="headerBtnViewFront" class="apple-segmented-btn active text-xs sm:text-sm" aria-pressed="true" tabindex="-1">ด้านหน้า</button>
+        <button type="button" id="headerBtnViewBoth" class="apple-segmented-btn text-xs sm:text-sm" aria-pressed="false" tabindex="-1">คู่หน้า-หลัง</button>
       </div>
     </div>
   </header>
@@ -195,12 +196,12 @@
       <div class="lg:col-span-6 flex flex-col items-center justify-center space-y-3">
 
         <!-- Stage View Mode Controls (Primary, sits directly above jersey stage) -->
-        <div id="stageSegmentedWrapper" class="w-full flex items-center justify-center px-2">
-          <div id="stageSegmentedControl" class="apple-segmented-control relative">
+        <div id="stageSegmentedWrapper" class="w-full flex items-center justify-center px-2" aria-hidden="false">
+          <div id="stageSegmentedControl" class="apple-segmented-control relative" role="group" aria-label="มุมมองเสื้อ">
             <div id="stageSegmentedIndicator" class="apple-segmented-indicator"></div>
-            <button type="button" id="stageBtnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
-            <button type="button" id="stageBtnViewFront" class="apple-segmented-btn active">ด้านหน้า</button>
-            <button type="button" id="stageBtnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
+            <button type="button" id="stageBtnViewBack" class="apple-segmented-btn" aria-pressed="false" tabindex="0">ด้านหลัง</button>
+            <button type="button" id="stageBtnViewFront" class="apple-segmented-btn active" aria-pressed="true" tabindex="0">ด้านหน้า</button>
+            <button type="button" id="stageBtnViewBoth" class="apple-segmented-btn" aria-pressed="false" tabindex="0">คู่หน้า-หลัง</button>
           </div>
         </div>
 
@@ -288,7 +289,7 @@
       <!-- ================= RIGHT: APPLE LIQUID GLASS CONFIGURATOR ================= -->
       <div class="lg:col-span-6 space-y-4">
 
-        <div class="apple-glass-card p-6 sm:p-7 space-y-5">
+        <div id="configuratorCard" class="apple-glass-card p-6 sm:p-7 space-y-5">
 
           <!-- Mobile Sheet Pull Handle Pill -->
           <div class="mobile-sheet-handle-container" aria-hidden="true"><div class="mobile-sheet-handle"></div></div>
@@ -853,7 +854,7 @@
   <script src="js/security.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=10"></script>
+  <script src="js/app.js?v=14"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>

@@ -55,6 +55,7 @@ const DEFAULT_DEMO_ORDERS = [];
 // ==========================================
 const DOM = {
   // Form Inputs & Buttons
+  configuratorCard: document.getElementById('configuratorCard'),
   inputEmail: document.getElementById('inputEmail'),
   emailLoadingSpinner: document.getElementById('emailLoadingSpinner'),
   emailStatusBadge: document.getElementById('emailStatusBadge'),
@@ -128,6 +129,7 @@ const DOM = {
   headerBtnViewBack: document.getElementById('headerBtnViewBack'),
   headerBtnViewFront: document.getElementById('headerBtnViewFront'),
   headerBtnViewBoth: document.getElementById('headerBtnViewBoth'),
+  stageSegmentedWrapper: document.getElementById('stageSegmentedWrapper'),
   stageSegmentedControl: document.getElementById('stageSegmentedControl'),
   stageSegmentedIndicator: document.getElementById('stageSegmentedIndicator'),
   stageBtnViewBack: document.getElementById('stageBtnViewBack'),
@@ -825,8 +827,11 @@ function updateJerseyViewButtons(selectedSide) {
     DOM.stageBtnViewFront,
     DOM.stageBtnViewBoth
   ];
-  allButtons.forEach(btn => {
-    if (btn) btn.classList.remove('active');
+  allButtons.forEach(buttonElement => {
+    if (buttonElement) {
+      buttonElement.classList.remove('active');
+      buttonElement.setAttribute('aria-pressed', 'false');
+    }
   });
 
   const activeButtons = {
@@ -835,9 +840,55 @@ function updateJerseyViewButtons(selectedSide) {
     both: [DOM.headerBtnViewBoth, DOM.stageBtnViewBoth]
   };
 
-  (activeButtons[selectedSide] || []).forEach(btn => {
-    if (btn) btn.classList.add('active');
+  (activeButtons[selectedSide] || []).forEach(buttonElement => {
+    if (buttonElement) {
+      buttonElement.classList.add('active');
+      buttonElement.setAttribute('aria-pressed', 'true');
+    }
   });
+}
+
+function transferSwitcherFocus(targetHeaderActive) {
+  const activeFocusElement = document.activeElement;
+  if (!activeFocusElement) return;
+
+  const switcherPairs = [
+    { headerBtn: DOM.headerBtnViewBack, stageBtn: DOM.stageBtnViewBack },
+    { headerBtn: DOM.headerBtnViewFront, stageBtn: DOM.stageBtnViewFront },
+    { headerBtn: DOM.headerBtnViewBoth, stageBtn: DOM.stageBtnViewBoth }
+  ];
+
+  switcherPairs.forEach(({ headerBtn, stageBtn }) => {
+    if (targetHeaderActive && activeFocusElement === stageBtn && headerBtn) {
+      setTimeout(() => headerBtn.focus(), 100);
+    } else if (!targetHeaderActive && activeFocusElement === headerBtn && stageBtn) {
+      setTimeout(() => stageBtn.focus(), 100);
+    }
+  });
+}
+
+function syncSwitcherAccessibility(isCollapsedState) {
+  const isDesktopViewport = window.innerWidth >= 1024;
+  const isHeaderActive = !isDesktopViewport && isCollapsedState;
+  const isStageActive = isDesktopViewport || !isCollapsedState;
+
+  if (DOM.headerSegmentedControl) {
+    DOM.headerSegmentedControl.setAttribute('aria-hidden', String(!isHeaderActive));
+    const headerButtons = [DOM.headerBtnViewBack, DOM.headerBtnViewFront, DOM.headerBtnViewBoth];
+    headerButtons.forEach(buttonElement => {
+      if (buttonElement) buttonElement.tabIndex = isHeaderActive ? 0 : -1;
+    });
+  }
+
+  if (DOM.stageSegmentedWrapper) {
+    DOM.stageSegmentedWrapper.setAttribute('aria-hidden', String(!isStageActive));
+    const stageButtons = [DOM.stageBtnViewBack, DOM.stageBtnViewFront, DOM.stageBtnViewBoth];
+    stageButtons.forEach(buttonElement => {
+      if (buttonElement) buttonElement.tabIndex = isStageActive ? 0 : -1;
+    });
+  }
+
+  transferSwitcherFocus(isHeaderActive);
 }
 
 function setJerseyView(side) {
@@ -863,50 +914,117 @@ window.addEventListener('resize', () => {
   }
 });
 
-function bindMobileScrollCollapse() {
-  const mainEl = document.querySelector('main');
-  if (!mainEl) return;
+let isMobileCollapsedState = false;
+let scrollEvaluationFrameId = null;
 
-  const COLLAPSE_THRESHOLD = 30;
-  const updateCollapsedState = () => {
-    const cardEl = document.querySelector('.apple-glass-card');
-    const mainScrolled = mainEl.scrollTop > COLLAPSE_THRESHOLD;
-    const cardScrolled = cardEl && cardEl.scrollTop > COLLAPSE_THRESHOLD;
-    document.body.classList.toggle('mobile-scrolled-collapsed', mainScrolled || cardScrolled);
-  };
-
-  mainEl.addEventListener('scroll', updateCollapsedState, { passive: true });
-  const cardEl = document.querySelector('.apple-glass-card');
-  if (cardEl) {
-    cardEl.addEventListener('scroll', updateCollapsedState, { passive: true });
-  }
-
-  bindGlobalTouchScroll(mainEl);
+function getActiveScrollOffset(mainElement) {
+  const cardElement = DOM.configuratorCard || document.getElementById('configuratorCard');
+  const mainOffset = mainElement.scrollTop;
+  const cardOffset = cardElement ? cardElement.scrollTop : 0;
+  return Math.max(mainOffset, cardOffset);
 }
 
-function bindGlobalTouchScroll(mainEl) {
-  const SKIP_TAGS = new Set(['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'CANVAS', 'LABEL']);
-  let touchStartY = 0;
-  let touchStartScroll = 0;
-  let isDragging = false;
+function applyCollapsedState(shouldCollapse) {
+  if (isMobileCollapsedState === shouldCollapse) return;
 
-  document.addEventListener('touchstart', (ev) => {
-    const target = ev.target;
-    if (SKIP_TAGS.has(target.tagName)) return;
-    touchStartY = ev.touches[0].clientY;
-    touchStartScroll = mainEl.scrollTop;
-    isDragging = true;
+  isMobileCollapsedState = shouldCollapse;
+  syncSwitcherAccessibility(shouldCollapse);
+  document.body.classList.toggle('mobile-scrolled-collapsed', shouldCollapse);
+
+  if (AppState && AppState.viewSide) {
+    updateSegmentedIndicator(AppState.viewSide);
+  }
+}
+
+function evaluateMobileScroll(mainElement) {
+  scrollEvaluationFrameId = null;
+
+  if (window.innerWidth >= 1024) {
+    applyCollapsedState(false);
+    return;
+  }
+
+  const combinedOffset = getActiveScrollOffset(mainElement);
+  const ENTER_THRESHOLD = 40;
+  const EXIT_THRESHOLD = 15;
+
+  if (!isMobileCollapsedState && combinedOffset > ENTER_THRESHOLD) {
+    applyCollapsedState(true);
+  } else if (isMobileCollapsedState && combinedOffset <= EXIT_THRESHOLD) {
+    applyCollapsedState(false);
+  }
+}
+
+function scheduleScrollEvaluation(mainElement) {
+  if (scrollEvaluationFrameId !== null) return;
+  scrollEvaluationFrameId = window.requestAnimationFrame(() => {
+    evaluateMobileScroll(mainElement);
+  });
+}
+
+function bindMobileScrollCollapse() {
+  const mainElement = document.querySelector('main');
+  if (!mainElement) return;
+
+  const handleScroll = () => scheduleScrollEvaluation(mainElement);
+
+  mainElement.addEventListener('scroll', handleScroll, { passive: true });
+  const cardElement = DOM.configuratorCard || document.getElementById('configuratorCard');
+  if (cardElement) {
+    cardElement.addEventListener('scroll', handleScroll, { passive: true });
+  }
+
+  window.addEventListener('resize', handleScroll, { passive: true });
+
+  syncSwitcherAccessibility(false);
+  bindGlobalTouchScroll(mainElement);
+}
+
+function shouldBypassTouchDrag(touchEvent) {
+  if (window.innerWidth >= 1024 || touchEvent.touches.length > 1) return true;
+  if (document.body.classList.contains('overflow-hidden')) return true;
+
+  const targetElement = touchEvent.target;
+  if (targetElement.closest('button, a, input, textarea, select, canvas, label')) return true;
+
+  const isPullHandle = Boolean(targetElement.closest('.mobile-sheet-handle-container'));
+  const isInsideCard = Boolean(targetElement.closest('#configuratorCard, .apple-glass-card'));
+  return !isPullHandle && isInsideCard;
+}
+
+function bindGlobalTouchScroll(mainElement) {
+  const INTERACTIVE_SELECTOR = 'button, a, input, textarea, select, canvas, label';
+  let touchStartClientY = 0;
+  let touchStartScrollTop = 0;
+  let isDraggingActive = false;
+
+  document.addEventListener('touchstart', (touchStartEvent) => {
+    if (shouldBypassTouchDrag(touchStartEvent)) return;
+
+    touchStartClientY = touchStartEvent.touches[0].clientY;
+    touchStartScrollTop = mainElement.scrollTop;
+    isDraggingActive = true;
   }, { passive: true });
 
-  document.addEventListener('touchmove', (ev) => {
-    if (!isDragging) return;
-    const target = ev.target;
-    if (SKIP_TAGS.has(target.tagName)) return;
-    const deltaY = touchStartY - ev.touches[0].clientY;
-    mainEl.scrollTop = touchStartScroll + deltaY;
+  document.addEventListener('touchmove', (touchMoveEvent) => {
+    if (!isDraggingActive || touchMoveEvent.touches.length > 1) {
+      isDraggingActive = false;
+      return;
+    }
+
+    const targetElement = touchMoveEvent.target;
+    if (targetElement.closest(INTERACTIVE_SELECTOR)) return;
+
+    const dragDistance = touchStartClientY - touchMoveEvent.touches[0].clientY;
+    mainElement.scrollTop = touchStartScrollTop + dragDistance;
   }, { passive: true });
 
-  document.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
+  const stopActiveDrag = () => {
+    isDraggingActive = false;
+  };
+
+  document.addEventListener('touchend', stopActiveDrag, { passive: true });
+  document.addEventListener('touchcancel', stopActiveDrag, { passive: true });
 }
 
 function getActiveModalElements() {
@@ -1185,7 +1303,10 @@ function resetToNewMode() {
   DOM.btnSubmitText.textContent = 'ยืนยันการสั่งจองและส่งสลิป';
   DOM.btnSubmitIcon.className = 'fa-solid fa-check mr-1.5';
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.remove('hidden');
-  
+  if (DOM.configuratorCard) {
+    DOM.configuratorCard.scrollTop = 0;
+  }
+
   // Update live preview
   updateLivePreview();
 }

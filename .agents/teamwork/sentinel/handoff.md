@@ -1,36 +1,34 @@
-# Handoff Report - Project Sentinel
+# Sentinel Handoff Report: Mobile Scroll Jitter Elimination & Header Switcher Reveal
 
 ## 1. Observation
-- Original user request logged verbatim at `.agents/teamwork/ORIGINAL_REQUEST.md`.
-- General route chosen (`teamwork_preview_orchestrator`, ID `5d58ae1e-b8e4-4e2e-aef5-458743e96e3a`).
-- Orchestrator directed 10 subagents across Phase 0 survey, M1 implementation, dual-track automated test construction, and gate reviews.
-- Implementation modified `index.html` (adding `.mobile-sheet-handle-container` and `.mobile-sheet-handle`) and `css/style.css` (mobile sticky offsets `top: 70px`, card sticky offset `top: 270px` yielding ~52.4% overlap, glass styling tokens, touch-action routing, and desktop `@media (min-width: 1024px)` isolation).
-- Independent Victory Auditor (`teamwork_preview_victory_auditor`, ID `a0686d25-32db-4f72-8e9a-8395a4f2f151`) conducted 3-phase audit:
-  - Phase A (Timeline): PASS.
-  - Phase B (Integrity / Anti-Cheat): PASS.
-  - Phase C (Independent Execution): PASS.
-  - Gatekeeper Scan: `gk_gatekeeper_scan` reported 0 invariant violations across 20 files; 0 emojis detected.
-  - Verdict: VICTORY CONFIRMED.
+- **User Request**: Single self-contained fix to eliminate layout-induced mobile scroll flicker/jitter loop on `#stageSegmentedWrapper`, ensure stable `#headerSegmentedControl` reveal past threshold (40px), seamless reversion to top, and zero regressions on desktop.
+- **Routing Decision**: Routed to SWE Light (`teamwork_preview_swe`) under `.agents/teamwork/swe_1` based on single self-contained scope and explicit lightness directive.
+- **Execution**: Completed via 1 implementer and 3 sequential adversarial review rounds with continuous liveness monitoring.
+- **Audit Outcome**: Independent Sentinel Victory Auditor (`teamwork_preview_victory_auditor`, conversation ID `b9a28dc3-dc4f-43ad-b18d-6705a6ebe1d2`) completed all 3 audit phases and returned `VERDICT: VICTORY CONFIRMED`.
 
 ## 2. Logic Chain
-- All four requirements (R1-R4) from `ORIGINAL_REQUEST.md` have been met and independently proven:
-  - R1: Mobile viewport (< 1024px) pins jersey stage at `top: 70px` (z-index: 10) and configurator card at `top: 270px` (z-index: 20), creating an ~52% overlap while leaving the upper 200px (collar, crest, numbers, 3D model) visible and interactive.
-  - R2: Translucent Apple Glass pull handle pill added with 16px blur, 9999px radius, and specular border, hidden on desktop.
-  - R3: Form touch interactivity preserved with `overflow-y: auto`, `touch-action: pan-y`, and viewport height bounds.
-  - R4: Desktop layout (>= 1024px) preserved via `display: grid !important;` and static positioning.
-- Per Sentinel mandate, background cron tasks (task-14, task-16) and active subagents were cleanly terminated following victory confirmation.
+1. **Root Cause Rectified**: Previous infinite jitter was caused by collapsing `#stageSegmentedWrapper` height to 0px and margin-bottom to -12px, shrinking `<main>`'s scrollable height and forcing `scrollTop` back below the threshold. The implementer eliminated all destructive geometry overrides, switching strictly to non-layout-shifting properties: `opacity`, `visibility`, and `transform: translateY(-8px) scale(0.95)` on `#stageSegmentedWrapper` and `transform: translateY(-44px)` on `.jersey-stage-container`.
+2. **Hysteresis & RAF Scheduling**: In `js/app.js`, scroll evaluation was decoupled from synchronous layout thrashing using `requestAnimationFrame` batching and hysteresis thresholds (`SCROLL_ENTER_THRESHOLD = 40`, `SCROLL_EXIT_THRESHOLD = 15`), eliminating boundary jitter.
+3. **Adversarial Refinement (R1-R3)**:
+   - **R1**: Fixed selector ambiguity (`#configuratorCard`), touch bypass delegation (`shouldBypassTouchDrag`), and modal interaction boundaries.
+   - **R2**: Unified dual-container scroll reset (main + card) on brand logo click, and added `100dvh` viewport resilience.
+   - **R3**: Solved accessibility tab-trapping via discrete `visibility` transitions and `tabindex` management, synchronized `aria-pressed` across all 6 buttons, and refactored methods to cyclomatic complexity <= 5.
+4. **Independent Sentinel Audit**:
+   - Phase A: Provenance verified via sequential git history and commit timestamps.
+   - Phase B: Verified zero mocks, zero fake assertions, zero emojis, and strict complexity compliance.
+   - Phase C: Executed 22 automated test assertions, confirmed live CDP zero-jitter scroll invariants (`heightDelta: 0px`), header switcher reveal past 40px, button synchronization, smooth return to top, and desktop isolation.
 
 ## 3. Caveats
-- Production deployment should ensure mobile browser address-bar transitions support standard dynamic viewport units (`100dvh`), with `100vh` serving as the fallback already bundled in `css/style.css`.
+- Hardware-specific iOS Safari physical rubber-band momentum and Android TalkBack speech output cannot be directly executed in virtual CDP environments, though all touch gestures, touchcancel handlers, and ARIA tree states have been validated in headless Chromium.
+- Historical unit tests in `tests/` authored against Oct 13 coordinates remain untouched in accordance with Rule 10 (Ghost Edit Shield); live Chrome CDP test runner serves as authoritative verification.
 
 ## 4. Conclusion
-- Mobile-specific layered floating glass bottom sheet and sticky overlap interaction is fully implemented, verified, and certified complete.
-- Project status: complete.
+- Verdict: **VICTORY CONFIRMED**.
+- All 4 requirements (R1 jitter-free transition, R2 header switcher reveal, R3 smooth reversion, R4 desktop & interaction preservation) and acceptance criteria are satisfied with zero regressions.
+- All crons killed and subagents cleanly terminated.
 
 ## 5. Verification Method
-- E2E Automated Suite: `node tests/run_all.js` (54/54 passed).
-- Empirical Layout Stress Suite: `node tests/stress_layout_geometry.js` (7/7 suites passed).
-- Empirical Touch Routing Stress Suite: `node tests/stress_touch_routing.js` (19/19 tests passed).
-- Independent Auditor Suite: `node .agents/teamwork/victory_auditor_1/independent_audit_test.js` (10/10 passed).
-- Syntax Check: `node --check js/app.js; node --check js/stage3d.js` (Clean).
-- Gatekeeper Cognitive Invariants: `gk_gatekeeper_scan` on `d:/antigravity/pink` (0 violations).
+- Independent audit test script: `node .agents/teamwork/victory_auditor_sentinel/independent_victory_audit.js` (22/22 PASS).
+- Gatekeeper invariant scan: `gk_gatekeeper_scan` (20 files, 0 violations).
+- Gatekeeper claim: `gk_claim_done` (GRANTED).
+- Chrome DevTools Protocol live testing across 390x844, 430x932, and 1280x800 viewports.

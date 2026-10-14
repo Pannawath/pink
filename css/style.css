@@ -1134,6 +1134,7 @@ main.max-w-5xl {
     min-height: 460px;
     padding: 2px 18px 20px;
     overflow: visible;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .jersey-card-wrapper[data-view="both"] {
@@ -1191,66 +1192,68 @@ main.max-w-5xl {
     transition: top 0.28s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  #modeStatusBanner {
+    position: static !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+
   #headerSegmentedControl {
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     transform: translateY(-4px) scale(0.96);
-    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   #stageSegmentedWrapper {
-    max-height: 70px;
-    margin-bottom: 0;
-    overflow: hidden;
-    transition: max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-                margin-bottom 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.22s ease,
-                transform 0.22s ease;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.22s ease,
+                transform 0.22s ease,
+                visibility 0.22s ease;
   }
 
   /* Scrolled State for Bottom Sheet & Header Switcher */
   .mobile-scrolled-collapsed #headerSegmentedControl {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
     transform: translateY(0) scale(1);
   }
 
   .mobile-scrolled-collapsed #stageSegmentedWrapper {
     opacity: 0 !important;
-    max-height: 0px !important;
-    height: 0px !important;
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
-    margin-top: 0px !important;
-    margin-bottom: -12px !important;
+    visibility: hidden !important;
     pointer-events: none !important;
-    transform: scale(0.85);
+    transform: translateY(-8px) scale(0.95);
   }
 
-  .mobile-scrolled-collapsed .grid.lg\:grid-cols-12 > div:first-child {
-    top: 4px !important;
-  }
-
-  .mobile-scrolled-collapsed .grid.lg\:grid-cols-12 > div:nth-child(2) {
-    top: 8px !important;
-  }
-
-  .mobile-scrolled-collapsed .apple-glass-card {
-    top: 8px !important;
-    max-height: calc(100vh - 75px) !important;
-    max-height: calc(100dvh - 75px) !important;
+  .mobile-scrolled-collapsed .jersey-stage-container {
+    transform: translateY(-44px);
   }
 }
 
 @media (min-width: 1024px) {
   #headerSegmentedControl {
     display: none !important;
+    visibility: hidden !important;
   }
 
   #stageSegmentedWrapper {
     display: flex !important;
     opacity: 1 !important;
+    visibility: visible !important;
     pointer-events: auto !important;
+    transform: none !important;
+  }
+
+  .jersey-stage-container {
+    transform: none !important;
   }
 }
 
