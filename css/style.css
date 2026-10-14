@@ -1111,10 +1111,11 @@ main.max-w-5xl {
   }
 
   .jersey-stage-container {
-    height: auto;
-    max-height: 420px;
-    min-height: 0;
-    padding: 14px 18px;
+    height: 500px;
+    max-height: 520px;
+    min-height: 480px;
+    padding: 10px 18px 20px;
+    overflow: visible;
   }
 
   .jersey-card-wrapper[data-view="both"] {
