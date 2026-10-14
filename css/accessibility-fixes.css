@@ -177,3 +177,55 @@ body::after {
 .apple-glass-card * {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
+
+/* ซ่อนปุ่ม mobile floating view บน desktop */
+@media (min-width: 1024px) {
+  .mobile-floating-view-btn {
+    display: none !important;
+  }
+}
+
+/* หมุน background video 90 องศาบนมือถือ และปรับให้เต็มพื้นที่ */
+@media (max-width: 1023px) {
+  /* STEP 1: ป้องกันแถบขาวจาก html/body */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: fixed !important;
+  }
+  
+  /* STEP 2: Container หมุน 90 องศา + ซูมหนัก */
+  .luxury-2k-bg-container {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    /* หมุน 90 องศา + ซูมเยอะ */
+    transform: translate(-50%, -50%) rotate(90deg) scale(3) !important;
+    transform-origin: center center !important;
+    /* ขนาดใหญ่กว่าจอ */
+    width: 150vh !important;
+    height: 150vw !important;
+    overflow: hidden !important;
+    z-index: 0 !important;
+  }
+  
+  /* STEP 3: Video เองก็ต้องใหญ่และ cover เต็มที่ */
+  .luxury-2k-video {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    /* ขนาดเกิน 100% เพื่อให้แน่ใจว่าไม่มีช่องว่าง */
+    width: 150% !important;
+    height: 150% !important;
+    min-width: 150% !important;
+    min-height: 150% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+}
