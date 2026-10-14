@@ -856,7 +856,7 @@ function bindGlobalTouchScroll(mainEl) {
 
   document.addEventListener('touchstart', (ev) => {
     const target = ev.target;
-    if (SKIP_TAGS.has(target.tagName) || target.closest('.apple-glass-card')) return;
+    if (SKIP_TAGS.has(target.tagName)) return;
     touchStartY = ev.touches[0].clientY;
     touchStartScroll = mainEl.scrollTop;
     isDragging = true;
