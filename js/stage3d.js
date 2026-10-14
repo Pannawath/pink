@@ -10,7 +10,11 @@ const Stage3DState = {
   camera: null,
   controls: null,
   shirtModel: null,
-  animationId: null
+  animationId: null,
+  textCanvas: null,
+  textTexture: null,
+  currentNumber: '10',
+  currentName: 'YOUR NAME'
 };
 
 function setupStageLighting(scene) {
@@ -65,6 +69,78 @@ function normalizeStageShirtMesh(modelScene) {
       childNode.material.roughness = Math.min(childNode.material.roughness, 0.72);
       childNode.material.metalness = 0.05;
       childNode.material.needsUpdate = true;
+    }
+  });
+}
+
+function createTextCanvas() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 1024;
+  return canvas;
+}
+
+function updateTextCanvas(number, name) {
+  if (!Stage3DState.textCanvas) {
+    Stage3DState.textCanvas = createTextCanvas();
+  }
+  
+  const canvas = Stage3DState.textCanvas;
+  const ctx = canvas.getContext('2d');
+  
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw number (large, centered)
+  ctx.fillStyle = '#5C3C2B';
+  ctx.font = 'bold 380px Lobster, cursive';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(number || '10', canvas.width / 2, canvas.height / 2 + 50);
+  
+  // Draw name (curved arc above number)
+  ctx.fillStyle = '#5C3C2B';
+  ctx.font = '900 70px "Computer Modern Serif", serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  // Simple arc text (straight for now, can be improved)
+  const displayName = name || 'YOUR NAME';
+  ctx.fillText(displayName, canvas.width / 2, canvas.height / 2 - 200);
+  
+  // Update texture if exists
+  if (Stage3DState.textTexture) {
+    Stage3DState.textTexture.needsUpdate = true;
+  }
+  
+  Stage3DState.currentNumber = number;
+  Stage3DState.currentName = name;
+}
+
+function applyTextTextureToModel() {
+  if (!Stage3DState.shirtModel || !Stage3DState.textCanvas) return;
+  
+  // Create texture from canvas
+  if (!Stage3DState.textTexture) {
+    Stage3DState.textTexture = new THREE.CanvasTexture(Stage3DState.textCanvas);
+    Stage3DState.textTexture.flipY = false;
+  }
+  
+  // Find the shirt mesh and apply texture as decal overlay
+  Stage3DState.shirtModel.traverse((childNode) => {
+    if (childNode.isMesh && childNode.material) {
+      // Clone material to avoid affecting other instances
+      if (!childNode.userData.originalMaterial) {
+        childNode.userData.originalMaterial = childNode.material.clone();
+      }
+      
+      // Apply texture as emissive map overlay (visible on both sides)
+      if (childNode.material.map) {
+        // Blend our text with existing texture
+        childNode.material.emissiveMap = Stage3DState.textTexture;
+        childNode.material.emissiveIntensity = 0.8;
+        childNode.material.needsUpdate = true;
+      }
     }
   });
 }
@@ -131,6 +207,11 @@ function loadStageShirtModel(scene) {
       normalizeStageShirtMesh(shirtScene);
       scene.add(shirtScene);
       Stage3DState.shirtModel = shirtScene;
+      
+      // Initialize text texture
+      updateTextCanvas(Stage3DState.currentNumber, Stage3DState.currentName);
+      applyTextTextureToModel();
+      
       resizeStage3DViewer();
     },
     undefined,
@@ -139,6 +220,19 @@ function loadStageShirtModel(scene) {
     }
   );
 }
+
+// Public function to update 3D text from outside
+window.update3DJerseyText = function(number, name) {
+  if (!Stage3DState.isInitialized || !Stage3DState.shirtModel) {
+    // Store for later when model loads
+    Stage3DState.currentNumber = number || '10';
+    Stage3DState.currentName = name || 'YOUR NAME';
+    return;
+  }
+  
+  updateTextCanvas(number, name);
+  applyTextTextureToModel();
+};
 
 function initJersey3DViewer() {
   if (Stage3DState.isInitialized) return;

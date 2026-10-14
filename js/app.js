@@ -747,6 +747,11 @@ function updateLivePreview() {
   syncJerseySvgNumber(DOM.svgBothNumber, displayNumber, JERSEY_CONFIG.backNumber);
 
   applyNumberStyle();
+  
+  // Update 3D model if function exists
+  if (typeof window.update3DJerseyText === 'function') {
+    window.update3DJerseyText(displayNumber, displayName);
+  }
 }
 
 function applyNumberStyle() {
