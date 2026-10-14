@@ -66,7 +66,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=16">
+  <link rel="stylesheet" href="css/style.css?v=17">
   
   <!-- Accessibility Fixes CSS -->
   <link rel="stylesheet" href="css/accessibility-fixes.css?v=6">
@@ -138,24 +138,32 @@
   </div>
 
   <!-- ================= FLOATING LIQUID GLASS HEADER ================= -->
-  <header class="sticky top-4 z-40 px-4 sm:px-6 max-w-5xl mx-auto w-full">
-    <div class="apple-glass-nav px-5 py-3 flex items-center justify-center">
+  <header class="sticky top-2 sm:top-4 z-40 px-3 sm:px-6 max-w-5xl mx-auto w-full">
+    <div class="apple-glass-nav px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
 
       <!-- Brand Minimal Logo -->
-      <a href="javascript:window.scrollTo({top:0,behavior:'smooth'})" class="flex items-center space-x-3 group justify-center">
+      <a href="javascript:window.scrollTo({top:0,behavior:'smooth'})" class="flex items-center space-x-2.5 shrink-0 group">
         <img src="assets/images/school_crest.png" alt="ตราโรงเรียนสารคามพิทยาคม"
-          class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition border border-white/40">
+          class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition border border-white/40">
         <div class="flex items-center">
-          <span class="app-brand-copy text-center">
-            <span class="app-brand-title text-2xl sm:text-3xl font-extrabold tracking-tight">จองเสื้อกีฬาสี</span>
+          <span class="app-brand-copy">
+            <span class="app-brand-title text-lg sm:text-2xl font-extrabold tracking-tight">จองเสื้อกีฬาสี</span>
           </span>
         </div>
       </a>
+
+      <!-- View mode controls integrated into header -->
+      <div class="apple-segmented-control relative flex-1 sm:flex-initial min-w-0">
+        <div id="segmentedIndicator" class="apple-segmented-indicator"></div>
+        <button type="button" id="btnViewBack" class="apple-segmented-btn text-xs sm:text-sm">ด้านหลัง</button>
+        <button type="button" id="btnViewFront" class="apple-segmented-btn active text-xs sm:text-sm">ด้านหน้า</button>
+        <button type="button" id="btnViewBoth" class="apple-segmented-btn text-xs sm:text-sm">คู่หน้า-หลัง</button>
+      </div>
     </div>
   </header>
 
   <!-- ================= MAIN STUDIO & CONFIGURATOR ================= -->
-  <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 relative z-10">
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-2 sm:py-8 space-y-4 relative z-10">
 
     <!-- Mode Status Alert Banner (Shown when email matches past record) -->
     <div id="modeStatusBanner"
@@ -184,25 +192,10 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
       <!-- ================= LEFT: PURE TRANSPARENT PRODUCT STAGE ================= -->
-      <div class="lg:col-span-6 flex flex-col items-center justify-center space-y-4">
-
-        <!-- View mode controls -->
-        <div class="w-full flex items-center justify-between px-2 mb-2 relative">
-          <div class="apple-segmented-control relative">
-            <div id="segmentedIndicator" class="apple-segmented-indicator"></div>
-            <button type="button" id="btnViewBack" class="apple-segmented-btn">ด้านหลัง</button>
-            <button type="button" id="btnViewFront" class="apple-segmented-btn active">ด้านหน้า</button>
-            <button type="button" id="btnViewBoth" class="apple-segmented-btn">คู่หน้า-หลัง</button>
-          </div>
-          <!-- Mobile Floating Circular View Switcher (Visible when scrolled) -->
-          <button type="button" id="mobileFloatingViewBtn" class="mobile-floating-view-btn" aria-label="สลับมุมมองเสื้อ">
-            <i id="mobileFloatingViewIcon" class="fa-solid fa-shirt"></i>
-            <span id="mobileFloatingViewBadge" class="mobile-floating-view-badge">หน้า</span>
-          </button>
-        </div>
+      <div class="lg:col-span-6 flex flex-col items-center justify-center">
 
         <!-- Floating Transparent Jersey Canvas -->
-        <div class="jersey-stage-container w-full flex items-center justify-center py-2">
+        <div class="jersey-stage-container w-full flex items-center justify-center">
           <div id="jerseyCardWrapper" class="jersey-card-wrapper relative">
 
             <!-- 1. Back View HD (Fixed calibration: y=445, font-size=445, arc y=195, name-size=75) -->
@@ -850,7 +843,7 @@
   <script src="js/security.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=8"></script>
+  <script src="js/app.js?v=9"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>

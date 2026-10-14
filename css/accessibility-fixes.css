@@ -80,9 +80,9 @@
 /* Segmented control บนมือถือ */
 @media (max-width: 520px) {
   .apple-segmented-btn {
-    min-height: 44px;
-    padding: 12px 10px;
-    font-size: 13px;
+    min-height: 36px;
+    padding: 6px 10px;
+    font-size: 11.5px;
   }
 }
 

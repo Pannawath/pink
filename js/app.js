@@ -127,9 +127,6 @@ const DOM = {
   btnViewBack: document.getElementById('btnViewBack'),
   btnViewFront: document.getElementById('btnViewFront'),
   btnViewBoth: document.getElementById('btnViewBoth'),
-  mobileFloatingViewBtn: document.getElementById('mobileFloatingViewBtn'),
-  mobileFloatingViewIcon: document.getElementById('mobileFloatingViewIcon'),
-  mobileFloatingViewBadge: document.getElementById('mobileFloatingViewBadge'),
   btnToggleRotation: null,
   btnDownloadJersey: document.getElementById('btnDownloadJersey'),
 
@@ -272,18 +269,10 @@ function bindSizeAndStatusEvents() {
   });
 }
 
-function cycleJerseyView() {
-  const sequence = ['front', 'back', 'both'];
-  const currentIndex = sequence.indexOf(AppState.viewSide || 'front');
-  const nextSide = sequence[(currentIndex + 1) % sequence.length];
-  setJerseyView(nextSide);
-}
-
 function bindViewSwitcherEvents() {
   if (DOM.btnViewBack) DOM.btnViewBack.addEventListener('click', () => setJerseyView('back'));
   if (DOM.btnViewFront) DOM.btnViewFront.addEventListener('click', () => setJerseyView('front'));
   if (DOM.btnViewBoth) DOM.btnViewBoth.addEventListener('click', () => setJerseyView('both'));
-  if (DOM.mobileFloatingViewBtn) DOM.mobileFloatingViewBtn.addEventListener('click', cycleJerseyView);
 
   if (DOM.btnOpenSizeGuideNav) {
     DOM.btnOpenSizeGuideNav.addEventListener('click', () => DOM.modalSizeGuide.classList.remove('hidden'));
@@ -818,15 +807,6 @@ function setJerseyView(side) {
 
   updateJerseyViewButtons(side);
   updateSegmentedIndicator(side);
-
-  const ICON_MAP = { front: 'fa-shirt', back: 'fa-shirt', '3d': 'fa-cube', both: 'fa-shirt' };
-  const BADGE_MAP = { front: 'หน้า', back: 'หลัง', '3d': '3D', both: 'คู่' };
-  if (DOM.mobileFloatingViewIcon) {
-    DOM.mobileFloatingViewIcon.className = `fa-solid ${ICON_MAP[side] || 'fa-shirt'}`;
-  }
-  if (DOM.mobileFloatingViewBadge) {
-    DOM.mobileFloatingViewBadge.textContent = BADGE_MAP[side] || side;
-  }
 
   [DOM.jerseyViewBackEl, DOM.jerseyViewFrontEl, DOM.jerseyViewBothEl].forEach(view => {
     if (view && !view.classList.contains('hidden')) {
