@@ -25,7 +25,6 @@ const AppState = {
   mode: 'new', // 'new' | 'edit'
   viewSide: 'front', // 'back' | 'front' | 'both'
   email: '',
-  fullName: '',
   classroom: '',
   studentNumber: '',
   size: 'L',
@@ -62,7 +61,6 @@ const DOM = {
   onboardingHintStep1: document.getElementById('onboardingHintStep1'),
   formContentSection: document.getElementById('formContentSection'),
   submitButtonSection: document.getElementById('submitButtonSection'),
-  inputFullName: document.getElementById('inputFullName'),
   inputStudentNumber: document.getElementById('inputStudentNumber'),
   selectClassroom: document.getElementById('selectClassroom'),
   inputScreenName: document.getElementById('inputScreenName'),
@@ -1223,7 +1221,6 @@ function populateEditModeFields(orderRecord) {
   AppState.existingRecord = orderRecord;
   AppState.slipChanged = false;
   AppState.slipUrl = orderRecord.slipUrl || null;
-  AppState.fullName = orderRecord.fullName || '';
   AppState.studentNumber = orderRecord.studentNumber || '';
   AppState.screenName = orderRecord.name || '';
   AppState.classroom = orderRecord.classroom || '';
@@ -1231,7 +1228,6 @@ function populateEditModeFields(orderRecord) {
   AppState.size = orderRecord.size || 'L';
   AppState.orderStatus = orderRecord.status || 'รอชำระเงิน';
 
-  if (DOM.inputFullName) DOM.inputFullName.value = orderRecord.fullName || '';
   if (DOM.inputStudentNumber) DOM.inputStudentNumber.value = orderRecord.studentNumber || '';
   DOM.inputScreenName.value = orderRecord.name || '';
   if (DOM.selectClassroom) DOM.selectClassroom.value = orderRecord.classroom || '';
@@ -1313,14 +1309,12 @@ function resetToNewMode() {
   AppState.orderStatus = 'รอชำระเงิน';
   
   // Clear form fields
-  AppState.fullName = '';
   AppState.studentNumber = '';
   AppState.screenName = '';
   AppState.classroom = '';
   AppState.screenNumber = '10';
   AppState.size = 'L';
   
-  if (DOM.inputFullName) DOM.inputFullName.value = '';
   if (DOM.inputStudentNumber) DOM.inputStudentNumber.value = '';
   DOM.inputScreenName.value = '';
   if (DOM.selectClassroom) DOM.selectClassroom.value = '';
@@ -1353,7 +1347,6 @@ function resetToNewMode() {
 }
 
 function resetForm() {
-  AppState.fullName = '';
   AppState.studentNumber = '';
   AppState.screenName = '';
   AppState.classroom = '';
@@ -1365,7 +1358,6 @@ function resetForm() {
   AppState.slipUploadedAt = null;
 
   DOM.inputEmail.value = '';
-  if (DOM.inputFullName) DOM.inputFullName.value = '';
   if (DOM.inputStudentNumber) DOM.inputStudentNumber.value = '';
   DOM.inputScreenName.value = '';
   if (DOM.selectClassroom) DOM.selectClassroom.value = '';
@@ -1426,19 +1418,7 @@ function validateForm() {
     if (!firstErrorField && DOM.inputStudentNumber) firstErrorField = DOM.inputStudentNumber;
   }
 
-  // 4. Validate Full Name (ชื่อ-นามสกุลจริง)
-  const fullName = DOM.inputFullName ? DOM.inputFullName.value.trim() : '';
-  if (!fullName) {
-    if (DOM.inputFullName) showFieldError(DOM.inputFullName, 'กรุณากรอกชื่อ-นามสกุลจริง (สำหรับเช็กชื่อ)');
-    isValid = false;
-    if (!firstErrorField && DOM.inputFullName) firstErrorField = DOM.inputFullName;
-  } else if (fullName.length < 3) {
-    if (DOM.inputFullName) showFieldError(DOM.inputFullName, 'ชื่อ-นามสกุลสั้นเกินไป');
-    isValid = false;
-    if (!firstErrorField && DOM.inputFullName) firstErrorField = DOM.inputFullName;
-  }
-
-  // 5. Validate Screen Name
+  // 4. Validate Screen Name
   const name = DOM.inputScreenName.value.trim();
   if (!name) {
     showFieldError(DOM.inputScreenName, 'กรุณากรอกชื่อที่ต้องการสกรีน (A-Z)');
@@ -1450,7 +1430,7 @@ function validateForm() {
     if (!firstErrorField) firstErrorField = DOM.inputScreenName;
   }
 
-  // 6. Validate Number
+  // 5. Validate Number
   const number = DOM.inputScreenNumber.value.trim();
   if (!number) {
     showFieldError(DOM.inputScreenNumber, 'กรุณากรอกเบอร์เสื้อ (0-99)');
@@ -1465,13 +1445,13 @@ function validateForm() {
     }
   }
 
-  // 7. Check if size is selected
+  // 6. Check if size is selected
   if (!AppState.size) {
     showToast('กรุณาเลือกไซส์เสื้อ', 'warning');
     isValid = false;
   }
 
-  // 8. Require Slip for New Orders
+  // 7. Require Slip for New Orders
   if (AppState.mode === 'new' && !AppState.slipImage) {
     if (DOM.slipDropzone) {
       DOM.slipDropzone.style.borderColor = '#dc2626';
@@ -1536,12 +1516,11 @@ async function fetchDriveImageViaGAS(fileId) {
 // ==========================================
 // 8. FORM SUBMISSION & GOOGLE SHEETS
 // ==========================================
-function buildOrderSubmissionRecord(email, fullName, studentNumber, name, number, classroom, nowTimestamp) {
+function buildOrderSubmissionRecord(email, studentNumber, name, number, classroom, nowTimestamp) {
   const shouldSendSlip = (AppState.mode === 'new' || AppState.slipChanged) && AppState.slipImage;
   return {
     email: email,
     productTitle: 'เสื้อแข่งขันทีมสีชมพู 2026',
-    fullName: fullName,
     studentNumber: studentNumber,
     name: name.toUpperCase(),
     number: number,
@@ -1588,7 +1567,6 @@ async function handleFormSubmit() {
   if (!validateForm()) return;
 
   const email = DOM.inputEmail.value.trim();
-  const fullName = DOM.inputFullName ? DOM.inputFullName.value.trim() : '';
   const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
   const name = DOM.inputScreenName.value.trim();
   const number = DOM.inputScreenNumber.value.trim();
@@ -1597,7 +1575,7 @@ async function handleFormSubmit() {
 
   updateFormSubmissionUI(true);
 
-  const submissionRecord = buildOrderSubmissionRecord(email, fullName, studentNumber, name, number, classroom, nowTimestamp);
+  const submissionRecord = buildOrderSubmissionRecord(email, studentNumber, name, number, classroom, nowTimestamp);
   const syncSuccess = await sendOrderToGoogleSheets(submissionRecord);
 
   updateFormSubmissionUI(false);
