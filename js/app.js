@@ -447,7 +447,7 @@ function initSlipUploadEvents() {
 function getPromptPayDetails() {
   const number = (typeof CONFIG !== 'undefined' && CONFIG.promptPayNumber)
     ? CONFIG.promptPayNumber
-    : '0987654321';
+    : '09X-XXX-XXXX';
   const name = (typeof CONFIG !== 'undefined' && CONFIG.accountName)
     ? CONFIG.accountName
     : 'คณะสีชมพู สารคามพิทยาคม';
@@ -456,13 +456,15 @@ function getPromptPayDetails() {
 
 function openQrPromptPayModal() {
   const account = getPromptPayDetails();
-  const amount = '275';
-  
-  // Generate QR Code using PromptPay API
-  const qrUrl = `https://promptpay.io/${account.number}${amount ? '/' + amount : ''}.png`;
+  const cleanNumber = (account.number || '').replace(/[^0-9]/g, '');
+  const isNumeric = cleanNumber.length >= 10;
   
   if (DOM.qrPromptPayImage) {
-    DOM.qrPromptPayImage.src = qrUrl;
+    if (isNumeric) {
+      DOM.qrPromptPayImage.src = `https://promptpay.io/${cleanNumber}/275.png`;
+    } else {
+      DOM.qrPromptPayImage.src = 'assets/images/qr-code.png';
+    }
   }
   if (DOM.promptPayNumber) {
     DOM.promptPayNumber.textContent = account.number;

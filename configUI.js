@@ -89,7 +89,7 @@ const CONFIG_UI = {
 
     // ข้อมูลบัญชีธนาคาร
     bankNameText: 'ธนาคารกสิกรไทย (KBank) / พร้อมเพย์',
-    bankAccountDetailText: '08X-XXX-XXXX • กีฬาสีทีมสีชมพู 2026',
+    bankAccountDetailText: '09X-XXX-XXXX • กีฬาสีทีมสีชมพู 2026',
     scanPayButtonText: 'สแกนจ่าย',
 
     // ช่องอัปโหลดไฟล์สลิป
