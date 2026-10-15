@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateLivePreview();
   setJerseyView(AppState.viewSide);
   checkGasConnection();
-  // Removed: loadOrdersDatabase() - No longer using LocalStorage
+  preloadHighResImages();
 });
 
 // ==========================================
@@ -1859,6 +1859,46 @@ function showToast(msg, type = 'info') {
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// ==========================================
+// PROGRESSIVE HIGH-RES IMAGE PRELOADER
+// ==========================================
+function preloadHighResImages() {
+  const highResList = [
+    { url: 'assets/images/jersey_clean_front.png?v=20261014_1522', selectors: ['.jersey-hd-front', '.jersey-hd-front-inner'] },
+    { url: 'assets/images/jersey_clean_back.png?v=20261014_1522', selectors: ['.jersey-hd-back', '.jersey-hd-back-inner'] },
+    { url: 'assets/images/jersey_clean_both_clene.png?v=20261014_1522', selectors: ['.jersey-hd-both'] }
+  ];
+
+  const schedulePreload = () => {
+    highResList.forEach(entry => {
+      const img = new Image();
+      img.src = entry.url;
+      img.onload = () => {
+        entry.selectors.forEach(sel => {
+          document.querySelectorAll(sel).forEach(el => {
+            el.classList.add('jersey-highres-loaded');
+          });
+        });
+      };
+    });
+
+    const guideImg = document.getElementById('imgSizeGuideDiagram');
+    if (guideImg && guideImg.dataset.highres) {
+      const gImg = new Image();
+      gImg.src = guideImg.dataset.highres;
+      gImg.onload = () => {
+        guideImg.src = guideImg.dataset.highres;
+      };
+    }
+  };
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(schedulePreload, { timeout: 1500 });
+  } else {
+    setTimeout(schedulePreload, 600);
+  }
 }
 
 
