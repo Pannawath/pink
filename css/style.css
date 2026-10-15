@@ -144,8 +144,8 @@
    ======================================================== */
 .apple-glass-nav {
   background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(18px) saturate(200%);
-  -webkit-backdrop-filter: blur(18px) saturate(200%);
+  backdrop-filter: blur(3px) saturate(200%);
+  -webkit-backdrop-filter: blur(3px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.95);
   box-shadow: 
     0 12px 36px -8px rgba(15, 23, 42, 0.05),
@@ -156,8 +156,8 @@
 
 .apple-glass-card {
   background: var(--opal-card-bg);
-  backdrop-filter: blur(18px) saturate(190%);
-  -webkit-backdrop-filter: blur(18px) saturate(190%);
+  backdrop-filter: blur(3px) saturate(190%);
+  -webkit-backdrop-filter: blur(3px) saturate(190%);
   border: 1px solid var(--opal-glass-border);
   box-shadow: 
     0 24px 50px -12px rgba(15, 23, 42, 0.05),
@@ -169,8 +169,8 @@
 /* Opal Segmented Pill Control */
 .apple-segmented-control {
   background: var(--opal-pill-track);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(2.5px);
+  -webkit-backdrop-filter: blur(2.5px);
   border: 1px solid rgba(226, 232, 240, 0.85);
   border-radius: 9999px;
   padding: 4px;
@@ -481,8 +481,8 @@
 .apple-dropzone {
   border: 1.5px dashed rgba(244, 63, 94, 0.45);
   background: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(7px) saturate(180%);
-  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(2.5px) saturate(180%);
+  -webkit-backdrop-filter: blur(2.5px) saturate(180%);
   border-radius: 24px;
   box-shadow: inset 0 1.2px 1.8px rgba(255, 255, 255, 0.7);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -590,8 +590,8 @@ html {
   box-shadow:
     0 16px 40px -8px rgba(244, 114, 182, 0.10),
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.90);
-  backdrop-filter: blur(7px) saturate(180%);
-  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
   border-radius: 9999px;
 }
 
@@ -635,8 +635,8 @@ main.max-w-5xl {
     0 16px 40px -12px rgba(244, 114, 182, 0.14),
     0 8px 24px -4px rgba(15, 23, 42, 0.03),
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(7px) saturate(180%);
-  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
   border-radius: 32px;
   color: var(--liquid-ink);
 }
@@ -673,8 +673,8 @@ main.max-w-5xl {
   box-shadow:
     0 2px 8px rgba(15, 23, 42, 0.12),
     inset 0 1px 1.5px rgba(255, 255, 255, 1);
-  backdrop-filter: blur(8px) saturate(180%);
-  -webkit-backdrop-filter: blur(8px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -702,8 +702,8 @@ main.max-w-5xl {
   box-shadow:
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.9),
     0 12px 30px rgba(139, 35, 86, 0.12);
-  backdrop-filter: blur(7px) saturate(180%);
-  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(2.5px) saturate(180%);
+  -webkit-backdrop-filter: blur(2.5px) saturate(180%);
 }
 
 .apple-segmented-indicator {
@@ -766,8 +766,8 @@ main.max-w-5xl {
   box-shadow:
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
     0 16px 40px -12px rgba(244, 114, 182, 0.15);
-  backdrop-filter: blur(7px) saturate(180%);
-  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
 }
 
 .jersey-card-wrapper {
@@ -817,8 +817,8 @@ main.max-w-5xl {
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 9999px;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(108, 23, 64, 0.08);
   white-space: nowrap;
@@ -840,8 +840,8 @@ main.max-w-5xl {
   justify-content: center;
   font-size: 13px;
   cursor: pointer;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 12px rgba(108, 23, 64, 0.08);
   z-index: 5;
@@ -885,8 +885,8 @@ main.max-w-5xl {
   box-shadow:
     inset 0 1.2px 1.8px 0 rgba(255, 255, 255, 0.8),
     0 8px 22px rgba(123, 31, 77, 0.05);
-  backdrop-filter: blur(7px) saturate(180%);
-  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(2.5px) saturate(180%);
+  -webkit-backdrop-filter: blur(2.5px) saturate(180%);
 }
 
 .apple-glass-input::placeholder {
@@ -909,8 +909,8 @@ main.max-w-5xl {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   background: rgba(255, 255, 255, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.85);
   box-shadow:
@@ -1016,8 +1016,8 @@ main.max-w-5xl {
 #qrPromptPayModal .bg-white {
   background: rgba(255, 255, 255, 0.94) !important;
   border: 1px solid rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  backdrop-filter: blur(6px) saturate(200%);
+  -webkit-backdrop-filter: blur(6px) saturate(200%);
   box-shadow: 0 35px 85px rgba(236, 72, 153, 0.28), 0 15px 35px rgba(15, 23, 42, 0.15), inset 0 2px 2px #ffffff !important;
   color: #0f172a !important;
 }
@@ -1173,8 +1173,8 @@ main.max-w-5xl {
     box-shadow:
       0 2px 8px rgba(15, 23, 42, 0.12),
       inset 0 1px 1.5px rgba(255, 255, 255, 1);
-    backdrop-filter: blur(8px) saturate(180%);
-    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    backdrop-filter: blur(3px) saturate(180%);
+    -webkit-backdrop-filter: blur(3px) saturate(180%);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
