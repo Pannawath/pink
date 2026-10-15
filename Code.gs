@@ -27,6 +27,7 @@ function doPost(e) {
 
     var email = (data.email || "").toString().trim().toLowerCase();
     var name = (data.name || "").toString().trim().toUpperCase();
+    var classroom = (data.classroom || "").toString().trim();
     var number = (data.number || "").toString().trim();
     var size = (data.size || "L").toString().trim().toUpperCase();
     var slipImage = data.slipImage || "";
@@ -42,10 +43,34 @@ function doPost(e) {
     }
 
     var values = sheet.getDataRange().getValues();
-    var foundRowIndex = -1;
+    var headers = values[0];
+    
+    // ค้นหาตำแหน่งคอลัมน์จากชื่อหัวตารางแบบไดนามิก
+    var colMap = {
+      timestamp: 1,
+      email: 2,
+      name: 3,
+      classroom: 4,
+      number: 5,
+      size: 6,
+      slip: 7,
+      status: 8
+    };
 
+    for (var h = 0; h < headers.length; h++) {
+      var head = headers[h].toString().trim().toLowerCase();
+      if (head === "email" || head === "อีเมล") colMap.email = h + 1;
+      if (head === "screen name" || head === "ชื่อ") colMap.name = h + 1;
+      if (head === "classroom" || head === "ห้อง" || head === "ห้องเรียน" || head === "ระดับชั้น") colMap.classroom = h + 1;
+      if (head === "screen number" || head === "เบอร์") colMap.number = h + 1;
+      if (head === "size" || head === "ไซส์") colMap.size = h + 1;
+      if (head === "payment slip" || head === "สลิป") colMap.slip = h + 1;
+      if (head === "status" || head === "สถานะ") colMap.status = h + 1;
+    }
+
+    var foundRowIndex = -1;
     for (var i = 1; i < values.length; i++) {
-      var rowEmail = (values[i][1] || "").toString().trim().toLowerCase();
+      var rowEmail = (values[i][colMap.email - 1] || "").toString().trim().toLowerCase();
       if (rowEmail === email) {
         foundRowIndex = i + 1;
         break;
@@ -54,12 +79,13 @@ function doPost(e) {
 
     if (foundRowIndex > 0) {
       // UPDATE existing row
-      sheet.getRange(foundRowIndex, 1).setValue(timestamp);
-      sheet.getRange(foundRowIndex, 3).setValue(name);
-      sheet.getRange(foundRowIndex, 4).setValue(number);
-      sheet.getRange(foundRowIndex, 5).setValue(size);
+      sheet.getRange(foundRowIndex, colMap.timestamp).setValue(timestamp);
+      sheet.getRange(foundRowIndex, colMap.name).setValue(name);
+      sheet.getRange(foundRowIndex, colMap.classroom).setValue(classroom);
+      sheet.getRange(foundRowIndex, colMap.number).setValue(number);
+      sheet.getRange(foundRowIndex, colMap.size).setValue(size);
       
-      var slipCell = sheet.getRange(foundRowIndex, 6);
+      var slipCell = sheet.getRange(foundRowIndex, colMap.slip);
       var currentSlipValue = slipCell.getValue();
       var currentSlipFormula = slipCell.getFormula();
       
@@ -82,9 +108,8 @@ function doPost(e) {
       else if ((!slipImage || slipImage === "") && (!slipUrl || slipUrl === "") && !currentSlipFormula && (!currentSlipValue || typeof currentSlipValue !== 'string' || currentSlipValue.indexOf('IMAGE') < 0)) {
         slipCell.setValue("⏳ ยังไม่แนบสลิป");
       }
-      // กรณีอื่นๆ = เก็บค่าเดิมไว้ (ไม่ทำอะไร)
       
-      sheet.getRange(foundRowIndex, 7).setValue(status);
+      sheet.getRange(foundRowIndex, colMap.status).setValue(status);
 
       return createJsonResponse({
         status: "success",
@@ -95,6 +120,7 @@ function doPost(e) {
           timestamp: timestamp,
           email: email,
           name: name,
+          classroom: classroom,
           number: number,
           size: size,
           slipUrl: slipUrl || (slipImage ? "uploaded" : ""),
@@ -120,20 +146,19 @@ function doPost(e) {
         slipStatus = "✅ มีสลิปแนบแล้ว";
       }
       
-      var newRow = [
-        timestamp,
-        email,
-        name,
-        number,
-        size,
-        slipFormula || slipStatus,
-        status
-      ];
+      var newRow = [];
+      newRow[colMap.timestamp - 1] = timestamp;
+      newRow[colMap.email - 1] = email;
+      newRow[colMap.name - 1] = name;
+      newRow[colMap.classroom - 1] = classroom;
+      newRow[colMap.number - 1] = number;
+      newRow[colMap.size - 1] = size;
+      newRow[colMap.slip - 1] = slipFormula || slipStatus;
+      newRow[colMap.status - 1] = status;
       
       sheet.appendRow(newRow);
       
-      // Set row height for image display
-      if (slipFormula) {
+      if (slipFormula && slipFormula.indexOf('=IMAGE') === 0) {
         var lastRow = sheet.getLastRow();
         sheet.setRowHeight(lastRow, 110);
       }
@@ -146,6 +171,7 @@ function doPost(e) {
           timestamp: timestamp,
           email: email,
           name: name,
+          classroom: classroom,
           number: number,
           size: size,
           slipUrl: slipFormula ? imageUrl : "",
@@ -172,7 +198,7 @@ function doGet(e) {
     var email = (params.email || "").toString().trim().toLowerCase();
     var fileId = params.fileId || "";
 
-    // NEW: Serve image from Drive as base64
+    // Serve image from Drive as base64
     if (action === "getImage" && fileId) {
       try {
         var file = DriveApp.getFileById(fileId);
@@ -204,14 +230,36 @@ function doGet(e) {
     var sheet = getOrCreateSheet();
     var values = sheet.getDataRange().getValues();
     var formulas = sheet.getDataRange().getFormulas();
+    var headers = values[0];
+
+    var colMap = {
+      timestamp: 1,
+      email: 2,
+      name: 3,
+      classroom: 4,
+      number: 5,
+      size: 6,
+      slip: 7,
+      status: 8
+    };
+
+    for (var h = 0; h < headers.length; h++) {
+      var head = headers[h].toString().trim().toLowerCase();
+      if (head === "email" || head === "อีเมล") colMap.email = h + 1;
+      if (head === "screen name" || head === "ชื่อ") colMap.name = h + 1;
+      if (head === "classroom" || head === "ห้อง" || head === "ห้องเรียน" || head === "ระดับชั้น") colMap.classroom = h + 1;
+      if (head === "screen number" || head === "เบอร์") colMap.number = h + 1;
+      if (head === "size" || head === "ไซส์") colMap.size = h + 1;
+      if (head === "payment slip" || head === "สลิป") colMap.slip = h + 1;
+      if (head === "status" || head === "สถานะ") colMap.status = h + 1;
+    }
 
     if (action === "search" && email) {
       for (var i = 1; i < values.length; i++) {
-        var rowEmail = (values[i][1] || "").toString().trim().toLowerCase();
+        var rowEmail = (values[i][colMap.email - 1] || "").toString().trim().toLowerCase();
         if (rowEmail === email) {
-          // Extract slipUrl from IMAGE formula if exists
-          var slipFormula = (formulas[i] && formulas[i][5]) ? formulas[i][5].toString() : "";
-          var slipCellValue = values[i][5] || "";
+          var slipFormula = (formulas[i] && formulas[i][colMap.slip - 1]) ? formulas[i][colMap.slip - 1].toString() : "";
+          var slipCellValue = values[i][colMap.slip - 1] || "";
           var slipUrl = "";
           
           if (slipFormula.indexOf('=IMAGE("') === 0) {
@@ -233,14 +281,15 @@ function doGet(e) {
             status: "success",
             found: true,
             data: {
-              timestamp: values[i][0],
-              email: values[i][1],
-              name: values[i][2],
-              number: (values[i][3] || "").toString(),
-              size: values[i][4] || "L",
+              timestamp: values[i][colMap.timestamp - 1],
+              email: values[i][colMap.email - 1],
+              name: values[i][colMap.name - 1],
+              classroom: values[i][colMap.classroom - 1] || "",
+              number: (values[i][colMap.number - 1] || "").toString(),
+              size: values[i][colMap.size - 1] || "L",
               hasSlip: hasSlipStatus,
               slipUrl: slipUrl,
-              status: values[i][6] || ""
+              status: values[i][colMap.status - 1] || ""
             }
           });
         }
@@ -256,15 +305,16 @@ function doGet(e) {
     if (action === "list") {
       var orders = [];
       for (var j = 1; j < values.length; j++) {
-        if (values[j][1]) {
+        if (values[j][colMap.email - 1]) {
           orders.push({
-            timestamp: values[j][0],
-            email: values[j][1],
-            name: values[j][2],
-            number: values[j][3],
-            size: values[j][4] || "L",
-            hasSlip: values[j][5] || "",
-            status: values[j][6] || ""
+            timestamp: values[j][colMap.timestamp - 1],
+            email: values[j][colMap.email - 1],
+            name: values[j][colMap.name - 1],
+            classroom: values[j][colMap.classroom - 1] || "",
+            number: values[j][colMap.number - 1],
+            size: values[j][colMap.size - 1] || "L",
+            hasSlip: values[j][colMap.slip - 1] || "",
+            status: values[j][colMap.status - 1] || ""
           });
         }
       }
@@ -304,7 +354,7 @@ function getOrCreateSheet() {
   var sheet = doc.getSheetByName(SHEET_NAME) || doc.getActiveSheet();
   
   if (sheet.getLastRow() === 0) {
-    var headers = ["Timestamp", "Email", "Screen Name", "Screen Number", "Size", "Payment Slip", "Status"];
+    var headers = ["Timestamp", "Email", "Screen Name", "Classroom", "Screen Number", "Size", "Payment Slip", "Status"];
     sheet.appendRow(headers);
     
     var headerRange = sheet.getRange(1, 1, 1, headers.length);
@@ -316,14 +366,41 @@ function getOrCreateSheet() {
     sheet.setColumnWidth(1, 170); // Timestamp
     sheet.setColumnWidth(2, 220); // Email
     sheet.setColumnWidth(3, 160); // Name
-    sheet.setColumnWidth(4, 120); // Number
-    sheet.setColumnWidth(5, 80);  // Size
-    sheet.setColumnWidth(6, 150); // Slip Status
-    sheet.setColumnWidth(7, 140); // Status
+    sheet.setColumnWidth(4, 130); // Classroom
+    sheet.setColumnWidth(5, 120); // Number
+    sheet.setColumnWidth(6, 80);  // Size
+    sheet.setColumnWidth(7, 150); // Slip Status
+    sheet.setColumnWidth(8, 140); // Status
+  } else {
+    // ตรวจสอบว่ามีคอลัมน์ Classroom หรือยัง ถ้ายังไม่มีให้แทรกที่คอลัมน์ D
+    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    var hasClassroom = false;
+    for (var i = 0; i < headers.length; i++) {
+      var h = headers[i].toString().trim().toLowerCase();
+      if (h === "classroom" || h === "ห้อง" || h === "ห้องเรียน" || h === "ระดับชั้น") {
+        hasClassroom = true;
+        break;
+      }
+    }
+    if (!hasClassroom) {
+      sheet.insertColumnAfter(3);
+      sheet.getRange(1, 4).setValue("Classroom").setFontWeight("bold").setBackground("#831843").setFontColor("#ffffff").setHorizontalAlignment("center");
+      sheet.setColumnWidth(4, 130);
+    }
   }
   
-  // Setup Data Validation for Status column (column 7)
-  var statusColumn = sheet.getRange(2, 7, sheet.getMaxRows() - 1, 1);
+  // Setup Data Validation for Status column
+  var statusColIndex = 8;
+  var currentHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  for (var c = 0; c < currentHeaders.length; c++) {
+    var ch = currentHeaders[c].toString().trim().toLowerCase();
+    if (ch === "status" || ch === "สถานะ") {
+      statusColIndex = c + 1;
+      break;
+    }
+  }
+
+  var statusColumn = sheet.getRange(2, statusColIndex, Math.max(1, sheet.getMaxRows() - 1), 1);
   var statusOptions = [
     "รอชำระเงิน",
     "รอตรวจสอบสลิป", 
@@ -349,72 +426,32 @@ function createJsonResponse(data) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/**
- * บันทึกรูปสลิป (Base64) ลง Google Drive
- * @param {string} base64Data - Base64 encoded image (data:image/jpeg;base64,...)
- * @param {string} email - Email สำหรับตั้งชื่อไฟล์
- * @return {string} URL ของรูปภาพที่บันทึกแล้ว หรือ null ถ้าไม่สำเร็จ
- */
 function saveSlipToDrive(base64Data, email) {
   try {
-    // แยก metadata และ base64 data
     var contentType = base64Data.split(',')[0].split(':')[1].split(';')[0];
     var base64String = base64Data.split(',')[1];
-    
-    // Decode base64 to binary
     var decoded = Utilities.base64Decode(base64String);
-    
-    // สร้างชื่อไฟล์ที่ไม่ซ้ำ
     var timestamp = new Date().getTime();
     var fileName = 'slip_' + email.replace(/[^a-zA-Z0-9]/g, '_') + '_' + timestamp + '.jpg';
-    
-    // สร้าง Blob
     var blob = Utilities.newBlob(decoded, contentType, fileName);
-    
-    // หาหรือสร้างโฟลเดอร์สำหรับเก็บสลิป
     var folder = getOrCreateFolder();
-    
-    // ลบไฟล์เก่าของ email เดียวกัน (ถ้ามี)
     deleteOldSlips(email, folder);
-    
-    // สร้างไฟล์ใหม่
     var file = folder.createFile(blob);
-    
-    // ตั้งค่าให้ทุกคนที่มี link ดูได้
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    
-    // คืนค่า URL สำหรับแสดงรูปใน Sheets
     return 'https://drive.google.com/uc?export=view&id=' + file.getId();
-    
   } catch (error) {
     Logger.log('Error saving slip to Drive: ' + error.toString());
     return null;
   }
 }
 
-/**
- * ลบไฟล์สลิปเก่าของ email นี้ (ถ้ามี)
- */
 function deleteOldSlips(email, folder) {
   try {
     var searchPattern = 'slip_' + email.replace(/[^a-zA-Z0-9]/g, '_');
-    var files = folder.getFilesByName(searchPattern);
-    
-    // ถ้าไม่เจอด้วยชื่อแน่นอน ให้ลองหาทุกไฟล์ที่เริ่มต้นด้วย pattern
-    if (!files.hasNext()) {
-      var allFiles = folder.getFiles();
-      while (allFiles.hasNext()) {
-        var file = allFiles.next();
-        if (file.getName().indexOf(searchPattern) === 0) {
-          Logger.log('Deleting old slip: ' + file.getName());
-          file.setTrashed(true);
-        }
-      }
-    } else {
-      // ลบไฟล์ที่เจอ
-      while (files.hasNext()) {
-        var file = files.next();
-        Logger.log('Deleting old slip: ' + file.getName());
+    var files = folder.getFiles();
+    while (files.hasNext()) {
+      var file = files.next();
+      if (file.getName().indexOf(searchPattern) === 0) {
         file.setTrashed(true);
       }
     }
@@ -423,29 +460,13 @@ function deleteOldSlips(email, folder) {
   }
 }
 
-/**
- * หาหรือสร้างโฟลเดอร์ใน Google Drive สำหรับเก็บสลิป
- */
 function getOrCreateFolder() {
   var folders = DriveApp.getFoldersByName(DRIVE_FOLDER_NAME);
-  
   if (folders.hasNext()) {
     return folders.next();
   } else {
-    // สร้างโฟลเดอร์ใหม่
     var folder = DriveApp.createFolder(DRIVE_FOLDER_NAME);
     folder.setDescription('โฟลเดอร์เก็บสลิปการโอนเงินจากระบบจองเสื้อทีมสีชมพู 2026');
     return folder;
   }
-}
-
-/**
- * ฟังก์ชันช่วยทดสอบการบันทึกรูป
- */
-function testSaveSlip() {
-  // ตัวอย่าง base64 ขนาดเล็กสำหรับทดสอบ (1x1 pixel red PNG)
-  var testData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==';
-  var url = saveSlipToDrive(testData, 'test@example.com');
-  Logger.log('Test slip URL: ' + url);
-  return url;
 }
