@@ -26,6 +26,8 @@ function doPost(e) {
     }
 
     var email = (data.email || "").toString().trim().toLowerCase();
+    var fullName = (data.fullName || "").toString().trim();
+    var studentNumber = (data.studentNumber || "").toString().trim();
     var name = (data.name || "").toString().trim().toUpperCase();
     var classroom = (data.classroom || "").toString().trim();
     var number = (data.number || "").toString().trim();
@@ -49,6 +51,8 @@ function doPost(e) {
     var colMap = {
       timestamp: 1,
       email: 2,
+      fullName: 0,
+      studentNumber: 0,
       name: 3,
       classroom: 4,
       number: 5,
@@ -60,12 +64,26 @@ function doPost(e) {
     for (var h = 0; h < headers.length; h++) {
       var head = headers[h].toString().trim().toLowerCase();
       if (head === "email" || head === "อีเมล") colMap.email = h + 1;
-      if (head === "screen name" || head === "ชื่อ") colMap.name = h + 1;
+      if (head === "full name" || head === "ชื่อจริง" || head === "ชื่อ-นามสกุล" || head === "ชื่อ-สกุล" || head === "ชื่อผู้สั่ง") colMap.fullName = h + 1;
+      if (head === "student number" || head === "เลขที่") colMap.studentNumber = h + 1;
+      if (head === "screen name" || head === "ชื่อ" || head === "ชื่อสกรีน") colMap.name = h + 1;
       if (head === "classroom" || head === "ห้อง" || head === "ห้องเรียน" || head === "ระดับชั้น") colMap.classroom = h + 1;
-      if (head === "screen number" || head === "เบอร์") colMap.number = h + 1;
+      if (head === "screen number" || head === "เบอร์" || head === "เบอร์สกรีน") colMap.number = h + 1;
       if (head === "size" || head === "ไซส์") colMap.size = h + 1;
       if (head === "payment slip" || head === "สลิป") colMap.slip = h + 1;
       if (head === "status" || head === "สถานะ") colMap.status = h + 1;
+    }
+
+    // Auto-create missing headers if fullName or studentNumber columns don't exist
+    if (colMap.fullName === 0) {
+      var nextCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, nextCol).setValue("Full Name");
+      colMap.fullName = nextCol;
+    }
+    if (colMap.studentNumber === 0) {
+      var nextCol2 = sheet.getLastColumn() + 1;
+      sheet.getRange(1, nextCol2).setValue("Student Number");
+      colMap.studentNumber = nextCol2;
     }
 
     var foundRowIndex = -1;
@@ -80,6 +98,8 @@ function doPost(e) {
     if (foundRowIndex > 0) {
       // UPDATE existing row
       sheet.getRange(foundRowIndex, colMap.timestamp).setValue(timestamp);
+      if (fullName && colMap.fullName > 0) sheet.getRange(foundRowIndex, colMap.fullName).setValue(fullName);
+      if (studentNumber && colMap.studentNumber > 0) sheet.getRange(foundRowIndex, colMap.studentNumber).setValue(studentNumber);
       sheet.getRange(foundRowIndex, colMap.name).setValue(name);
       sheet.getRange(foundRowIndex, colMap.classroom).setValue(classroom);
       sheet.getRange(foundRowIndex, colMap.number).setValue(number);
@@ -119,6 +139,8 @@ function doPost(e) {
         data: {
           timestamp: timestamp,
           email: email,
+          fullName: fullName,
+          studentNumber: studentNumber,
           name: name,
           classroom: classroom,
           number: number,
@@ -149,6 +171,8 @@ function doPost(e) {
       var newRow = [];
       newRow[colMap.timestamp - 1] = timestamp;
       newRow[colMap.email - 1] = email;
+      if (colMap.fullName > 0) newRow[colMap.fullName - 1] = fullName;
+      if (colMap.studentNumber > 0) newRow[colMap.studentNumber - 1] = studentNumber;
       newRow[colMap.name - 1] = name;
       newRow[colMap.classroom - 1] = classroom;
       newRow[colMap.number - 1] = number;
@@ -235,6 +259,8 @@ function doGet(e) {
     var colMap = {
       timestamp: 1,
       email: 2,
+      fullName: 0,
+      studentNumber: 0,
       name: 3,
       classroom: 4,
       number: 5,
@@ -246,9 +272,11 @@ function doGet(e) {
     for (var h = 0; h < headers.length; h++) {
       var head = headers[h].toString().trim().toLowerCase();
       if (head === "email" || head === "อีเมล") colMap.email = h + 1;
-      if (head === "screen name" || head === "ชื่อ") colMap.name = h + 1;
+      if (head === "full name" || head === "ชื่อจริง" || head === "ชื่อ-นามสกุล" || head === "ชื่อ-สกุล" || head === "ชื่อผู้สั่ง") colMap.fullName = h + 1;
+      if (head === "student number" || head === "เลขที่") colMap.studentNumber = h + 1;
+      if (head === "screen name" || head === "ชื่อ" || head === "ชื่อสกรีน") colMap.name = h + 1;
       if (head === "classroom" || head === "ห้อง" || head === "ห้องเรียน" || head === "ระดับชั้น") colMap.classroom = h + 1;
-      if (head === "screen number" || head === "เบอร์") colMap.number = h + 1;
+      if (head === "screen number" || head === "เบอร์" || head === "เบอร์สกรีน") colMap.number = h + 1;
       if (head === "size" || head === "ไซส์") colMap.size = h + 1;
       if (head === "payment slip" || head === "สลิป") colMap.slip = h + 1;
       if (head === "status" || head === "สถานะ") colMap.status = h + 1;
@@ -283,6 +311,8 @@ function doGet(e) {
             data: {
               timestamp: values[i][colMap.timestamp - 1],
               email: values[i][colMap.email - 1],
+              fullName: colMap.fullName > 0 ? (values[i][colMap.fullName - 1] || "") : "",
+              studentNumber: colMap.studentNumber > 0 ? (values[i][colMap.studentNumber - 1] || "").toString() : "",
               name: values[i][colMap.name - 1],
               classroom: values[i][colMap.classroom - 1] || "",
               number: (values[i][colMap.number - 1] || "").toString(),
@@ -309,6 +339,8 @@ function doGet(e) {
           orders.push({
             timestamp: values[j][colMap.timestamp - 1],
             email: values[j][colMap.email - 1],
+            fullName: colMap.fullName > 0 ? (values[j][colMap.fullName - 1] || "") : "",
+            studentNumber: colMap.studentNumber > 0 ? (values[j][colMap.studentNumber - 1] || "").toString() : "",
             name: values[j][colMap.name - 1],
             classroom: values[j][colMap.classroom - 1] || "",
             number: values[j][colMap.number - 1],
@@ -354,7 +386,7 @@ function getOrCreateSheet() {
   var sheet = doc.getSheetByName(SHEET_NAME) || doc.getActiveSheet();
   
   if (sheet.getLastRow() === 0) {
-    var headers = ["Timestamp", "Email", "Screen Name", "Classroom", "Screen Number", "Size", "Payment Slip", "Status"];
+    var headers = ["Timestamp", "Email", "Full Name", "Classroom", "Student Number", "Screen Name", "Screen Number", "Size", "Payment Slip", "Status"];
     sheet.appendRow(headers);
     
     var headerRange = sheet.getRange(1, 1, 1, headers.length);
@@ -365,12 +397,14 @@ function getOrCreateSheet() {
     
     sheet.setColumnWidth(1, 170); // Timestamp
     sheet.setColumnWidth(2, 220); // Email
-    sheet.setColumnWidth(3, 160); // Name
+    sheet.setColumnWidth(3, 180); // Full Name
     sheet.setColumnWidth(4, 130); // Classroom
-    sheet.setColumnWidth(5, 120); // Number
-    sheet.setColumnWidth(6, 80);  // Size
-    sheet.setColumnWidth(7, 150); // Slip Status
-    sheet.setColumnWidth(8, 140); // Status
+    sheet.setColumnWidth(5, 120); // Student Number
+    sheet.setColumnWidth(6, 160); // Screen Name
+    sheet.setColumnWidth(7, 120); // Screen Number
+    sheet.setColumnWidth(8, 80);  // Size
+    sheet.setColumnWidth(9, 150); // Slip Status
+    sheet.setColumnWidth(10, 140); // Status
   } else {
     // ตรวจสอบว่ามีคอลัมน์ Classroom หรือยัง ถ้ายังไม่มีให้แทรกที่คอลัมน์ D
     var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
