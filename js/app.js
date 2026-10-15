@@ -69,6 +69,7 @@ const DOM = {
   btnSubmit: document.getElementById('btnSubmit'),
   btnSubmitText: document.getElementById('btnSubmitText'),
   btnSubmitIcon: document.getElementById('btnSubmitIcon'),
+  submitSlipNotice: document.getElementById('submitSlipNotice'),
   btnReset: document.getElementById('btnResetForm'),
   btnRandomNumber: document.getElementById('btnRandomNumber'),
   btnCapsName: document.getElementById('btnCapsName'),
@@ -664,9 +665,11 @@ function updateSubmitButtonAvailability() {
   if (!isEligible) {
     DOM.btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
     DOM.btnSubmit.title = 'กรุณาแนบสลิปการโอนเงินก่อนยืนยันการสั่งจอง';
+    if (DOM.submitSlipNotice) DOM.submitSlipNotice.classList.remove('hidden');
   } else {
     DOM.btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
     DOM.btnSubmit.removeAttribute('title');
+    if (DOM.submitSlipNotice) DOM.submitSlipNotice.classList.add('hidden');
   }
 }
 
@@ -1810,10 +1813,13 @@ function bindCancelledModalEvents(modal) {
 
   if (btnSupport) {
     btnSupport.addEventListener('click', () => {
-      const chatUrl = (typeof CONFIG !== 'undefined' && CONFIG.openChatUrl)
-        ? CONFIG.openChatUrl
-        : 'https://line.me/ti/g2/your-openchat-url';
-      window.open(chatUrl, '_blank');
+      const rawUrl = (typeof CONFIG !== 'undefined' && CONFIG.openChatUrl) ? CONFIG.openChatUrl : '';
+      const isConfigured = rawUrl && rawUrl.indexOf('your-openchat-url') === -1;
+      if (isConfigured) {
+        window.open(rawUrl, '_blank');
+      } else {
+        showToast('กรุณาติดต่อคณะกรรมการสีชมพู หรือครูที่ปรึกษาประจำสี', 'info');
+      }
       closeModal();
     });
   }

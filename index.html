@@ -328,7 +328,7 @@
                 aria-label="อีเมลของคุณ"
                 required 
                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                title="กรุณากรอกอีเมลให้ถูกต้อง เช่น name@example.com"
+                title="กรุณากรอกอีเมลให้ถูกต้อง เช่น student@spk.ac.th"
                 class="apple-glass-input w-full px-3.5 py-2.5 text-sm">
               <div id="emailLoadingSpinner" class="absolute right-3.5 top-1/2 -translate-y-1/2 hidden text-slate-700">
                 <i class="fa-solid fa-circle-notch fa-spin text-sm"></i>
@@ -599,15 +599,20 @@
           </div>
 
           <!-- 5. Submit CTA Button (Also hidden until email is valid) -->
-          <div id="submitButtonSection" class="pt-2 border-t border-slate-200/60 flex items-center gap-2.5 hidden">
-            <button type="button" id="btnResetForm" class="apple-btn-secondary px-3.5 py-3 text-xs">
-              ล้างค่า
-            </button>
-            <button type="button" id="btnSubmit"
-              class="apple-btn-primary flex-grow py-3 text-sm flex items-center justify-center space-x-2">
-              <i id="btnSubmitIcon" class="fa-solid fa-check text-xs"></i>
-              <span id="btnSubmitText">ยืนยันการสั่งจองและส่งสลิป</span>
-            </button>
+          <div id="submitButtonSection" class="pt-2 border-t border-slate-200/60 space-y-2 hidden">
+            <div class="flex items-center gap-2.5">
+              <button type="button" id="btnResetForm" class="apple-btn-secondary px-3.5 py-3 text-xs">
+                ล้างค่า
+              </button>
+              <button type="button" id="btnSubmit"
+                class="apple-btn-primary flex-grow py-3 text-sm flex items-center justify-center space-x-2">
+                <i id="btnSubmitIcon" class="fa-solid fa-check text-xs"></i>
+                <span id="btnSubmitText">ยืนยันการสั่งจองและส่งสลิป</span>
+              </button>
+            </div>
+            <p id="submitSlipNotice" class="text-[11px] text-center text-slate-500 font-medium transition">
+              <i class="fa-solid fa-circle-info mr-1 text-pink-600"></i>กรุณาแนบสลิปการโอนเงินด้านบน เพื่อเปิดใช้งานปุ่มยืนยัน
+            </p>
           </div>
 
         </div>
@@ -907,7 +912,7 @@
   <script src="js/security.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=18"></script>
+  <script src="js/app.js?v=19"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>
