@@ -23,7 +23,7 @@ const JERSEY_CONFIG = {
 // ==========================================
 const AppState = {
   mode: 'new', // 'new' | 'edit'
-  viewSide: 'front', // 'back' | 'front' | 'both'
+  viewSide: 'back', // 'back' | 'front' | 'both'
   email: '',
   classroom: '',
   studentNumber: '',
@@ -1405,15 +1405,15 @@ function validateForm() {
     if (!firstErrorField && DOM.selectClassroom) firstErrorField = DOM.selectClassroom;
   }
 
-  // 3. Validate Student Number (เลขที่ - รองรับ 1-60 และ ก / ข)
+  // 3. Validate Student Number (เลขที่ - บังคับ 1-60 ตามด้วย ก หรือ ข)
   const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
-  const studentNumPattern = /^[0-9]{1,2}[ก-ข]?$/;
+  const studentNumPattern = /^[0-9]{1,2}[กข]$/;
   if (!studentNumber) {
-    if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'กรุณากรอกเลขที่ (เช่น 15 หรือ 15ก)');
+    if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'กรุณากรอกเลขที่ตามด้วย ก หรือ ข (เช่น 15ก หรือ 22ข)');
     isValid = false;
     if (!firstErrorField && DOM.inputStudentNumber) firstErrorField = DOM.inputStudentNumber;
   } else if (!studentNumPattern.test(studentNumber)) {
-    if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'รูปแบบเลขที่ต้องเป็นตัวเลข 1-60 หรือมี ก/ข ต่อท้าย (เช่น 15 หรือ 15ก)');
+    if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'ต้องระบุเลขที่ตามด้วย ก หรือ ข เท่านั้น (เช่น 15ก หรือ 22ข)');
     isValid = false;
     if (!firstErrorField && DOM.inputStudentNumber) firstErrorField = DOM.inputStudentNumber;
   }
