@@ -1198,23 +1198,6 @@ async function lookupEmailAndShowForm(email) {
     showToast('ระบบยังไม่ได้ตั้งค่า กรุณากรอกข้อมูลใหม่', 'warning');
   }
 }
-function loadOrdersDatabase() {
-  // Removed LocalStorage - using Google Sheets only
-  AppState.orders = [];
-}
-
-function saveOrdersToLocal() {
-  // Removed LocalStorage - using Google Sheets only
-}
-
-function updateOrdersCountBadge() {
-  // Removed - no longer tracking local count
-}
-
-async function lookupEmail(email) {
-  // This function is now replaced by lookupEmailAndShowForm
-  await lookupEmailAndShowForm(email);
-}
 
 function populateEditModeFields(orderRecord) {
   AppState.mode = 'edit';
@@ -1655,14 +1638,13 @@ window.editOrderFromList = function (idx) {
   if (!order) return;
   closeDatabaseModal();
   DOM.inputEmail.value = order.email;
-  lookupEmail(order.email);
+  lookupEmailAndShowForm(order.email);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.deleteOrderFromList = function (idx) {
   if (confirm('คุณต้องการลบรายการสั่งจองนี้ใช่หรือไม่?')) {
     AppState.orders.splice(idx, 1);
-    saveOrdersToLocal();
     renderOrdersList();
     showToast('ลบรายการเรียบร้อยแล้ว', 'info');
   }
