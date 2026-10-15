@@ -657,12 +657,26 @@ function updateSlipStatusBadge(isExternalUrl) {
   }
 }
 
+function updateSubmitButtonAvailability() {
+  if (!DOM.btnSubmit) return;
+  const isEligible = AppState.mode === 'edit' || Boolean(AppState.slipImage);
+  DOM.btnSubmit.disabled = !isEligible;
+  if (!isEligible) {
+    DOM.btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+    DOM.btnSubmit.title = 'กรุณาแนบสลิปการโอนเงินก่อนยืนยันการสั่งจอง';
+  } else {
+    DOM.btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+    DOM.btnSubmit.removeAttribute('title');
+  }
+}
+
 function clearSlipPreview() {
   if (DOM.slipDropzone) DOM.slipDropzone.classList.remove('hidden');
   if (DOM.slipPreviewCard) DOM.slipPreviewCard.classList.add('hidden');
   if (DOM.slipThumbnailImg) DOM.slipThumbnailImg.src = '';
   if (DOM.slipFullImg) DOM.slipFullImg.src = '';
   if (DOM.inputSlipFile) DOM.inputSlipFile.value = '';
+  updateSubmitButtonAvailability();
 }
 
 function renderSlipPreview() {
@@ -688,6 +702,7 @@ function renderSlipPreview() {
   if (DOM.slipUploadTime) DOM.slipUploadTime.textContent = AppState.slipUploadedAt ? `อัปโหลดเมื่อ ${AppState.slipUploadedAt}` : 'มีสลิปในระบบ';
 
   updateSlipStatusBadge(isExternalUrl);
+  updateSubmitButtonAvailability();
 }
 
 // ==========================================
@@ -1080,6 +1095,7 @@ function showFormContent() {
   if (DOM.paymentStatusSection) DOM.paymentStatusSection.classList.remove('hidden');
   if (DOM.submitButtonSection) DOM.submitButtonSection.classList.remove('hidden');
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.add('hidden');
+  updateSubmitButtonAvailability();
 }
 
 async function lookupEmailAndShowForm(email) {
@@ -1498,12 +1514,13 @@ function buildOrderSubmissionRecord(email, name, number, classroom, nowTimestamp
 
 function updateFormSubmissionUI(isSubmitting) {
   AppState.isSubmitting = isSubmitting;
-  DOM.btnSubmit.disabled = isSubmitting;
   if (isSubmitting) {
+    DOM.btnSubmit.disabled = true;
     DOM.btnSubmitText.textContent = 'กำลังบันทึกข้อมูล...';
     return;
   }
   DOM.btnSubmitText.textContent = AppState.mode === 'edit' ? 'บันทึกการแก้ไขข้อมูล' : 'ยืนยันการสั่งจองและส่งสลิป';
+  updateSubmitButtonAvailability();
 }
 
 async function sendOrderToGoogleSheets(submissionRecord) {
