@@ -1415,7 +1415,7 @@ function validateForm() {
 
   // 3. Validate Student Number (เลขที่ - รองรับ 1-60 และ ก / ข)
   const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
-  const studentNumPattern = /^[0-9]{1,2}[ก-ขA-Za-z]?$/;
+  const studentNumPattern = /^[0-9]{1,2}[ก-ข]?$/;
   if (!studentNumber) {
     if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'กรุณากรอกเลขที่ (เช่น 15 หรือ 15ก)');
     isValid = false;

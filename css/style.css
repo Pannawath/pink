@@ -765,6 +765,12 @@ main.max-w-5xl {
   font-weight: 800;
 }
 
+.apple-segmented-btn:focus-visible {
+  outline: 2px solid #db2777;
+  outline-offset: 2px;
+  border-radius: 9999px !important;
+}
+
 .apple-segmented-btn.active {
   color: #ffffff !important;
   font-weight: 800;
