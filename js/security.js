@@ -7,7 +7,7 @@
  * =========================================================================
  */
 
-const DEVTOOLS_PASSWORD = '28052552';
+const DEVTOOLS_PASSWORD = '12345678';
 let isDevToolsUnlocked = false;
 
 function buildPasswordModalContentHtml() {
