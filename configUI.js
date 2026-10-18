@@ -62,7 +62,7 @@ const CONFIG_UI = {
     productTitle: 'เสื้อกีฬาสี สีชมพู',
 
     // สโลแกน / คำโปรยใต้ชื่อเสื้อ
-    productSubtitle: 'ใส่ทีมเดียวกัน สู้ไปด้วยกัน',
+    productSubtitle: '',
 
     // ราคาสินค้าที่แสดง
     priceText: '฿275',

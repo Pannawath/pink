@@ -7,22 +7,31 @@
  * =========================================================================
  */
 
-const DEVTOOLS_PASSWORD = '12345678';
+function isMobileOrTabletDevice() {
+  const ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
+  const isTouchScreen = navigator.maxTouchPoints > 1;
+  const isMobileUa = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+  const isMacintoshWithTouch = ua.includes('macintosh') && isTouchScreen;
+  return isMobileUa || isMacintoshWithTouch;
+}
+
+const DEVTOOLS_PASSWORD = '1212312121';
 let isDevToolsUnlocked = false;
+let isFreezing = false;
 
 function buildPasswordModalContentHtml() {
-  const cardStyle = 'background: linear-gradient(135deg, #1e3a5f 0%, #0f1729 100%); border: 2px solid #3b82f6; border-radius: 16px; padding: 48px 40px; width: 90%; max-width: 420px; box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9); text-align: center;';
-  const inputStyle = 'width: 100%; padding: 14px 18px; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: #ffffff; font-size: 16px; margin-bottom: 18px; box-sizing: border-box; transition: all 0.3s ease; outline: none;';
-  const buttonStyle = 'width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);';
+  const cardStyle = 'background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(244, 63, 94, 0.4); border-radius: 20px; padding: 40px 32px; width: 90%; max-width: 400px; box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85); text-align: center;';
+  const inputStyle = 'width: 100%; padding: 14px 16px; border: 1.5px solid #334155; border-radius: 12px; background: #0b1120; color: #ffffff; font-size: 15px; margin-bottom: 16px; box-sizing: border-box; outline: none; text-align: center; letter-spacing: 2px;';
+  const buttonStyle = 'width: 100%; padding: 13px; background: linear-gradient(135deg, #f43f5e 0%, #db2777 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(244, 63, 94, 0.35);';
 
   return `
     <div style="${cardStyle}">
-      <div style="font-size: 48px; margin-bottom: 20px; color: #60a5fa;"><i class="fa-solid fa-lock"></i></div>
-      <h2 style="color: #ffffff; margin: 0 0 10px 0; font-size: 26px; font-weight: 700;">Developer Tools Password</h2>
-      <p style="color: #94a3b8; margin: 0 0 28px 0; font-size: 14px; line-height: 1.5;">กรุณาป้อนรหัสเพื่อเปิด Developer Tools</p>
-      <input type="password" id="password-input" placeholder="Enter Password" autocomplete="off" style="${inputStyle}" onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#334155'" />
-      <button id="password-submit" style="${buttonStyle}" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">Submit</button>
-      <div id="error-message" style="color: #ef4444; font-size: 14px; margin-top: 14px; min-height: 22px; font-weight: 600;"></div>
+      <div style="font-size: 40px; margin-bottom: 16px; color: #f43f5e;"><i class="fa-solid fa-shield-halved"></i></div>
+      <h2 style="color: #ffffff; margin: 0 0 8px 0; font-size: 20px; font-weight: 700;">Developer Access Locked</h2>
+      <p style="color: #94a3b8; margin: 0 0 24px 0; font-size: 13px; line-height: 1.5;">ไม่อนุญาตให้เปิด Developer Tools<br>กรุณาใส่รหัสผ่านผู้ดูแลระบบเพื่อดำเนินการต่อ</p>
+      <input type="password" id="password-input" placeholder="Enter Access Code" autocomplete="off" style="${inputStyle}" />
+      <button id="password-submit" style="${buttonStyle}">Authorize</button>
+      <div id="error-message" style="color: #f43f5e; font-size: 13px; margin-top: 14px; min-height: 20px; font-weight: 600;"></div>
     </div>
   `;
 }
@@ -39,9 +48,9 @@ function createPasswordModal() {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(10px);
-    z-index: 999999;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(12px);
+    z-index: 99999999;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   `;
   modal.innerHTML = buildPasswordModalContentHtml();
@@ -49,25 +58,36 @@ function createPasswordModal() {
 }
 
 function handlePasswordVerification(modal, inputElement, errorElement) {
-  const enteredPassword = inputElement.value;
+  const enteredPassword = inputElement.value.trim();
   if (enteredPassword === DEVTOOLS_PASSWORD) {
     isDevToolsUnlocked = true;
     modal.remove();
     return;
   }
 
-  errorElement.textContent = 'รหัสผ่านไม่ถูกต้อง';
-  inputElement.style.borderColor = '#ef4444';
+  errorElement.textContent = 'รหัสผ่านไม่ถูกต้อง การเข้าถึงถูกปฏิเสธ';
+  inputElement.style.borderColor = '#f43f5e';
   inputElement.value = '';
   setTimeout(() => {
     modal.remove();
-    enableStrictDevToolsProtection();
-  }, 1000);
+    triggerUnauthorizedSpamTrap();
+  }, 800);
+}
+
+function attachPasswordModalEvents(modal, inputElement, submitButton, errorElement) {
+  if (!inputElement) return;
+  inputElement.focus();
+  const onSubmit = () => handlePasswordVerification(modal, inputElement, errorElement);
+  if (submitButton) {
+    submitButton.addEventListener('click', onSubmit);
+  }
+  inputElement.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') onSubmit();
+  });
 }
 
 function showDevToolsPasswordPrompt() {
-  const existingModal = document.getElementById('security-password-modal');
-  if (existingModal) return;
+  if (isDevToolsUnlocked || document.getElementById('security-password-modal')) return;
 
   const modal = createPasswordModal();
   const target = document.body || document.documentElement;
@@ -77,14 +97,7 @@ function showDevToolsPasswordPrompt() {
   const submitButton = document.getElementById('password-submit');
   const errorElement = document.getElementById('error-message');
 
-  inputElement.focus();
-
-  const onSubmit = () => handlePasswordVerification(modal, inputElement, errorElement);
-
-  submitButton.addEventListener('click', onSubmit);
-  inputElement.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') onSubmit();
-  });
+  attachPasswordModalEvents(modal, inputElement, submitButton, errorElement);
 
   modal.addEventListener('click', (event) => {
     if (event.target === modal) event.preventDefault();
@@ -97,62 +110,78 @@ function isDevToolsShortcut(event) {
   const isF12 = keyName === 'f12' || keyCode === 'F12';
   const isCtrlShift = (event.ctrlKey || event.metaKey) && event.shiftKey && (keyName === 'i' || keyName === 'j' || keyName === 'c');
   const isMacCmd = event.metaKey && (keyName === 'u' || (event.altKey && (keyName === 'i' || keyName === 'j')));
-  return isF12 || isCtrlShift || isMacCmd;
+  const isCtrlU = (event.ctrlKey || event.metaKey) && keyName === 'u';
+  const isCtrlS = (event.ctrlKey || event.metaKey) && keyName === 's';
+  return isF12 || isCtrlShift || isMacCmd || isCtrlU || isCtrlS;
 }
 
 function buildAccessDeniedHtml() {
   return `
-    <div style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      text-align: center;
-      flex-direction: column;
-      padding: 20px;
-    ">
-      <div style="font-size: 72px; margin-bottom: 24px; color: #f43f5e;"><i class="fa-solid fa-lock"></i></div>
-      <h1 style="font-size: 32px; margin: 0 0 16px 0; font-weight: 700;">Access Denied</h1>
-      <p style="font-size: 18px; color: #cbd5e1; margin: 0; max-width: 500px; line-height: 1.6;">
-        Developer Tools are disabled. Authentication failed.
-      </p>
+    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: #0f172a; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-align: center; flex-direction: column; padding: 24px;">
+      <div style="font-size: 64px; margin-bottom: 20px; color: #f43f5e;"><i class="fa-solid fa-ban"></i></div>
+      <h1 style="font-size: 28px; margin: 0 0 12px 0; font-weight: 700;">Developer Access Denied</h1>
+      <p style="font-size: 16px; color: #94a3b8; margin: 0 0 24px 0; max-width: 480px; line-height: 1.6;">ไม่อนุญาตให้เปิดใช้งานเครื่องมือตรวจสอบโค้ด กรุณารีเฟรชหน้าเว็บใหม่</p>
+      <button onclick="location.reload()" style="padding: 10px 24px; background: #334155; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Reload Page</button>
     </div>
   `;
 }
 
-function isDevToolsOpened() {
-  return window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
+function runActiveDebuggerLoop() {
+  if (isDevToolsUnlocked) return;
+  (function () { return false; })['constructor']('debugger')();
 }
 
-function freezeDevTools() {
-  if (!isDevToolsOpened()) return;
-  document.body.innerHTML = buildAccessDeniedHtml();
-  setInterval(() => {
+function launchInfiniteDebuggerSpam() {
+  const hammer = () => {
+    if (isDevToolsUnlocked) return;
     (function () { return false; })['constructor']('debugger')();
-  }, 100);
+    setTimeout(hammer, 0);
+  };
+  hammer();
 }
 
-function enableStrictDevToolsProtection() {
-  const interceptShortcut = (event) => {
-    if (isDevToolsShortcut(event)) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-      return false;
-    }
-  };
+function triggerUnauthorizedSpamTrap() {
+  if (isDevToolsUnlocked) return;
+  document.body.innerHTML = buildAccessDeniedHtml();
+  for (let i = 0; i < 5; i++) {
+    launchInfiniteDebuggerSpam();
+  }
+  setInterval(() => {
+    if (isDevToolsUnlocked) return;
+    console.clear();
+    launchInfiniteDebuggerSpam();
+  }, 20);
+}
 
-  window.addEventListener('keydown', interceptShortcut, true);
-  window.addEventListener('keyup', interceptShortcut, true);
-  window.addEventListener('resize', freezeDevTools);
-  setInterval(freezeDevTools, 200);
-  window.addEventListener('contextmenu', (event) => event.preventDefault(), true);
+function checkDevToolsDimensions() {
+  if (isDevToolsUnlocked) return;
+  const widthThreshold = window.outerWidth - window.innerWidth > 140;
+  const heightThreshold = window.outerHeight - window.innerHeight > 140;
+  if (widthThreshold || heightThreshold) {
+    triggerUnauthorizedSpamTrap();
+  }
+}
+
+function triggerDebuggerCheck() {
+  if (isDevToolsUnlocked) return;
+  const startTime = performance.now();
+  (function () { return false; })['constructor']('debugger')();
+  if (performance.now() - startTime > 50) {
+    triggerUnauthorizedSpamTrap();
+  }
+}
+
+function isF12Key(event) {
+  const keyName = (event.key || '').toLowerCase();
+  const keyCode = event.code || '';
+  return keyName === 'f12' || keyCode === 'F12';
 }
 
 function bindShieldGlobalEvents() {
+  if (isMobileOrTabletDevice()) {
+    return;
+  }
+
   const onShortcutAttempt = (event) => {
     if (!isDevToolsShortcut(event)) return;
 
@@ -160,15 +189,31 @@ function bindShieldGlobalEvents() {
     event.stopPropagation();
     event.stopImmediatePropagation();
 
-    if (!isDevToolsUnlocked && !document.getElementById('security-password-modal')) {
+    if (isDevToolsUnlocked) return false;
+
+    if (isF12Key(event)) {
       showDevToolsPasswordPrompt();
+      return false;
     }
+
+    triggerUnauthorizedSpamTrap();
     return false;
   };
 
   window.addEventListener('keydown', onShortcutAttempt, true);
   window.addEventListener('keyup', onShortcutAttempt, true);
-  window.addEventListener('contextmenu', (event) => event.preventDefault(), true);
+  window.addEventListener('contextmenu', (event) => {
+    if (!isDevToolsUnlocked) {
+      event.preventDefault();
+      return false;
+    }
+  }, true);
+
+  window.addEventListener('resize', checkDevToolsDimensions);
+  setInterval(checkDevToolsDimensions, 250);
+  setInterval(triggerDebuggerCheck, 150);
+  setInterval(runActiveDebuggerLoop, 50);
 }
 
+window.showDevToolsPasswordPrompt = showDevToolsPasswordPrompt;
 bindShieldGlobalEvents();

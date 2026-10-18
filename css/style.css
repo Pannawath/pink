@@ -82,6 +82,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body,
+input,
+select,
+textarea,
+button {
+  font-family: 'Kanit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
 
 /* ========================================================
    STUDIO 3D FLOATING WEBGL CANVAS WITH LIGHTING
@@ -634,7 +642,7 @@ html {
   font-family: 'Kanit', sans-serif;
   font-weight: 800;
   color: #0f172a;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   text-shadow: none;
 }
 
@@ -665,8 +673,17 @@ main.max-w-5xl {
 .apple-glass-card h2,
 .apple-glass-card h3,
 .apple-glass-card .font-sport-bold {
-  font-family: 'Kanit', 'Plus Jakarta Sans', sans-serif;
-  letter-spacing: 0;
+  font-family: 'Kanit', 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Secondary & helper text styling (low visual dominance) */
+.helper-microtext {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 /* ========================================================
@@ -1214,7 +1231,7 @@ main.max-w-5xl {
       inset 0 1px 2px rgba(255, 255, 255, 1);
   }
 
-  .apple-glass-card {
+  #configuratorCard.apple-glass-card {
     border-radius: 28px;
     position: static;
     z-index: 20;

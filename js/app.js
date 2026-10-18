@@ -46,7 +46,9 @@ const AppState = {
     ? CONFIG.backend.spreadsheetId
     : '13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0',
   existingRecord: null,
-  orders: []
+  orders: [],
+  ordersCache: new Map(),
+  isCacheReady: false
 };
 
 // ==========================================
@@ -178,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateLivePreview();
   setJerseyView(AppState.viewSide);
   checkGasConnection();
+  startPeriodicCacheSync();
   preloadHighResImages();
 });
 
@@ -215,9 +218,25 @@ function bindEmailSyncEvents() {
   });
 }
 
+function clearFieldError(inputElement) {
+  if (!inputElement) return;
+  inputElement.style.borderColor = '';
+  inputElement.style.boxShadow = '';
+  const parent = inputElement.parentElement;
+  if (parent) {
+    const errorEl = parent.querySelector('.field-error-message');
+    if (errorEl) errorEl.remove();
+  }
+}
+
 function bindPersonalizationEvents() {
   DOM.inputScreenName.addEventListener('input', (event) => {
-    AppState.screenName = event.target.value;
+    const englishOnly = event.target.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
+    if (event.target.value !== englishOnly) {
+      event.target.value = englishOnly;
+    }
+    AppState.screenName = englishOnly;
+    clearFieldError(DOM.inputScreenName);
     updateLivePreview();
   });
 
@@ -226,6 +245,7 @@ function bindPersonalizationEvents() {
     if (numericDigits.length > 2) numericDigits = numericDigits.slice(0, 2);
     AppState.screenNumber = numericDigits;
     event.target.value = numericDigits;
+    clearFieldError(DOM.inputScreenNumber);
     updateLivePreview();
   });
 
@@ -233,6 +253,7 @@ function bindPersonalizationEvents() {
     DOM.btnCapsName.addEventListener('click', () => {
       AppState.screenName = AppState.screenName.toUpperCase();
       DOM.inputScreenName.value = AppState.screenName;
+      clearFieldError(DOM.inputScreenName);
       updateLivePreview();
     });
   }
@@ -243,6 +264,7 @@ function bindPersonalizationEvents() {
       const chosenNumber = luckyList[Math.floor(Math.random() * luckyList.length)];
       AppState.screenNumber = chosenNumber;
       DOM.inputScreenNumber.value = chosenNumber;
+      clearFieldError(DOM.inputScreenNumber);
       updateLivePreview();
     });
   }
@@ -250,6 +272,14 @@ function bindPersonalizationEvents() {
   if (DOM.selectClassroom) {
     DOM.selectClassroom.addEventListener('change', (event) => {
       AppState.classroom = event.target.value;
+      clearFieldError(DOM.selectClassroom);
+    });
+  }
+
+  if (DOM.inputStudentNumber) {
+    DOM.inputStudentNumber.addEventListener('input', (event) => {
+      clearFieldError(DOM.inputStudentNumber);
+      AppState.studentNumber = event.target.value.trim();
     });
   }
 }
@@ -445,29 +475,21 @@ function initSlipUploadEvents() {
 // QR PROMPTPAY MODAL
 // ==========================================
 function getPromptPayDetails() {
-  const number = (typeof CONFIG !== 'undefined' && CONFIG.promptPayNumber)
-    ? CONFIG.promptPayNumber
-    : '09X-XXX-XXXX';
   const name = (typeof CONFIG !== 'undefined' && CONFIG.accountName)
     ? CONFIG.accountName
-    : 'คณะสีชมพู สารคามพิทยาคม';
-  return { number, name };
+    : 'น.ส. ภัททิยา เมืองวงษ์';
+  return { name };
 }
 
 function openQrPromptPayModal() {
   const account = getPromptPayDetails();
-  const cleanNumber = (account.number || '').replace(/[^0-9]/g, '');
-  const isNumeric = cleanNumber.length >= 10;
   
   if (DOM.qrPromptPayImage) {
-    if (isNumeric) {
-      DOM.qrPromptPayImage.src = `https://promptpay.io/${cleanNumber}/275.png`;
-    } else {
-      DOM.qrPromptPayImage.src = 'assets/images/qr-code.png';
-    }
+    DOM.qrPromptPayImage.src = 'assets/images/qr-code.png';
   }
-  if (DOM.promptPayNumber) {
-    DOM.promptPayNumber.textContent = account.number;
+  const recipientNameEl = document.getElementById('promptPayRecipientName');
+  if (recipientNameEl) {
+    recipientNameEl.textContent = `ชื่อบัญชี: ${account.name}`;
   }
   
   if (DOM.qrPromptPayModal) {
@@ -494,14 +516,23 @@ if (DOM.qrPromptPayModal) {
   });
 }
 
+const btnDownloadQr = document.getElementById('btnDownloadQr');
+if (btnDownloadQr) {
+  btnDownloadQr.addEventListener('click', () => {
+    showToast('กำลังบันทึกรูป QR Code...', 'success');
+  });
+}
+
 if (DOM.btnCopyPromptPay) {
   DOM.btnCopyPromptPay.addEventListener('click', () => {
     const account = getPromptPayDetails();
-    navigator.clipboard.writeText(account.number).then(() => {
-      showToast(`คัดลอกเลขพร้อมเพย์ ${account.number} แล้ว`, 'success');
-    }).catch(() => {
-      showToast(`เลขพร้อมเพย์: ${account.number}`, 'info');
-    });
+    if (account.name) {
+      navigator.clipboard.writeText(account.name).then(() => {
+        showToast(`คัดลอกชื่อบัญชี ${account.name} แล้ว`, 'success');
+      }).catch(() => {
+        showToast(`ชื่อบัญชี: ${account.name}`, 'info');
+      });
+    }
   });
 }
 
@@ -525,13 +556,74 @@ function processSlipFile(file) {
       AppState.slipImage = compressedDataUrl;
       AppState.slipFileName = file.name;
       AppState.slipUploadedAt = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-      AppState.slipChanged = true; // Mark that slip was changed
+      AppState.slipChanged = true;
       renderSlipPreview();
       showToast('แนบสลิปเรียบร้อยแล้ว!', 'success');
+      verifySlipRecipientName(compressedDataUrl);
     });
   };
   reader.readAsDataURL(file);
 }
+
+function normalizeThaiText(text) {
+  if (!text) return '';
+  return text
+    .toLowerCase()
+    .replace(/[\s\r\n\t\-._,;:'"()\/]/g, '')
+    .replace(/[ัิีึืฺุู็่้๊๋์ํ๎]/g, (char) => char);
+}
+
+function checkRecipientNameMatch(rawText) {
+  const normalized = normalizeThaiText(rawText);
+  const targetKeywords = ['ภัททิยา', 'เมืองวงษ์', 'pattiya', 'muangwong', 'phattiya'];
+  return targetKeywords.some((keyword) => normalized.includes(normalizeThaiText(keyword)));
+}
+
+function updateSlipVerificationUI(state) {
+  const box = document.getElementById('slipVerificationBox');
+  const verifying = document.getElementById('slipVerifyingState');
+  const match = document.getElementById('slipVerifiedMatch');
+  const mismatch = document.getElementById('slipVerifiedMismatch');
+  if (!box || !verifying || !match || !mismatch) return;
+
+  box.classList.remove('hidden');
+  verifying.classList.add('hidden');
+  match.classList.add('hidden');
+  mismatch.classList.add('hidden');
+
+  if (state === 'verifying') {
+    verifying.classList.remove('hidden');
+  } else if (state === 'match') {
+    match.classList.remove('hidden');
+    showToast('ตรวจสอบใบเสร็จถูกต้องเรียบร้อย', 'success');
+  } else if (state === 'mismatch') {
+    mismatch.classList.remove('hidden');
+    showToast('ข้อมูลในสลิปไม่ตรง หรือรูปไม่ชัด (ยังส่งได้ตามปกติ)', 'warning');
+  }
+}
+
+async function verifySlipRecipientName(imageDataUrl) {
+  if (typeof Tesseract === 'undefined') {
+    return;
+  }
+
+  updateSlipVerificationUI('verifying');
+
+  try {
+    const recognitionResult = await Tesseract.recognize(imageDataUrl, 'tha+eng', {
+      logger: () => {}
+    });
+    const recognizedText = recognitionResult?.data?.text || '';
+    const hasRecipient = checkRecipientNameMatch(recognizedText);
+
+    updateSlipVerificationUI(hasRecipient ? 'match' : 'mismatch');
+  } catch (err) {
+    updateSlipVerificationUI('mismatch');
+  }
+}
+
+window.updateSlipVerificationUI = updateSlipVerificationUI;
+window.verifySlipRecipientName = verifySlipRecipientName;
 
 function compressSlipImage(dataUrl, callback) {
   const img = new Image();
@@ -592,7 +684,7 @@ function getOrCreatePaymentNotice(parentContainer) {
 }
 
 function updateSlipUploadAccess() {
-  const lockedStatuses = ['ชำระเงินแล้ว', 'กำลังผลิต', 'จัดส่งแล้ว', 'เสร็จสิ้น'];
+  const lockedStatuses = ['ชำระเงินแล้ว', 'จัดส่งแล้ว', 'เสร็จสิ้น'];
   const isLocked = lockedStatuses.includes(AppState.orderStatus);
   const slipSection = document.getElementById('slipUploadSection');
 
@@ -678,6 +770,8 @@ function clearSlipPreview() {
   if (DOM.slipThumbnailImg) DOM.slipThumbnailImg.src = '';
   if (DOM.slipFullImg) DOM.slipFullImg.src = '';
   if (DOM.inputSlipFile) DOM.inputSlipFile.value = '';
+  const verificationBox = document.getElementById('slipVerificationBox');
+  if (verificationBox) verificationBox.classList.add('hidden');
   updateSubmitButtonAvailability();
 }
 
@@ -1100,103 +1194,111 @@ function showFormContent() {
   updateSubmitButtonAvailability();
 }
 
+function buildOrderRecordFromRaw(raw, email) {
+  return {
+    email: raw.email || email,
+    fullName: raw.fullName || '',
+    studentNumber: raw.studentNumber || '',
+    name: raw.name || '',
+    classroom: raw.classroom || '',
+    number: (raw.number || '10').toString(),
+    size: raw.size || 'L',
+    price: 275,
+    timestamp: raw.timestamp || '',
+    status: raw.status || 'รอชำระเงิน',
+    slipUrl: raw.slipUrl || null,
+    slipImage: raw.slipUrl || null,
+    slipFileName: 'สลิปการโอนเงินเดิม.jpg'
+  };
+}
+
+async function syncOrdersCache() {
+  if (!AppState.gasUrl) return;
+  try {
+    const listUrl = `${AppState.gasUrl}?action=list`;
+    const resp = await fetch(listUrl);
+    if (!resp.ok) return;
+    const json = await resp.json();
+    if (json && json.status === 'success' && Array.isArray(json.orders)) {
+      AppState.ordersCache.clear();
+      json.orders.forEach(orderEntry => {
+        const emailKey = (orderEntry.email || '').trim().toLowerCase();
+        if (emailKey) {
+          AppState.ordersCache.set(emailKey, orderEntry);
+        }
+      });
+      AppState.isCacheReady = true;
+    }
+  } catch (err) {
+    // Silent fail for background sync
+  }
+}
+
+function startPeriodicCacheSync() {
+  syncOrdersCache();
+  setInterval(syncOrdersCache, 30000);
+}
+
+function applyExistingOrder(record) {
+  DOM.emailLoadingSpinner.classList.add('hidden');
+  switchToEditMode(record);
+  showFormContent();
+  showToast('พบข้อมูลเดิม ดึงข้อมูลมาให้เรียบร้อยแล้ว', 'success');
+}
+
+function applyNewOrderPrompt() {
+  DOM.emailLoadingSpinner.classList.add('hidden');
+  resetToNewMode();
+  showFormContent();
+  DOM.emailStatusBadge.classList.remove('hidden');
+  DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-check text-emerald-500 mr-1"></i>อีเมลใหม่ พร้อมสั่งจอง';
+  showToast('ไม่พบประวัติการจองเดิม กรุณากรอกข้อมูลใหม่', 'info');
+}
+
 async function lookupEmailAndShowForm(email) {
-  // Clear previous data first
   DOM.emailLoadingSpinner.classList.remove('hidden');
   DOM.emailStatusBadge.classList.add('hidden');
 
-  console.log('Looking up email:', email);
-  console.log('GAS URL:', AppState.gasUrl);
+  const normalizedKey = (email || '').trim().toLowerCase();
 
-  // Check Google Sheets only
+  // Instant Check from 30s background cache
+  if (AppState.ordersCache.has(normalizedKey)) {
+    const cachedItem = AppState.ordersCache.get(normalizedKey);
+    const orderRecord = buildOrderRecordFromRaw(cachedItem, email);
+    applyExistingOrder(orderRecord);
+    return;
+  }
+
+  // Fallback to Live GAS fetch if not found in cache or cache not yet ready
   if (AppState.gasUrl) {
     try {
       const searchUrl = `${AppState.gasUrl}?action=search&email=${encodeURIComponent(email)}`;
-      console.log('Fetching:', searchUrl);
-      
       const resp = await fetch(searchUrl);
-      console.log('Response status:', resp.status);
-      console.log('Response type:', resp.headers.get('content-type'));
-      
       const text = await resp.text();
-      console.log('Response text (first 200 chars):', text.substring(0, 200));
-      
       let result;
       try {
         result = JSON.parse(text);
-        console.log('Parsed JSON:', result);
       } catch (parseErr) {
-        console.error('JSON parse error:', parseErr);
-        console.error('Response is not JSON, probably HTML error page');
-        
-        // FIX: แสดงฟอร์มแม้ว่า API ล้มเหลว
-        DOM.emailLoadingSpinner.classList.add('hidden');
-        resetToNewMode();
-        showFormContent();
-        DOM.emailStatusBadge.classList.remove('hidden');
-        DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>ไม่สามารถตรวจสอบประวัติได้';
-        showToast('ไม่สามารถเชื่อมต่อระบบได้ กรุณากรอกข้อมูลใหม่', 'warning');
+        applyNewOrderPrompt();
         return;
       }
-      
-      DOM.emailLoadingSpinner.classList.add('hidden');
 
       if (result && result.found && result.data) {
-        // Found existing record - load it
-        const gasRecord = {
-          email: result.data.email || email,
-          fullName: result.data.fullName || '',
-          studentNumber: result.data.studentNumber || '',
-          name: result.data.name || '',
-          classroom: result.data.classroom || '',
-          number: (result.data.number || '10').toString(),
-          size: result.data.size || 'L',
-          price: 275,
-          timestamp: result.data.timestamp || '',
-          status: result.data.status || 'Confirmed',
-          slipUrl: result.data.slipUrl || null,
-          slipImage: result.data.slipUrl || null,
-          slipFileName: 'สลิปการโอนเงินเดิม.jpg'
-        };
-        
-        console.log('Found record, loading data...');
-        switchToEditMode(gasRecord);
-        showFormContent();
-        showToast('พบข้อมูลเดิม ดึงข้อมูลมาให้เรียบร้อยแล้ว', 'success');
-        return;
-      } else {
-        console.log('Email not found in Sheets');
-        // FIX: แสดงฟอร์มเสมอแม้ไม่พบข้อมูลเดิม
-        resetToNewMode();
-        showFormContent();
-        DOM.emailStatusBadge.classList.remove('hidden');
-        DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-check text-emerald-500 mr-1"></i>อีเมลใหม่ พร้อมสั่งจอง';
-        showToast('ไม่พบประวัติการจองเดิม กรุณากรอกข้อมูลใหม่', 'info');
+        const orderRecord = buildOrderRecordFromRaw(result.data, email);
+        AppState.ordersCache.set(normalizedKey, result.data);
+        applyExistingOrder(orderRecord);
         return;
       }
+
+      applyNewOrderPrompt();
+      return;
     } catch (err) {
-      console.error('GAS lookup error:', err);
-      DOM.emailLoadingSpinner.classList.add('hidden');
-      
-      // FIX: แสดงฟอร์มแม้เกิด error และแจ้งเตือนชัดเจน
-      resetToNewMode();
-      showFormContent();
-      DOM.emailStatusBadge.classList.remove('hidden');
-      DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500 mr-1"></i>เกิดข้อผิดพลาด';
-      showToast('ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง', 'error');
+      applyNewOrderPrompt();
       return;
     }
-  } else {
-    console.warn('No GAS URL configured');
-    DOM.emailLoadingSpinner.classList.add('hidden');
-    
-    // FIX: แสดงฟอร์มแม้ไม่มี GAS URL
-    resetToNewMode();
-    showFormContent();
-    DOM.emailStatusBadge.classList.remove('hidden');
-    DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>ระบบยังไม่พร้อม';
-    showToast('ระบบยังไม่ได้ตั้งค่า กรุณากรอกข้อมูลใหม่', 'warning');
   }
+
+  applyNewOrderPrompt();
 }
 
 function populateEditModeFields(orderRecord) {
@@ -1403,8 +1505,13 @@ function validateForm() {
 
   // 4. Validate Screen Name
   const name = DOM.inputScreenName.value.trim();
+  const englishNamePattern = /^[a-zA-Z\s]+$/;
   if (!name) {
     showFieldError(DOM.inputScreenName, 'กรุณากรอกชื่อที่ต้องการสกรีน (A-Z)');
+    isValid = false;
+    if (!firstErrorField) firstErrorField = DOM.inputScreenName;
+  } else if (!englishNamePattern.test(name)) {
+    showFieldError(DOM.inputScreenName, 'ชื่อต้องเป็นภาษาอังกฤษเท่านั้น (A-Z)');
     isValid = false;
     if (!firstErrorField) firstErrorField = DOM.inputScreenName;
   } else if (name.length > 16) {
