@@ -361,7 +361,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/jersey_clean_back_preview.webp?v=1');
+  background-image: url('../assets/images/jersey_clean_back_preview.webp?v=20261018_2215');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -372,7 +372,7 @@ button {
 }
 
 .jersey-hd-back.jersey-highres-loaded {
-  background-image: url('../assets/images/jersey_clean_back.png?v=20261014_1522');
+  background-image: url('../assets/images/jersey_clean_back.png?v=20261018_2215');
 }
 
 .jersey-hd-front {
@@ -380,7 +380,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/jersey_clean_front_preview.webp?v=1');
+  background-image: url('../assets/images/jersey_clean_front_preview.webp?v=20261018_2215');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -391,7 +391,7 @@ button {
 }
 
 .jersey-hd-front.jersey-highres-loaded {
-  background-image: url('../assets/images/jersey_clean_front.png?v=20261014_1522');
+  background-image: url('../assets/images/jersey_clean_front.png?v=20261018_2215');
 }
 
 .jersey-hd-both {
@@ -399,7 +399,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/jersey_clean_both_clene_preview.webp?v=1');
+  background-image: url('../assets/images/jersey_clean_both_clene_preview.webp?v=20261018_2215');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -410,7 +410,7 @@ button {
 }
 
 .jersey-hd-both.jersey-highres-loaded {
-  background-image: url('../assets/images/jersey_clean_both_clene.png?v=20261014_1522');
+  background-image: url('../assets/images/jersey_clean_both_clene.png?v=20261018_2215');
 }
 
 .jersey-hd-both-container {
@@ -443,7 +443,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/jersey_clean_front_preview.webp?v=1');
+  background-image: url('../assets/images/jersey_clean_front_preview.webp?v=20261018_2215');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -451,7 +451,7 @@ button {
 }
 
 .jersey-hd-front-inner.jersey-highres-loaded {
-  background-image: url('../assets/images/jersey_clean_front.png?v=20261014_1522');
+  background-image: url('../assets/images/jersey_clean_front.png?v=20261018_2215');
 }
 
 .jersey-hd-back-inner {
@@ -459,7 +459,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/jersey_clean_back_preview.webp?v=1');
+  background-image: url('../assets/images/jersey_clean_back_preview.webp?v=20261018_2215');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -467,7 +467,7 @@ button {
 }
 
 .jersey-hd-back-inner.jersey-highres-loaded {
-  background-image: url('../assets/images/jersey_clean_back.png?v=20261014_1522');
+  background-image: url('../assets/images/jersey_clean_back.png?v=20261018_2215');
 }
 
 .jersey-svg-overlay {

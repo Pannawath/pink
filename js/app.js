@@ -1977,9 +1977,9 @@ function isValidEmail(email) {
 // ==========================================
 function preloadHighResImages() {
   const highResList = [
-    { url: 'assets/images/jersey_clean_front.png?v=20261014_1522', selectors: ['.jersey-hd-front', '.jersey-hd-front-inner'] },
-    { url: 'assets/images/jersey_clean_back.png?v=20261014_1522', selectors: ['.jersey-hd-back', '.jersey-hd-back-inner'] },
-    { url: 'assets/images/jersey_clean_both_clene.png?v=20261014_1522', selectors: ['.jersey-hd-both'] }
+    { url: 'assets/images/jersey_clean_front.png?v=20261018_2215', selectors: ['.jersey-hd-front', '.jersey-hd-front-inner'] },
+    { url: 'assets/images/jersey_clean_back.png?v=20261018_2215', selectors: ['.jersey-hd-back', '.jersey-hd-back-inner'] },
+    { url: 'assets/images/jersey_clean_both_clene.png?v=20261018_2215', selectors: ['.jersey-hd-both'] }
   ];
 
   const schedulePreload = () => {
