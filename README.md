@@ -104,7 +104,7 @@ pink/
 ```javascript
 const CONFIG = {
   gasUrl: 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec',
-  accountName: 'น.ส. ภัททิยา เมืองวงษ์',
+  accountName: 'NAME XXXX',
   openChatUrl: ''
 };
 ```
