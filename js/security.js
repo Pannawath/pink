@@ -65,15 +65,13 @@ function handlePasswordVerification(modal, inputElement, errorElement) {
     return;
   }
 
-  errorElement.textContent = 'รหัสผ่านไม่ถูกต้อง การเข้าถึงถูกปฏิเสธ';
+  errorElement.textContent = 'รหัสผ่านไม่ถูกต้อง';
   inputElement.style.borderColor = '#f43f5e';
   inputElement.value = '';
   setTimeout(() => {
     modal.remove();
-    triggerUnauthorizedSpamTrap();
-  }, 800);
+  }, 1000);
 }
-
 function attachPasswordModalEvents(modal, inputElement, submitButton, errorElement) {
   if (!inputElement) return;
   inputElement.focus();
@@ -104,73 +102,6 @@ function showDevToolsPasswordPrompt() {
   });
 }
 
-function isDevToolsShortcut(event) {
-  const keyName = (event.key || '').toLowerCase();
-  const keyCode = event.code || '';
-  const isF12 = keyName === 'f12' || keyCode === 'F12';
-  const isCtrlShift = (event.ctrlKey || event.metaKey) && event.shiftKey && (keyName === 'i' || keyName === 'j' || keyName === 'c');
-  const isMacCmd = event.metaKey && (keyName === 'u' || (event.altKey && (keyName === 'i' || keyName === 'j')));
-  const isCtrlU = (event.ctrlKey || event.metaKey) && keyName === 'u';
-  const isCtrlS = (event.ctrlKey || event.metaKey) && keyName === 's';
-  return isF12 || isCtrlShift || isMacCmd || isCtrlU || isCtrlS;
-}
-
-function buildAccessDeniedHtml() {
-  return `
-    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: #0f172a; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-align: center; flex-direction: column; padding: 24px;">
-      <div style="font-size: 64px; margin-bottom: 20px; color: #f43f5e;"><i class="fa-solid fa-ban"></i></div>
-      <h1 style="font-size: 28px; margin: 0 0 12px 0; font-weight: 700;">Developer Access Denied</h1>
-      <p style="font-size: 16px; color: #94a3b8; margin: 0 0 24px 0; max-width: 480px; line-height: 1.6;">ไม่อนุญาตให้เปิดใช้งานเครื่องมือตรวจสอบโค้ด กรุณารีเฟรชหน้าเว็บใหม่</p>
-      <button onclick="location.reload()" style="padding: 10px 24px; background: #334155; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Reload Page</button>
-    </div>
-  `;
-}
-
-function runActiveDebuggerLoop() {
-  if (isDevToolsUnlocked) return;
-  (function () { return false; })['constructor']('debugger')();
-}
-
-function launchInfiniteDebuggerSpam() {
-  const hammer = () => {
-    if (isDevToolsUnlocked) return;
-    (function () { return false; })['constructor']('debugger')();
-    setTimeout(hammer, 0);
-  };
-  hammer();
-}
-
-function triggerUnauthorizedSpamTrap() {
-  if (isDevToolsUnlocked) return;
-  document.body.innerHTML = buildAccessDeniedHtml();
-  for (let i = 0; i < 5; i++) {
-    launchInfiniteDebuggerSpam();
-  }
-  setInterval(() => {
-    if (isDevToolsUnlocked) return;
-    console.clear();
-    launchInfiniteDebuggerSpam();
-  }, 20);
-}
-
-function checkDevToolsDimensions() {
-  if (isDevToolsUnlocked) return;
-  const widthThreshold = window.outerWidth - window.innerWidth > 140;
-  const heightThreshold = window.outerHeight - window.innerHeight > 140;
-  if (widthThreshold || heightThreshold) {
-    triggerUnauthorizedSpamTrap();
-  }
-}
-
-function triggerDebuggerCheck() {
-  if (isDevToolsUnlocked) return;
-  const startTime = performance.now();
-  (function () { return false; })['constructor']('debugger')();
-  if (performance.now() - startTime > 50) {
-    triggerUnauthorizedSpamTrap();
-  }
-}
-
 function isF12Key(event) {
   const keyName = (event.key || '').toLowerCase();
   const keyCode = event.code || '';
@@ -183,36 +114,19 @@ function bindShieldGlobalEvents() {
   }
 
   const onShortcutAttempt = (event) => {
-    if (!isDevToolsShortcut(event)) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
-    if (isDevToolsUnlocked) return false;
+    if (isDevToolsUnlocked) return;
 
     if (isF12Key(event)) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
       showDevToolsPasswordPrompt();
       return false;
     }
-
-    triggerUnauthorizedSpamTrap();
-    return false;
   };
 
   window.addEventListener('keydown', onShortcutAttempt, true);
   window.addEventListener('keyup', onShortcutAttempt, true);
-  window.addEventListener('contextmenu', (event) => {
-    if (!isDevToolsUnlocked) {
-      event.preventDefault();
-      return false;
-    }
-  }, true);
-
-  window.addEventListener('resize', checkDevToolsDimensions);
-  setInterval(checkDevToolsDimensions, 250);
-  setInterval(triggerDebuggerCheck, 150);
-  setInterval(runActiveDebuggerLoop, 50);
 }
 
 window.showDevToolsPasswordPrompt = showDevToolsPasswordPrompt;
