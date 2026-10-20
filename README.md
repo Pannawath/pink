@@ -75,7 +75,6 @@ pink/
 │   └── accessibility-fixes.css
 ├── js/
 │   ├── app.js               # ตรรกะหลักของระบบสั่งจอง แคช และการจัดการฟอร์ม
-│   ├── security.js          # ระบบป้องกัน DevTools และการเข้าถึงโดยไม่ได้รับอนุญาต
 │   └── stage3d.js           # ตัวควบคุม WebGL Three.js สำหรับเสื้อ 3 มิติ
 ├── Code.gs                  # Backend Script สำหรับรันบน Google Apps Script
 ├── config.js                # ไฟล์คอนฟิก URL สำหรับเชื่อมต่อ Google Apps Script
