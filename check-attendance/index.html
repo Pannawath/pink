@@ -14,13 +14,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/attendance.css?v=5" />
+  <link rel="stylesheet" href="css/attendance.css?v=6" />
 
   <!-- Scripts -->
-  <script defer src="js/config.js?v=5"></script>
-  <script defer src="js/api.js?v=5"></script>
-  <script defer src="js/store.js?v=5"></script>
-  <script defer src="js/app.js?v=5"></script>
+  <script defer src="js/config.js?v=6"></script>
+  <script defer src="js/api.js?v=6"></script>
+  <script defer src="js/store.js?v=6"></script>
+  <script defer src="js/app.js?v=6"></script>
 </head>
 <body>
   <!-- TOP CAPSULE HEADER -->
@@ -32,7 +32,8 @@
       </div>
 
       <!-- Desktop Nav Tabs -->
-      <nav class="desktop-capsule-tabs" aria-label="เมนูหลักระบบเช็คชื่อ">
+      <nav class="desktop-capsule-tabs" id="desktopCapsuleTabs" aria-label="เมนูหลักระบบเช็คชื่อ">
+        <div class="desktop-capsule-glider" id="desktopCapsuleGlider"></div>
         <button class="capsule-tab-btn active" data-view="home" onclick="AttendanceApp.navigate('home')">หน้าแรก</button>
         <button class="capsule-tab-btn" data-view="register" onclick="AttendanceApp.navigate('register')">ลงทะเบียน</button>
         <button class="capsule-tab-btn" data-view="classes" onclick="AttendanceApp.navigate('classes')">ดูตามห้อง</button>

@@ -20,6 +20,26 @@ function getVal(elementIdentifier) {
   return targetElement ? targetElement.value : '';
 }
 
+function updateDesktopGlider(viewName) {
+  const container = document.getElementById('desktopCapsuleTabs');
+  const glider = document.getElementById('desktopCapsuleGlider');
+  if (!container || !glider) return;
+  const activeBtn = container.querySelector('[data-view="' + viewName + '"]');
+  if (!activeBtn) return;
+  glider.style.width = activeBtn.offsetWidth + 'px';
+  glider.style.transform = 'translateX(' + activeBtn.offsetLeft + 'px)';
+}
+
+function updateRoomGlider(roomKey) {
+  const track = document.getElementById('roomTrack');
+  const glider = document.getElementById('roomGlider');
+  if (!track || !glider) return;
+  const targetBtn = track.querySelector('[data-room="' + roomKey + '"]');
+  if (!targetBtn) return;
+  glider.style.width = targetBtn.offsetWidth + 'px';
+  glider.style.transform = 'translateX(' + targetBtn.offsetLeft + 'px)';
+}
+
 function updateDockGlider(targetViewName) {
   const dockGliderElement = document.getElementById('dockGlider');
   if (!dockGliderElement) return;
@@ -186,10 +206,13 @@ function renderClassFilters() {
     if (matchedGrade) {
       roomChipsHtml = `
       <div class="ios-thumb-scroll" style="padding-top:0;">
-        <button class="ios-chip-btn ${activeRoomFilter === '' ? 'active' : ''}" onclick="AttendanceApp.setRoomFilter('')">ทุกห้องใน ${matchedGrade.grade}</button>
-        ${matchedGrade.rooms.map(roomName => `
-          <button class="ios-chip-btn ${activeRoomFilter === roomName ? 'active' : ''}" onclick="AttendanceApp.setRoomFilter('${roomName}')">${roomName}</button>
-        `).join('')}
+        <div class="ios-room-track" id="roomTrack">
+          <div class="ios-room-glider" id="roomGlider"></div>
+          <button class="ios-chip-btn ${activeRoomFilter === '' ? 'active' : ''}" data-room="" onclick="AttendanceApp.setRoomFilter('')">ทุกห้องใน ${matchedGrade.grade}</button>
+          ${matchedGrade.rooms.map(roomName => `
+            <button class="ios-chip-btn ${activeRoomFilter === roomName ? 'active' : ''}" data-room="${roomName}" onclick="AttendanceApp.setRoomFilter('${roomName}')">${roomName}</button>
+          `).join('')}
+        </div>
       </div>`;
     }
   }
@@ -586,12 +609,16 @@ function renderCurrentView() {
     else dockItem.classList.remove('active');
   });
   updateDockGlider(appState.view);
+  requestAnimationFrame(() => updateDesktopGlider(appState.view));
 
   if (appState.view === 'home') mainContainer.innerHTML = renderHome(appState);
   else if (appState.view === 'register') mainContainer.innerHTML = renderRegister();
   else if (appState.view === 'classes') {
     mainContainer.innerHTML = renderClasses(appState);
-    requestAnimationFrame(() => updateGradeGlider(activeGradeFilter));
+    requestAnimationFrame(() => {
+      updateGradeGlider(activeGradeFilter);
+      updateRoomGlider(activeRoomFilter);
+    });
   }
   else if (appState.view === 'departments') mainContainer.innerHTML = renderDepartments(appState);
 }
@@ -695,6 +722,7 @@ const AttendanceApp = {
   setRoomFilter(selectedRoom) {
     activeRoomFilter = selectedRoom;
     renderCurrentView();
+    requestAnimationFrame(() => updateRoomGlider(selectedRoom));
   },
 
   onSearchInput(searchInputValue) {

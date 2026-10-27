@@ -164,6 +164,67 @@ a {
 }
 
 /* DESKTOP NAV TABS (HIDDEN ON MOBILE) */
+/* DESKTOP CAPSULE GLIDER */
+.desktop-capsule-glider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 70px;
+  background: var(--ios-primary);
+  border-radius: var(--ios-radius-pill);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  z-index: 1;
+  pointer-events: none;
+  transition: transform var(--ios-duration) var(--ios-easing), width var(--ios-duration) var(--ios-easing);
+}
+
+.desktop-capsule-tabs .capsule-tab-btn {
+  position: relative;
+  z-index: 2;
+  transition: color var(--ios-duration) var(--ios-easing);
+}
+
+.desktop-capsule-tabs .capsule-tab-btn.active {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
+/* ROOM TRACK WITH FLUID SLIDING GLIDER */
+.ios-room-track {
+  position: relative;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ios-room-glider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  background: var(--ios-primary);
+  border-radius: var(--ios-radius-pill);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  z-index: 1;
+  pointer-events: none;
+  transition: transform var(--ios-duration) var(--ios-easing), width var(--ios-duration) var(--ios-easing);
+}
+
+.ios-room-track .ios-chip-btn {
+  position: relative;
+  z-index: 2;
+  transition: color var(--ios-duration) var(--ios-easing), transform 0.15s ease;
+}
+
+.ios-room-track .ios-chip-btn.active {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
 .desktop-capsule-tabs {
   position: relative;
   display: flex;
