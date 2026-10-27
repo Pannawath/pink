@@ -287,6 +287,45 @@ a {
   box-shadow: var(--ios-shadow-card);
 }
 
+/* 2-SEGMENT SWITCH (ROLE CATEGORY) */
+.ios-segmented-wrap.two-slots .ios-segmented-glider {
+  width: calc((100% - 8px) / 2);
+}
+
+/* GRADE SCROLL TRACK WITH FLUID SLIDING GLIDER */
+.ios-grade-track {
+  position: relative;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ios-grade-glider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  background: var(--ios-primary);
+  border-radius: var(--ios-radius-pill);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  z-index: 1;
+  pointer-events: none;
+  transition: transform var(--ios-duration) var(--ios-easing), width var(--ios-duration) var(--ios-easing);
+}
+
+.ios-grade-track .ios-chip-btn {
+  position: relative;
+  z-index: 2;
+  transition: color var(--ios-duration) var(--ios-easing), transform 0.15s ease;
+}
+
+.ios-grade-track .ios-chip-btn.active {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
 .ios-segmented-glider {
   position: absolute;
   top: 4px;

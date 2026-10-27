@@ -1,4 +1,5 @@
 let activeHomeSubTab = 'overview';
+let activeRoleCategory = 'department';
 let studentSearchQuery = '';
 let activeGradeFilter = 'ALL';
 let activeRoomFilter = '';
@@ -26,6 +27,23 @@ function updateDockGlider(targetViewName) {
   const viewIndices = { home: 0, register: 1, classes: 2, departments: 3 };
   const targetIndex = viewIndices[targetViewName] != null ? viewIndices[targetViewName] : 0;
   dockGliderElement.style.transform = `translateX(${targetIndex * 100}%)`;
+}
+
+function updateRoleGlider(categoryKey) {
+  const glider = document.getElementById('roleCategoryGlider');
+  if (!glider) return;
+  const isCentral = categoryKey === 'central';
+  glider.style.transform = isCentral ? 'translateX(100%)' : 'translateX(0%)';
+}
+
+function updateGradeGlider(gradeKey) {
+  const track = document.getElementById('gradeTrack');
+  const glider = document.getElementById('gradeGlider');
+  if (!track || !glider) return;
+  const targetBtn = track.querySelector('[data-grade="' + gradeKey + '"]');
+  if (!targetBtn) return;
+  glider.style.width = targetBtn.offsetWidth + 'px';
+  glider.style.transform = 'translateX(' + targetBtn.offsetLeft + 'px)';
 }
 
 function updateSegmentedGlider(subTabIdentifier) {
@@ -156,9 +174,9 @@ function renderHome(appState) {
 
 function renderClassFilters() {
   const gradeButtonsHtml = [
-    `<button class="ios-chip-btn ${activeGradeFilter === 'ALL' ? 'active' : ''}" onclick="AttendanceApp.setGradeFilter('ALL')">ทั้งหมด</button>`,
+    `<button class="ios-chip-btn ${activeGradeFilter === 'ALL' ? 'active' : ''}" data-grade="ALL" onclick="AttendanceApp.setGradeFilter('ALL')">ทั้งหมด</button>`,
     ...AttendanceConfig.GRADES.map(gradeGroup => `
-      <button class="ios-chip-btn ${activeGradeFilter === gradeGroup.grade ? 'active' : ''}" onclick="AttendanceApp.setGradeFilter('${gradeGroup.grade}')">${gradeGroup.grade}</button>
+      <button class="ios-chip-btn ${activeGradeFilter === gradeGroup.grade ? 'active' : ''}" data-grade="${gradeGroup.grade}" onclick="AttendanceApp.setGradeFilter('${gradeGroup.grade}')">${gradeGroup.grade}</button>
     `)
   ].join('');
 
@@ -184,7 +202,7 @@ function renderClassFilters() {
     </svg>
     <input type="text" class="ios-search-input" id="studentSearchInput" placeholder="พิมพ์ชื่อ, ชื่อเล่น, หรือเลขที่เพื่อค้นหา..." value="${esc(studentSearchQuery)}" oninput="AttendanceApp.onSearchInput(this.value)" />
   </div>
-  <div class="ios-thumb-scroll">${gradeButtonsHtml}</div>
+  <div class="ios-thumb-scroll"><div class="ios-grade-track" id="gradeTrack"><div class="ios-grade-glider" id="gradeGlider"></div>${gradeButtonsHtml}</div></div>
   ${roomChipsHtml}`;
 }
 
@@ -531,14 +549,17 @@ function buildRoleSectionHTML(selectedRoom) {
     return `<div class="ios-note-box" style="margin-top:0;">ระบบล็อกคำตอบให้เข้า <strong>ฝ่ายสแตนเชียร์</strong> ในสถานะ <strong>สมาชิกฝ่าย</strong> โดยอัตโนมัติ หากต้องการตำแหน่งอื่น กรุณาแจ้งพี่สตาฟโดยตรง พี่สตาฟจะเป็นผู้แก้ไขข้อมูลในระบบให้</div>`;
   }
 
-  const selectedCategory = getVal('roleCategory') || 'department';
+  const selectedCategory = activeRoleCategory || 'department';
+  const isCentral = selectedCategory === 'central';
   const categoryFieldHtml = `
     <div class="ios-field" style="margin-bottom:14px;">
       <label>ประเภทบทบาท <span class="req">*</span></label>
-      <select id="roleCategory" onchange="AttendanceApp.onRoleChange()">
-        <option value="department" ${selectedCategory === 'department' ? 'selected' : ''}>ฝ่ายงาน</option>
-        <option value="central" ${selectedCategory === 'central' ? 'selected' : ''}>ตำแหน่งบริหารคณะสี</option>
-      </select>
+      <input type="hidden" id="roleCategory" value="${selectedCategory}" />
+      <div class="ios-segmented-wrap two-slots" style="margin: 6px 0 14px;">
+        <div class="ios-segmented-glider" id="roleCategoryGlider" style="transform: translateX(${isCentral ? '100%' : '0%'});"></div>
+        <button type="button" class="ios-segmented-btn ${!isCentral ? 'active' : ''}" onclick="AttendanceApp.setRoleCategory('department')">ฝ่ายงาน</button>
+        <button type="button" class="ios-segmented-btn ${isCentral ? 'active' : ''}" onclick="AttendanceApp.setRoleCategory('central')">ตำแหน่งบริหารคณะสี</button>
+      </div>
     </div>`;
 
   return selectedCategory === 'central'
@@ -568,7 +589,10 @@ function renderCurrentView() {
 
   if (appState.view === 'home') mainContainer.innerHTML = renderHome(appState);
   else if (appState.view === 'register') mainContainer.innerHTML = renderRegister();
-  else if (appState.view === 'classes') mainContainer.innerHTML = renderClasses(appState);
+  else if (appState.view === 'classes') {
+    mainContainer.innerHTML = renderClasses(appState);
+    requestAnimationFrame(() => updateGradeGlider(activeGradeFilter));
+  }
   else if (appState.view === 'departments') mainContainer.innerHTML = renderDepartments(appState);
 }
 
@@ -651,6 +675,14 @@ const AttendanceApp = {
     activeHomeSubTab = subTabIdentifier;
     updateSegmentedGlider(subTabIdentifier);
     renderCurrentView();
+  },
+
+  setRoleCategory(chosenCategory) {
+    activeRoleCategory = chosenCategory;
+    const roleSection = document.getElementById('roleSection');
+    const selectedRoom = getVal('classRoom');
+    if (roleSection) roleSection.innerHTML = buildRoleSectionHTML(selectedRoom);
+    updateRoleGlider(chosenCategory);
   },
 
   setGradeFilter(selectedGrade) {
