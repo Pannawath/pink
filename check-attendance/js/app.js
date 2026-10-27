@@ -819,11 +819,18 @@ const AttendanceApp = {
       AttendanceStore.setRegs(freshRecords);
     });
     AttendanceStore.setRegs(cacheResult.records);
+    requestAnimationFrame(() => updateDesktopGlider(AttendanceStore.getState().view));
   }
 };
 
 if (typeof window !== 'undefined') {
   window.AttendanceApp = AttendanceApp;
+    window.addEventListener('resize', () => {
+      const currentView = AttendanceStore.getState().view;
+      updateDockGlider(currentView);
+      updateDesktopGlider(currentView);
+    });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => AttendanceApp.init());
   } else {
