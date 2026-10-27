@@ -689,6 +689,7 @@ const AttendanceApp = {
     activeGradeFilter = selectedGrade;
     activeRoomFilter = '';
     renderCurrentView();
+    requestAnimationFrame(() => updateGradeGlider(selectedGrade));
   },
 
   setRoomFilter(selectedRoom) {
