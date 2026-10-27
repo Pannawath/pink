@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>อยุธยาสีชมพู ปี 2569 - ระบบจัดสรรฝ่ายงานและเช็คชื่อ</title>
+  <title>อยุธยาสีชมพู 2569 · ระบบลงทะเบียนและเช็คชื่อ</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="../assets/images/school_crest.png">
@@ -12,39 +12,37 @@
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/attendance.css?v=2" />
+  <link rel="stylesheet" href="css/attendance.css?v=3" />
 
   <!-- Scripts -->
-  <script defer src="js/config.js?v=2"></script>
-  <script defer src="js/api.js?v=2"></script>
-  <script defer src="js/store.js?v=2"></script>
-  <script defer src="js/app.js?v=2"></script>
+  <script defer src="js/config.js?v=3"></script>
+  <script defer src="js/api.js?v=3"></script>
+  <script defer src="js/store.js?v=3"></script>
+  <script defer src="js/app.js?v=3"></script>
 </head>
 <body>
-  <!-- DESKTOP / MOBILE TOP HEADER -->
-  <header class="nav">
-    <div class="nav-inner">
-      <div class="nav-left">
-        <div class="brand">
-          <span class="brand-dot"></span>
-          อยุธยาสีชมพู 2569
-        </div>
+  <!-- TOP CAPSULE HEADER -->
+  <header class="top-capsule-bar">
+    <div class="top-capsule-inner">
+      <div class="brand-capsule">
+        <span class="brand-orb"></span>
+        <span>อยุธยาสีชมพู 2569</span>
       </div>
-      
-      <!-- Desktop Navigation Tabs -->
-      <nav class="desktop-tabs" aria-label="เมนูหลักเดสก์ท็อป">
-        <button class="tab active" data-view="home" onclick="AttendanceApp.navigate('home')">หน้าแรก</button>
-        <button class="tab" data-view="register" onclick="AttendanceApp.navigate('register')">ลงทะเบียน</button>
-        <button class="tab" data-view="classes" onclick="AttendanceApp.navigate('classes')">ดูตามห้อง</button>
-        <button class="tab" data-view="departments" onclick="AttendanceApp.navigate('departments')">ดูตามฝ่าย</button>
+
+      <!-- Desktop Nav Tabs -->
+      <nav class="desktop-capsule-tabs" aria-label="เมนูหลักระบบเช็คชื่อ">
+        <button class="capsule-tab-btn active" data-view="home" onclick="AttendanceApp.navigate('home')">หน้าแรก</button>
+        <button class="capsule-tab-btn" data-view="register" onclick="AttendanceApp.navigate('register')">ลงทะเบียน</button>
+        <button class="capsule-tab-btn" data-view="classes" onclick="AttendanceApp.navigate('classes')">ดูตามห้อง</button>
+        <button class="capsule-tab-btn" data-view="departments" onclick="AttendanceApp.navigate('departments')">ดูตามฝ่าย</button>
       </nav>
 
-      <!-- Refresh Button -->
+      <!-- Refresh Capsule -->
       <div>
-        <button class="btn-refresh" id="refreshBtn" onclick="AttendanceApp.refreshData()" title="รีเฟรชข้อมูลสด">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <button class="btn-refresh-capsule" id="refreshBtn" onclick="AttendanceApp.refreshData()" title="รีเฟรชข้อมูลสด">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
           </svg>
           รีเฟรช
@@ -55,24 +53,24 @@
 
   <!-- VIEW CONTAINER -->
   <main id="view-container">
-    <div style="text-align:center; padding: 80px 20px; color: var(--text-muted); font-size: 15px;">
+    <div style="text-align:center; padding: 70px 20px; color: var(--ios-muted); font-size: 14.5px;">
       กำลังโหลดข้อมูลคณะสี...
     </div>
   </main>
 
-  <!-- MOBILE BOTTOM NAVIGATION BAR -->
-  <nav class="mobile-bottom-nav" aria-label="เมนูหลักโทรศัพท์มือถือ">
-    <div class="mobile-nav-grid">
-      <button type="button" class="mobile-nav-item active" data-mobile-view="home" onclick="AttendanceApp.navigate('home')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- FLOATING LIQUID GLASS DOCK (iOS 27 STYLE) -->
+  <nav class="floating-glass-dock" aria-label="แถบควบคุมลอยสไตล์ iOS">
+    <div class="dock-grid">
+      <button type="button" class="dock-item active" data-dock-view="home" onclick="AttendanceApp.navigate('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
         <span>หน้าแรก</span>
       </button>
 
-      <button type="button" class="mobile-nav-item" data-mobile-view="register" onclick="AttendanceApp.navigate('register')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="dock-item" data-dock-view="register" onclick="AttendanceApp.navigate('register')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
           <circle cx="9" cy="7" r="4"/>
           <line x1="19" y1="8" x2="19" y2="14"/>
@@ -81,22 +79,22 @@
         <span>ลงทะเบียน</span>
       </button>
 
-      <button type="button" class="mobile-nav-item" data-mobile-view="classes" onclick="AttendanceApp.navigate('classes')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="dock-item" data-dock-view="classes" onclick="AttendanceApp.navigate('classes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
           <circle cx="9" cy="7" r="4"/>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
           <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
-        <span>ดูตามห้อง</span>
+        <span>ตามห้อง</span>
       </button>
 
-      <button type="button" class="mobile-nav-item" data-mobile-view="departments" onclick="AttendanceApp.navigate('departments')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="dock-item" data-dock-view="departments" onclick="AttendanceApp.navigate('departments')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
           <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
         </svg>
-        <span>ดูตามฝ่าย</span>
+        <span>ตามฝ่าย</span>
       </button>
     </div>
   </nav>
@@ -104,7 +102,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="wrap">
-      อยุธยาสีชมพู ปี 2569 · ระบบจัดสรรบทบาทคณะสี สารคามพิทยาคม
+      อยุธยาสีชมพู ปี 2569 · ระบบลงทะเบียนคณะสี สารคามพิทยาคม
     </div>
   </footer>
 </body>

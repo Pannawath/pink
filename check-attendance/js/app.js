@@ -21,22 +21,24 @@ function getVal(elementIdentifier) {
 
 function renderHeroBanner(registeredCount) {
   return `
-  <section class="hero-compact"><div class="wrap">
-    <div class="hero-banner-card">
-      <div class="hero-titles">
-        <h1>อยุธยาสีชมพู <span class="accent">ปี 2569</span></h1>
-        <p>รวมพลังสีชมพู รู้หน้าที่ พร้อมไปด้วยกัน ตรวจสอบและลงทะเบียนบทบาทคณะสี</p>
+  <section><div class="wrap">
+    <div class="ios-hero-card">
+      <div class="status-pill-badge">
+        <span class="brand-orb" style="width:7px;height:7px;"></span>
+        <span>ระบบลงทะเบียนปีการศึกษา 2569</span>
       </div>
-      <div class="hero-cta-group">
+      <h1>อยุธยาสีชมพู <span class="accent">ปี 2569</span></h1>
+      <p>จัดสรรบทบาทหน้าที่และตรวจสอบฝ่ายงาน คณะสีชมพู โรงเรียนสารคามพิทยาคม</p>
+      <div class="ios-hero-cta">
         <button class="btn btn-primary" onclick="AttendanceApp.navigate('register')">ลงทะเบียนบทบาท</button>
         <button class="btn btn-outline" onclick="AttendanceApp.navigate('classes')">ค้นหารายชื่อ</button>
       </div>
     </div>
-    <div class="stats-compact-row">
-      <div class="stat-compact-card"><span class="num">${AttendanceConfig.GRADES.length}</span><span class="lbl">ระดับชั้น</span></div>
-      <div class="stat-compact-card"><span class="num">${AttendanceConfig.ALL_ROOMS.length}</span><span class="lbl">ห้องเรียน</span></div>
-      <div class="stat-compact-card"><span class="num">${AttendanceConfig.DEPARTMENTS.length}</span><span class="lbl">ฝ่ายงาน</span></div>
-      <div class="stat-compact-card"><span class="num">${registeredCount}</span><span class="lbl">ผู้ลงทะเบียน</span></div>
+    <div class="ios-stats-grid">
+      <div class="ios-stat-pill"><span class="num">${AttendanceConfig.GRADES.length}</span><span class="lbl">ระดับชั้น</span></div>
+      <div class="ios-stat-pill"><span class="num">${AttendanceConfig.ALL_ROOMS.length}</span><span class="lbl">ห้องเรียน</span></div>
+      <div class="ios-stat-pill"><span class="num">${AttendanceConfig.DEPARTMENTS.length}</span><span class="lbl">ฝ่ายงาน</span></div>
+      <div class="ios-stat-pill"><span class="num">${registeredCount}</span><span class="lbl">ผู้ลงทะเบียน</span></div>
     </div>
   </div></section>`;
 }
@@ -44,54 +46,51 @@ function renderHeroBanner(registeredCount) {
 function renderHomeSegmentedTabs() {
   return `
   <div class="wrap">
-    <div class="segmented-wrap">
-      <button class="segmented-btn ${activeHomeSubTab === 'overview' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('overview')">ภาพรวมระดับชั้น</button>
-      <button class="segmented-btn ${activeHomeSubTab === 'structure' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('structure')">โครงสร้างฝ่ายงาน</button>
-      <button class="segmented-btn ${activeHomeSubTab === 'stats' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('stats')">สถิติล่าสุด</button>
+    <div class="ios-segmented-wrap">
+      <button class="ios-segmented-btn ${activeHomeSubTab === 'overview' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('overview')">ภาพรวมระดับชั้น</button>
+      <button class="ios-segmented-btn ${activeHomeSubTab === 'structure' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('structure')">โครงสร้างฝ่ายงาน</button>
+      <button class="ios-segmented-btn ${activeHomeSubTab === 'stats' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('stats')">สถิติล่าสุด</button>
     </div>
   </div>`;
 }
 
 function renderGradeOverview() {
   const cardsHtml = AttendanceConfig.GRADES.map(gradeGroup => `
-    <div class="grade-card">
+    <div class="ios-grade-card">
       <h3>${gradeGroup.grade}</h3>
       <div class="room-chips">${gradeGroup.rooms.map(roomName => `<span class="chip">${roomName}</span>`).join('')}</div>
       ${gradeGroup.locked ? `<div class="grade-note">${gradeGroup.note}</div>` : ''}
     </div>`).join('');
 
   return `
-  <section class="section" style="padding-top:10px;"><div class="wrap">
-    <div class="section-head"><h2>กลุ่มห้องเรียนที่เข้าร่วม</h2><p>เลือกดูห้องเรียนและสิทธิ์การลงทะเบียนของแต่ละระดับชั้น</p></div>
-    <div class="grade-grid">${cardsHtml}</div>
+  <section><div class="wrap">
+    <div class="ios-section-head"><h2>กลุ่มห้องเรียนที่เข้าร่วม</h2><p>เลือกดูห้องเรียนและสิทธิ์การลงทะเบียนของแต่ละระดับชั้น</p></div>
+    <div class="ios-grade-grid">${cardsHtml}</div>
   </div></section>`;
 }
 
 function renderDeptStructure() {
   const deptCardsHtml = AttendanceConfig.DEPARTMENTS.map((deptDefinition, deptIndex) => `
-    <div class="dept-card">
-      <div class="dept-num">${String(deptIndex + 1).padStart(2, '0')}</div>
-      <h4>${deptDefinition.name}</h4>
-      <div class="desc">${AttendanceConfig.NO_STAFF_DEPARTMENTS.includes(deptDefinition.name) ? 'ประธานฝ่าย 1 คน · สมาชิกฝ่าย' : 'ประธานฝ่าย 1 คน · สตาฟฝ่าย · สมาชิกฝ่าย'}</div>
-      ${deptDefinition.deputyLabel ? `<div class="extra">${deptDefinition.deputyLabel} 1 คน</div>` : ''}
-      ${deptDefinition.isStand ? `<div class="extra">ม.1 เข้าร่วมในบทบาทสมาชิกฝ่าย</div>` : ''}
+    <div class="ios-grade-card">
+      <div class="accordion-num" style="margin-bottom:8px;">${String(deptIndex + 1).padStart(2, '0')}</div>
+      <h4 style="margin:0 0 4px;font-size:15px;color:var(--ios-primary-deep);">${deptDefinition.name}</h4>
+      <div style="font-size:12px;color:var(--ios-muted);">${AttendanceConfig.NO_STAFF_DEPARTMENTS.includes(deptDefinition.name) ? 'ประธานฝ่าย · สมาชิกฝ่าย' : 'ประธานฝ่าย · สตาฟ · สมาชิก'}</div>
+      ${deptDefinition.deputyLabel ? `<div style="font-size:11.5px;color:var(--ios-primary);margin-top:6px;">${deptDefinition.deputyLabel} 1 คน</div>` : ''}
+      ${deptDefinition.isStand ? `<div style="font-size:11.5px;color:var(--ios-primary);margin-top:6px;">ม.1 เข้าเป็นสมาชิกฝ่าย</div>` : ''}
     </div>`).join('');
 
   return `
-  <section class="section" style="padding-top:10px;"><div class="wrap">
-    <div class="section-head"><h2>โครงสร้างตำแหน่งคณะสี</h2><p>การจัดสรรและอัตรากำลังคนของแต่ละฝ่าย</p></div>
-    <div class="exec-band">
-      <div style="flex:1;min-width:240px;">
-        <h3>ตำแหน่งบริหารคณะสี</h3>
-        <div class="pill-row">${AttendanceConfig.CENTRAL_POSITIONS.map(positionTitle => `<span class="pill">${positionTitle}</span>`).join('')}</div>
-      </div>
-      <div class="cap">ตำแหน่งละ 1 คน</div>
+  <section><div class="wrap">
+    <div class="ios-section-head"><h2>โครงสร้างตำแหน่งคณะสี</h2><p>การจัดสรรและอัตรากำลังคนของแต่ละฝ่าย</p></div>
+    <div class="ios-grade-card" style="margin-bottom:12px;">
+      <h3 style="font-size:15px;margin:0 0 8px;color:var(--ios-primary-deep);">ตำแหน่งบริหารคณะสี (ตำแหน่งละ 1 คน)</h3>
+      <div class="name-list">${AttendanceConfig.CENTRAL_POSITIONS.map(positionTitle => `<span class="name-tag">${positionTitle}</span>`).join('')}</div>
     </div>
-    <div class="dept-grid">${deptCardsHtml}</div>
-    <div class="sport-band">
-      <h3>ประเภทกีฬา (10 ชนิดกีฬา)</h3>
-      <p>แต่ละประเภทมีหัวหน้ากีฬา 1 คน พร้อมสตาฟกีฬาและนักกีฬา</p>
-      <div class="pill-row">${AttendanceConfig.SPORT_TYPES.map(sportName => `<span class="pill">${sportName}</span>`).join('')}</div>
+    <div class="ios-grade-grid">${deptCardsHtml}</div>
+    <div class="ios-grade-card" style="margin-top:12px;">
+      <h3 style="font-size:15px;margin:0 0 6px;color:var(--ios-primary-deep);">ประเภทกีฬา (10 ชนิดกีฬา)</h3>
+      <p style="font-size:12px;color:var(--ios-muted);margin:0 0 10px;">แต่ละประเภทมีหัวหน้ากีฬา 1 คน พร้อมสตาฟและนักกีฬา</p>
+      <div class="name-list">${AttendanceConfig.SPORT_TYPES.map(sportName => `<span class="name-tag">${sportName}</span>`).join('')}</div>
     </div>
   </div></section>`;
 }
@@ -109,8 +108,8 @@ function renderLiveStats(appState) {
   }).join('');
 
   return `
-  <section class="section" style="padding-top:10px;"><div class="wrap">
-    <div class="section-head"><h2>รายงานจำนวนสมาชิกล่าสุด</h2><p>อัปเดตแบบเรียลไทม์ตามการลงทะเบียนจริง</p></div>
+  <section><div class="wrap">
+    <div class="ios-section-head"><h2>รายงานจำนวนสมาชิกล่าสุด</h2><p>อัปเดตแบบเรียลไทม์จากข้อมูลจริง</p></div>
     <div class="live-grid">
       <div class="live-card">
         <h4>สรุปจำนวนคนตามฝ่ายงาน</h4>
@@ -135,9 +134,9 @@ function renderHome(appState) {
 
 function renderClassFilters() {
   const gradeButtonsHtml = [
-    `<button class="thumb-filter-btn ${activeGradeFilter === 'ALL' ? 'active' : ''}" onclick="AttendanceApp.setGradeFilter('ALL')">ทั้งหมด</button>`,
+    `<button class="ios-chip-btn ${activeGradeFilter === 'ALL' ? 'active' : ''}" onclick="AttendanceApp.setGradeFilter('ALL')">ทั้งหมด</button>`,
     ...AttendanceConfig.GRADES.map(gradeGroup => `
-      <button class="thumb-filter-btn ${activeGradeFilter === gradeGroup.grade ? 'active' : ''}" onclick="AttendanceApp.setGradeFilter('${gradeGroup.grade}')">${gradeGroup.grade}</button>
+      <button class="ios-chip-btn ${activeGradeFilter === gradeGroup.grade ? 'active' : ''}" onclick="AttendanceApp.setGradeFilter('${gradeGroup.grade}')">${gradeGroup.grade}</button>
     `)
   ].join('');
 
@@ -146,24 +145,24 @@ function renderClassFilters() {
     const matchedGrade = AttendanceConfig.GRADES.find(gradeGroup => gradeGroup.grade === activeGradeFilter);
     if (matchedGrade) {
       roomChipsHtml = `
-      <div class="thumb-scroll-row" style="padding-top:0;">
-        <button class="thumb-filter-btn ${activeRoomFilter === '' ? 'active' : ''}" onclick="AttendanceApp.setRoomFilter('')">ทุกห้องใน ${matchedGrade.grade}</button>
+      <div class="ios-thumb-scroll" style="padding-top:0;">
+        <button class="ios-chip-btn ${activeRoomFilter === '' ? 'active' : ''}" onclick="AttendanceApp.setRoomFilter('')">ทุกห้องใน ${matchedGrade.grade}</button>
         ${matchedGrade.rooms.map(roomName => `
-          <button class="thumb-filter-btn ${activeRoomFilter === roomName ? 'active' : ''}" onclick="AttendanceApp.setRoomFilter('${roomName}')">${roomName}</button>
+          <button class="ios-chip-btn ${activeRoomFilter === roomName ? 'active' : ''}" onclick="AttendanceApp.setRoomFilter('${roomName}')">${roomName}</button>
         `).join('')}
       </div>`;
     }
   }
 
   return `
-  <div class="search-input-wrap">
+  <div class="ios-search-wrap">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="11" cy="11" r="8"></circle>
       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
     </svg>
-    <input type="text" class="search-input" id="studentSearchInput" placeholder="พิมพ์ชื่อ, ชื่อเล่น, หรือเลขที่เพื่อค้นหา..." value="${esc(studentSearchQuery)}" oninput="AttendanceApp.onSearchInput(this.value)" />
+    <input type="text" class="ios-search-input" id="studentSearchInput" placeholder="พิมพ์ชื่อ, ชื่อเล่น, หรือเลขที่เพื่อค้นหา..." value="${esc(studentSearchQuery)}" oninput="AttendanceApp.onSearchInput(this.value)" />
   </div>
-  <div class="thumb-scroll-row">${gradeButtonsHtml}</div>
+  <div class="ios-thumb-scroll">${gradeButtonsHtml}</div>
   ${roomChipsHtml}`;
 }
 
@@ -190,27 +189,6 @@ function filterStudents(records) {
   });
 }
 
-function renderClasses(appState) {
-  const filteredList = filterStudents(appState.regs).sort((alpha, beta) => (alpha.classRoom || '').localeCompare(beta.classRoom || '', 'th') || (alpha.numberLabel || '').localeCompare(beta.numberLabel || '', 'th'));
-
-  let resultsHtml = '';
-  if (filteredList.length === 0) {
-    resultsHtml = `<div class="empty-state">ไม่พบข้อมูลนักเรียนที่ตรงกับเงื่อนไขการค้นหา</div>`;
-  } else {
-    resultsHtml = groupAndRenderStudents(filteredList);
-  }
-
-  return `
-  <div class="view-page"><div class="wrap">
-    <div class="section-head">
-      <h2>ค้นหาและดูข้อมูลตามห้อง</h2>
-      <p>พบรายชื่อนักเรียน ${filteredList.length} รายการ</p>
-    </div>
-    ${renderClassFilters()}
-    <div id="classResultsList" style="margin-top:10px;">${resultsHtml}</div>
-  </div></div>`;
-}
-
 function groupAndRenderStudents(studentRecords) {
   const studentGroups = [];
   const groupRegistry = {};
@@ -233,16 +211,37 @@ function groupAndRenderStudents(studentRecords) {
   });
 
   return studentGroups.map(studentItem => {
-    const badgesHtml = studentItem.roles.map(roleItem => `<span class="badge ${roleItem.isLeader ? 'lead' : ''}">${esc(roleItem.text)}</span>`).join('');
+    const badgesHtml = studentItem.roles.map(roleItem => `<span class="ios-badge ${roleItem.isLeader ? 'lead' : ''}">${esc(roleItem.text)}</span>`).join('');
     return `
-    <div class="result-card">
+    <div class="ios-result-card">
       <div>
-        <div class="who">${esc(studentItem.fullName)} <span style="color:var(--text-muted);font-weight:400;">(${esc(studentItem.nickname)})</span></div>
-        <div class="sub">ห้อง ${studentItem.classRoom} · เลขที่ ${studentItem.numberLabel}${studentItem.roles.length > 1 ? ` · ลงทะเบียน ${studentItem.roles.length} บทบาท` : ''}</div>
+        <div class="who">${esc(studentItem.fullName)} <span style="color:var(--ios-muted);font-weight:400;">(${esc(studentItem.nickname)})</span></div>
+        <div class="sub">ห้อง ${studentItem.classRoom} · เลขที่ ${studentItem.numberLabel}${studentItem.roles.length > 1 ? ` · ${studentItem.roles.length} บทบาท` : ''}</div>
       </div>
       <div class="badge-group">${badgesHtml}</div>
     </div>`;
   }).join('');
+}
+
+function renderClasses(appState) {
+  const filteredList = filterStudents(appState.regs).sort((alpha, beta) => (alpha.classRoom || '').localeCompare(beta.classRoom || '', 'th') || (alpha.numberLabel || '').localeCompare(beta.numberLabel || '', 'th'));
+
+  let resultsHtml = '';
+  if (filteredList.length === 0) {
+    resultsHtml = `<div class="empty-state">ไม่พบข้อมูลนักเรียนที่ตรงกับเงื่อนไข</div>`;
+  } else {
+    resultsHtml = groupAndRenderStudents(filteredList);
+  }
+
+  return `
+  <div class="wrap" style="padding-top:6px;">
+    <div class="ios-section-head">
+      <h2>ค้นหาและดูข้อมูลตามห้อง</h2>
+      <p>พบรายชื่อนักเรียน ${filteredList.length} รายการ</p>
+    </div>
+    ${renderClassFilters()}
+    <div id="classResultsList" style="margin-top:6px;">${resultsHtml}</div>
+  </div>`;
 }
 
 function renderDepartments(appState) {
@@ -259,34 +258,34 @@ function renderDepartments(appState) {
     }
 
     return `
-    <div class="dept-accordion-card ${isOpen ? 'open' : ''}">
-      <button class="accordion-header" onclick="AttendanceApp.toggleDeptAccordion('${deptMetadata.name}')">
-        <div class="accordion-header-left">
-          <div class="accordion-num-badge">${String(deptIndex + 1).padStart(2, '0')}</div>
-          <div class="accordion-title-wrap">
+    <div class="ios-accordion-card ${isOpen ? 'open' : ''}">
+      <button class="ios-accordion-header" onclick="AttendanceApp.toggleDeptAccordion('${deptMetadata.name}')">
+        <div class="accordion-title-block">
+          <div class="accordion-num">${String(deptIndex + 1).padStart(2, '0')}</div>
+          <div>
             <h3 class="accordion-title">${deptMetadata.name}</h3>
-            <div class="accordion-subtitle">${AttendanceConfig.NO_STAFF_DEPARTMENTS.includes(deptMetadata.name) ? 'ประธานฝ่าย · สมาชิก' : 'ประธานฝ่าย · สตาฟ · สมาชิก'}</div>
+            <div class="accordion-sub">${AttendanceConfig.NO_STAFF_DEPARTMENTS.includes(deptMetadata.name) ? 'ประธานฝ่าย · สมาชิก' : 'ประธานฝ่าย · สตาฟ · สมาชิก'}</div>
           </div>
         </div>
-        <div class="accordion-header-right">
-          <span class="count-badge">${memberCount} คน</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <div class="accordion-meta-block">
+          <span class="ios-count-badge">${memberCount} คน</span>
+          <svg class="ios-chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
       </button>
-      ${isOpen ? `<div class="accordion-body">${detailContentHtml}</div>` : ''}
+      ${isOpen ? `<div class="ios-accordion-body">${detailContentHtml}</div>` : ''}
     </div>`;
   }).join('');
 
   return `
-  <div class="view-page"><div class="wrap">
-    <div class="section-head">
+  <div class="wrap" style="padding-top:6px;">
+    <div class="ios-section-head">
       <h2>รายชื่อสมาชิกแยกตามฝ่ายงาน</h2>
       <p>แตะเพื่อเปิดดูรายชื่อประธาน สตาฟ และสมาชิกในแต่ละฝ่าย</p>
     </div>
-    <div class="accordion-list">${accordionItemsHtml}</div>
-  </div></div>`;
+    <div class="ios-accordion-list">${accordionItemsHtml}</div>
+  </div>`;
 }
 
 function buildSportsDeptDetail(deptMembers) {
@@ -301,7 +300,7 @@ function buildSportsDeptDetail(deptMembers) {
 
     contentHtml += `<div class="sport-group"><div class="sname">${sportTitle}</div>
       <div class="name-list">
-        ${captainRecord ? `<span class="badge lead">หัวหน้า: ${esc(captainRecord.fullName)}</span>` : `<span class="badge">หัวหน้า: ว่าง</span>`}
+        ${captainRecord ? `<span class="ios-badge lead">หัวหน้า: ${esc(captainRecord.fullName)}</span>` : `<span class="ios-badge">หัวหน้า: ว่าง</span>`}
         ${staffMembers.map(entry => `<span class="name-tag">${esc(entry.fullName)} (สตาฟ)</span>`).join('')}
         ${athleteMembers.map(entry => `<span class="name-tag">${esc(entry.fullName)} (นักกีฬา)</span>`).join('')}
       </div></div>`;
@@ -340,38 +339,38 @@ function buildGeneralDeptDetail(deptMetadata, deptMembers) {
 
 function renderRegister() {
   return `
-  <div class="view-page"><div class="wrap">
-    <div class="form-card">
-      <div class="section-head" style="margin-bottom:16px;">
+  <div class="wrap" style="padding-top:6px;">
+    <div class="ios-form-card">
+      <div class="ios-section-head" style="margin-bottom:14px;">
         <h2>ลงทะเบียนข้อมูลและฝ่ายงาน</h2>
         <p>กรอกข้อมูลส่วนตัว และเลือกบทบาทหน้าที่ในคณะสีชมพู</p>
       </div>
       <div id="formMsgBox"></div>
-      <div class="form-sec-title">01 ข้อมูลส่วนตัว</div>
-      <div class="field-grid">
-        <div class="field"><label>ชื่อ-นามสกุล <span class="req">*</span></label><input id="fullName" type="text" placeholder="กรอกชื่อ-นามสกุล" /></div>
-        <div class="field"><label>ชื่อเล่น <span class="req">*</span></label><input id="nickname" type="text" placeholder="กรอกชื่อเล่น" /></div>
+      <div class="ios-form-title">01 ข้อมูลส่วนตัว</div>
+      <div class="ios-field-grid">
+        <div class="ios-field"><label>ชื่อ-นามสกุล <span class="req">*</span></label><input id="fullName" type="text" placeholder="กรอกชื่อ-นามสกุล" /></div>
+        <div class="ios-field"><label>ชื่อเล่น <span class="req">*</span></label><input id="nickname" type="text" placeholder="กรอกชื่อเล่น" /></div>
       </div>
-      <div class="field-grid">
-        <div class="field">
+      <div class="ios-field-grid">
+        <div class="ios-field">
           <label>ชั้น / ห้อง <span class="req">*</span></label>
           <select id="classRoom" onchange="AttendanceApp.onClassRoomChange()">
             <option value="">เลือกชั้น / ห้อง</option>
             ${AttendanceConfig.GRADES.map(gradeGroup => `<optgroup label="${gradeGroup.grade}">${gradeGroup.rooms.map(roomName => `<option value="${roomName}">${roomName}</option>`).join('')}</optgroup>`).join('')}
           </select>
         </div>
-        <div class="field">
+        <div class="ios-field">
           <label>เลขที่ <span class="req">*</span></label>
           <select id="number"><option value="">เลือกเลขที่และกลุ่ม</option>${AttendanceConfig.NUMBERS.map(numberName => `<option value="${numberName}">${numberName}</option>`).join('')}</select>
           <div class="hint">เลขที่ 1–20 กลุ่ม ก และ 1–20 กลุ่ม ข</div>
         </div>
       </div>
-      <div class="form-sec-title">02 ตำแหน่งและฝ่ายงาน</div>
+      <div class="ios-form-title">02 ตำแหน่งและฝ่ายงาน</div>
       <div id="roleSection">${buildRoleSectionHTML('')}</div>
-      <div class="note-bar">ตำแหน่งสำคัญรับได้ตำแหน่งละ 1 คน ระบบตรวจสอบตำแหน่งว่างแบบเรียลไทม์จากข้อมูลจริง</div>
-      <button class="submit-btn" id="submitBtn" onclick="AttendanceApp.submitRegistration()">บันทึกข้อมูล</button>
+      <div class="ios-note-box">ตำแหน่งสำคัญรับได้ตำแหน่งละ 1 คน ระบบตรวจสอบตำแหน่งว่างแบบเรียลไทม์จากข้อมูลจริง</div>
+      <button class="ios-submit-btn" id="submitBtn" onclick="AttendanceApp.submitRegistration()">บันทึกข้อมูล</button>
     </div>
-  </div></div>`;
+  </div>`;
 }
 
 function buildCentralPositionField() {
@@ -382,7 +381,7 @@ function buildCentralPositionField() {
     return `<option value="${positionTitle}" ${isOccupied && !isCurrentChoice ? 'disabled' : ''} ${isCurrentChoice ? 'selected' : ''}>${positionTitle}${isOccupied ? ' (มีผู้รับแล้ว)' : ''}</option>`;
   }).join('');
 
-  return `<div class="field"><label>ตำแหน่ง <span class="req">*</span></label>
+  return `<div class="ios-field"><label>ตำแหน่ง <span class="req">*</span></label>
     <select id="centralPosition"><option value="">เลือกตำแหน่ง</option>${optionsHtml}</select></div>`;
 }
 
@@ -405,7 +404,7 @@ function buildDeptPositionField(deptMetadata) {
     return `<option value="${positionTitle}" ${isOccupied && !isCurrentChoice ? 'disabled' : ''} ${isCurrentChoice ? 'selected' : ''}>${positionTitle}${isOccupied ? ' (มีผู้รับแล้ว)' : ''}</option>`;
   }).join('');
 
-  return `<div class="field"><label>ตำแหน่ง <span class="req">*</span></label><select id="deptPosition">
+  return `<div class="ios-field"><label>ตำแหน่ง <span class="req">*</span></label><select id="deptPosition">
     <option value="">เลือกตำแหน่ง</option>${optionsHtml}</select></div>`;
 }
 
@@ -415,14 +414,14 @@ function buildSportsFields() {
 
   if (selectedMode === 'president') {
     return `
-    <div class="field-grid">
-      <div class="field"><label>บทบาทในฝ่ายกีฬา <span class="req">*</span></label>
+    <div class="ios-field-grid">
+      <div class="ios-field"><label>บทบาทในฝ่ายกีฬา <span class="req">*</span></label>
         <select id="sportsMode" onchange="AttendanceApp.onRoleChange()">
           <option value="team">เข้าร่วมทีมกีฬา</option>
           <option value="president" selected>ประธานฝ่ายกีฬา (ภาพรวม)</option>
         </select>
       </div>
-      <div class="field"><label>&nbsp;</label><div class="hint" style="margin-top:12px;">ดูแลภาพรวมฝ่ายกีฬาทั้งหมด</div></div>
+      <div class="ios-field"><label>&nbsp;</label><div class="hint" style="margin-top:12px;">ดูแลภาพรวมฝ่ายกีฬาทั้งหมด</div></div>
     </div>`;
   }
 
@@ -430,14 +429,14 @@ function buildSportsFields() {
   const roleDropdownHtml = selectedSport ? buildSportRoleDropdown(selectedSport) : '';
 
   return `
-  <div class="field-grid">
-    <div class="field"><label>บทบาทในฝ่ายกีฬา <span class="req">*</span></label>
+  <div class="ios-field-grid">
+    <div class="ios-field"><label>บทบาทในฝ่ายกีฬา <span class="req">*</span></label>
       <select id="sportsMode" onchange="AttendanceApp.onRoleChange()">
         <option value="team" selected>เข้าร่วมทีมกีฬา</option>
         <option value="president" ${isPresidentOccupied ? 'disabled' : ''}>ประธานฝ่ายกีฬา (ภาพรวม)${isPresidentOccupied ? ' (มีผู้รับแล้ว)' : ''}</option>
       </select>
     </div>
-    <div class="field"><label>ประเภทกีฬา <span class="req">*</span></label>
+    <div class="ios-field"><label>ประเภทกีฬา <span class="req">*</span></label>
       <select id="sportType" onchange="AttendanceApp.onRoleChange()">
         <option value="">เลือกประเภทกีฬา</option>
         ${AttendanceConfig.SPORT_TYPES.map(sportTitle => `<option value="${sportTitle}" ${selectedSport === sportTitle ? 'selected' : ''}>${sportTitle}</option>`).join('')}
@@ -457,7 +456,7 @@ function buildSportRoleDropdown(sportTitle) {
     return `<option value="${roleTitle}" ${isOccupied && !isCurrentChoice ? 'disabled' : ''} ${isCurrentChoice ? 'selected' : ''}>${roleTitle}${isOccupied ? ' (มีผู้รับแล้ว)' : ''}</option>`;
   }).join('');
 
-  return `<div class="field"><label>ตำแหน่งในทีม <span class="req">*</span></label><select id="sportRole">
+  return `<div class="ios-field"><label>ตำแหน่งในทีม <span class="req">*</span></label><select id="sportRole">
     <option value="">เลือกตำแหน่ง</option>${optionsHtml}</select></div>`;
 }
 
@@ -465,22 +464,22 @@ function buildDepartmentFields() {
   const selectedDeptName = getVal('department');
   if (!selectedDeptName) {
     return `
-    <div class="field-grid">
-      <div class="field"><label>ฝ่ายงาน <span class="req">*</span></label>
+    <div class="ios-field-grid">
+      <div class="ios-field"><label>ฝ่ายงาน <span class="req">*</span></label>
         <select id="department" onchange="AttendanceApp.onRoleChange()">
           <option value="">เลือกฝ่ายงาน</option>
           ${AttendanceConfig.DEPARTMENTS.map(deptItem => `<option value="${deptItem.name}">${deptItem.name}</option>`).join('')}
         </select>
       </div>
-      <div class="field"><label>ตำแหน่ง <span class="req">*</span></label><select disabled><option>เลือกฝ่ายงานก่อน</option></select></div>
+      <div class="ios-field"><label>ตำแหน่ง <span class="req">*</span></label><select disabled><option>เลือกฝ่ายงานก่อน</option></select></div>
     </div>`;
   }
 
   const deptMetadata = AttendanceConfig.DEPARTMENTS.find(deptItem => deptItem.name === selectedDeptName);
   if (deptMetadata && deptMetadata.hasSports) {
     return `
-    <div class="field-grid">
-      <div class="field"><label>ฝ่ายงาน <span class="req">*</span></label>
+    <div class="ios-field-grid">
+      <div class="ios-field"><label>ฝ่ายงาน <span class="req">*</span></label>
         <select id="department" onchange="AttendanceApp.onRoleChange()">
           <option value="">เลือกฝ่ายงาน</option>
           ${AttendanceConfig.DEPARTMENTS.map(deptItem => `<option value="${deptItem.name}" ${selectedDeptName === deptItem.name ? 'selected' : ''}>${deptItem.name}</option>`).join('')}
@@ -491,8 +490,8 @@ function buildDepartmentFields() {
   }
 
   return `
-  <div class="field-grid">
-    <div class="field"><label>ฝ่ายงาน <span class="req">*</span></label>
+  <div class="ios-field-grid">
+    <div class="ios-field"><label>ฝ่ายงาน <span class="req">*</span></label>
       <select id="department" onchange="AttendanceApp.onRoleChange()">
         <option value="">เลือกฝ่ายงาน</option>
         ${AttendanceConfig.DEPARTMENTS.map(deptItem => `<option value="${deptItem.name}" ${selectedDeptName === deptItem.name ? 'selected' : ''}>${deptItem.name}</option>`).join('')}
@@ -505,12 +504,12 @@ function buildDepartmentFields() {
 function buildRoleSectionHTML(selectedRoom) {
   const isLockedRoom = AttendanceConfig.LOCKED_ROOMS.includes(selectedRoom);
   if (isLockedRoom) {
-    return `<div class="note-bar" style="margin-top:0;">ระบบล็อกคำตอบให้เข้า <strong>ฝ่ายสแตนเชียร์</strong> ในสถานะ <strong>สมาชิกฝ่าย</strong> โดยอัตโนมัติ หากต้องการตำแหน่งอื่น กรุณาแจ้งพี่สตาฟโดยตรง พี่สตาฟจะเป็นผู้แก้ไขข้อมูลในระบบให้</div>`;
+    return `<div class="ios-note-box" style="margin-top:0;">ระบบล็อกคำตอบให้เข้า <strong>ฝ่ายสแตนเชียร์</strong> ในสถานะ <strong>สมาชิกฝ่าย</strong> โดยอัตโนมัติ หากต้องการตำแหน่งอื่น กรุณาแจ้งพี่สตาฟโดยตรง พี่สตาฟจะเป็นผู้แก้ไขข้อมูลในระบบให้</div>`;
   }
 
   const selectedCategory = getVal('roleCategory') || 'department';
   const categoryFieldHtml = `
-    <div class="field" style="margin-bottom:18px;">
+    <div class="ios-field" style="margin-bottom:14px;">
       <label>ประเภทบทบาท <span class="req">*</span></label>
       <select id="roleCategory" onchange="AttendanceApp.onRoleChange()">
         <option value="department" ${selectedCategory === 'department' ? 'selected' : ''}>ฝ่ายงาน</option>
@@ -528,18 +527,18 @@ function renderCurrentView() {
   const mainContainer = document.getElementById('view-container');
   if (!mainContainer) return;
 
-  // Sync Desktop Navigation Tabs
-  document.querySelectorAll('.desktop-tabs .tab').forEach(tabButton => {
+  // Sync Desktop Top Capsule Tabs
+  document.querySelectorAll('.desktop-capsule-tabs .capsule-tab-btn').forEach(tabButton => {
     const tabRoute = tabButton.getAttribute('data-view');
     if (tabRoute === appState.view) tabButton.classList.add('active');
     else tabButton.classList.remove('active');
   });
 
-  // Sync Mobile Bottom Navigation Items
-  document.querySelectorAll('.mobile-nav-item').forEach(navItem => {
-    const mobileRoute = navItem.getAttribute('data-mobile-view');
-    if (mobileRoute === appState.view) navItem.classList.add('active');
-    else navItem.classList.remove('active');
+  // Sync Floating iOS 27 Glass Dock Items
+  document.querySelectorAll('.floating-glass-dock .dock-item').forEach(dockItem => {
+    const dockRoute = dockItem.getAttribute('data-dock-view');
+    if (dockRoute === appState.view) dockItem.classList.add('active');
+    else dockItem.classList.remove('active');
   });
 
   if (appState.view === 'home') mainContainer.innerHTML = renderHome(appState);
