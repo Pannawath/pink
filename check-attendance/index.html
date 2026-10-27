@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>อยุธยาสีชมพู ปี 2569 - ระบบจัดสรรฝ่ายงานและเช็คชื่อ</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../assets/images/school_crest.png">
+  <link rel="apple-touch-icon" href="../assets/images/school_crest.png">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/attendance.css" />
+
+  <!-- Scripts -->
+  <script defer src="js/config.js"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/store.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <!-- NAV HEADER -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="../index.html" class="back-home-btn" title="กลับสู่หน้าหลัก Pink Jersey Studio">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          หน้าหลัก
+        </a>
+        <div class="brand">
+          <span class="brand-dot"></span>
+          อยุธยาสีชมพู 2569
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-view="home" onclick="AttendanceApp.navigate('home')">หน้าแรก</button>
+        <button class="tab" data-view="register" onclick="AttendanceApp.navigate('register')">กรอกข้อมูล</button>
+        <button class="tab" data-view="classes" onclick="AttendanceApp.navigate('classes')">ดูตามห้อง</button>
+        <button class="tab" data-view="departments" onclick="AttendanceApp.navigate('departments')">ดูตามฝ่าย</button>
+        <button class="btn-refresh" id="refreshBtn" onclick="AttendanceApp.refreshData()" title="รีเฟรชข้อมูลสด">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          รีเฟรช
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- VIEW CONTAINER -->
+  <main id="view-container">
+    <div style="text-align:center; padding: 80px 20px; color: var(--text-muted); font-size: 15px;">
+      กำลังโหลดข้อมูลคณะสี...
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      อยุธยาสีชมพู ปี 2569 · ออกแบบและจัดสรรบทบาทระบบคณะสีชมพู สารคามพิทยาคม
+    </div>
+  </footer>
+</body>
+</html>
