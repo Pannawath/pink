@@ -1,6 +1,6 @@
 /* ========================================================
    MINIMALIST LIQUID GLASS iOS 27 DESIGN SYSTEM
-   Ayutthaya Pink 2026 - Independent Web App
+   Ultra-Smooth Fluid Animations (cubic-bezier(0.16, 1, 0.3, 1))
    ======================================================== */
 
 :root {
@@ -14,9 +14,8 @@
   --ios-text-secondary: #475569;
   --ios-muted: #64748b;
   --ios-glass: rgba(255, 255, 255, 0.72);
-  --ios-glass-card: rgba(255, 255, 255, 0.78);
+  --ios-glass-card: rgba(255, 255, 255, 0.8);
   --ios-glass-border: rgba(255, 255, 255, 0.92);
-  --ios-glass-highlight: rgba(255, 255, 255, 0.98);
   --ios-border-soft: rgba(244, 63, 94, 0.12);
   --ios-shadow-float: 0 16px 36px -10px rgba(244, 63, 94, 0.12), 0 6px 16px -4px rgba(15, 23, 42, 0.04);
   --ios-shadow-dock: 0 20px 48px -8px rgba(15, 23, 42, 0.14), 0 8px 20px -4px rgba(244, 63, 94, 0.16);
@@ -26,7 +25,9 @@
   --ios-radius-lg: 26px;
   --ios-radius-pill: 9999px;
   --ios-blur: blur(28px) saturate(190%);
-  --dock-height: 62px;
+  --dock-height: 64px;
+  --ios-easing: cubic-bezier(0.16, 1, 0.3, 1);
+  --ios-duration: 0.35s;
 }
 
 * {
@@ -69,6 +70,22 @@ a {
   padding: 0 18px;
 }
 
+/* VIEW TRANSITIONS */
+.view-enter-anim {
+  animation: iosFadeSlide var(--ios-duration) var(--ios-easing) forwards;
+}
+
+@keyframes iosFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* TOP HEADER CAPSULE */
 .top-capsule-bar {
   position: sticky;
@@ -109,6 +126,12 @@ a {
   border-radius: 50%;
   background: var(--ios-primary);
   box-shadow: 0 0 10px rgba(244, 63, 94, 0.7);
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 14px rgba(244, 63, 94, 0.9); }
 }
 
 .btn-refresh-capsule {
@@ -123,16 +146,16 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: transform 0.2s var(--ios-easing), background 0.2s ease;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .btn-refresh-capsule:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
 }
 
 .btn-refresh-capsule.spinning svg {
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -142,12 +165,15 @@ a {
 
 /* DESKTOP NAV TABS (HIDDEN ON MOBILE) */
 .desktop-capsule-tabs {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
 .capsule-tab-btn {
+  position: relative;
+  z-index: 2;
   border: none;
   background: transparent;
   padding: 7px 15px;
@@ -156,21 +182,20 @@ a {
   font-weight: 600;
   color: var(--ios-muted);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: color var(--ios-duration) var(--ios-easing);
 }
 
 .capsule-tab-btn:hover {
   color: var(--ios-primary);
-  background: var(--ios-primary-soft);
 }
 
 .capsule-tab-btn.active {
-  background: var(--ios-primary);
   color: #ffffff;
+  background: var(--ios-primary);
   box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 
-/* FLOATING LIQUID GLASS DOCK */
+/* FLOATING LIQUID GLASS DOCK WITH SLIDING GLIDER */
 .floating-glass-dock {
   position: fixed;
   bottom: 16px;
@@ -179,7 +204,7 @@ a {
   z-index: 60;
   width: calc(100% - 32px);
   max-width: 440px;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.84);
   backdrop-filter: var(--ios-blur);
   -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
@@ -189,12 +214,29 @@ a {
 }
 
 .dock-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
 }
 
+.dock-slider-glider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(25% - 3px);
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid var(--ios-primary-border);
+  border-radius: var(--ios-radius-pill);
+  z-index: 1;
+  pointer-events: none;
+  transition: transform var(--ios-duration) var(--ios-easing);
+}
+
 .dock-item {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -208,13 +250,14 @@ a {
   cursor: pointer;
   padding: 7px 4px;
   border-radius: var(--ios-radius-pill);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color var(--ios-duration) var(--ios-easing), transform 0.15s var(--ios-easing);
 }
 
 .dock-item svg {
   width: 19px;
   height: 19px;
   stroke-width: 2.2;
+  transition: stroke var(--ios-duration) var(--ios-easing), transform var(--ios-duration) var(--ios-easing);
 }
 
 .dock-item:active {
@@ -223,28 +266,44 @@ a {
 
 .dock-item.active {
   color: var(--ios-primary);
-  background: rgba(244, 63, 94, 0.1);
 }
 
 .dock-item.active svg {
   stroke: var(--ios-primary);
+  transform: translateY(-1px);
 }
 
-/* SEGMENTED PILL SWITCHER */
+/* SEGMENTED CONTROL WITH SLIDING INDICATOR */
 .ios-segmented-wrap {
+  position: relative;
   display: flex;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: var(--ios-blur);
   -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-pill);
   padding: 4px;
-  gap: 4px;
   margin: 14px 0 22px;
   box-shadow: var(--ios-shadow-card);
 }
 
+.ios-segmented-glider {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / 3);
+  background: var(--ios-primary);
+  border-radius: var(--ios-radius-pill);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  z-index: 1;
+  pointer-events: none;
+  transition: transform var(--ios-duration) var(--ios-easing);
+}
+
 .ios-segmented-btn {
+  position: relative;
+  z-index: 2;
   flex: 1;
   border: none;
   background: transparent;
@@ -254,7 +313,7 @@ a {
   font-weight: 600;
   color: var(--ios-muted);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color var(--ios-duration) var(--ios-easing);
   text-align: center;
   white-space: nowrap;
 }
@@ -264,9 +323,7 @@ a {
 }
 
 .ios-segmented-btn.active {
-  background: var(--ios-primary);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 
 /* HERO COMPACT CARD */
@@ -279,6 +336,7 @@ a {
   padding: 24px;
   box-shadow: var(--ios-shadow-float);
   margin-top: 6px;
+  transition: transform var(--ios-duration) var(--ios-easing);
 }
 
 .status-pill-badge {
@@ -336,6 +394,12 @@ a {
   padding: 12px 8px;
   text-align: center;
   box-shadow: var(--ios-shadow-card);
+  transition: transform 0.25s var(--ios-easing), box-shadow 0.25s ease;
+}
+
+.ios-stat-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -6px rgba(244, 63, 94, 0.14);
 }
 
 .ios-stat-pill .num {
@@ -385,6 +449,7 @@ a {
   color: var(--ios-muted);
   width: 17px;
   height: 17px;
+  transition: color 0.2s ease;
 }
 
 .ios-search-input {
@@ -398,7 +463,7 @@ a {
   font-size: 14px;
   color: var(--ios-text);
   box-shadow: var(--ios-shadow-card);
-  transition: all 0.2s ease;
+  transition: border-color var(--ios-duration) var(--ios-easing), box-shadow var(--ios-duration) var(--ios-easing);
 }
 
 .ios-search-input:focus {
@@ -434,7 +499,7 @@ a {
   white-space: nowrap;
   flex-shrink: 0;
   box-shadow: var(--ios-shadow-card);
-  transition: all 0.2s ease;
+  transition: all var(--ios-duration) var(--ios-easing);
 }
 
 .ios-chip-btn:active {
@@ -448,7 +513,7 @@ a {
   box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 
-/* ACCORDION CARDS */
+/* ACCORDION CARDS WITH SMOOTH GRID EXPANSION */
 .ios-accordion-list {
   display: flex;
   flex-direction: column;
@@ -463,7 +528,7 @@ a {
   border-radius: var(--ios-radius-md);
   box-shadow: var(--ios-shadow-card);
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: border-color var(--ios-duration) var(--ios-easing), box-shadow var(--ios-duration) var(--ios-easing);
 }
 
 .ios-accordion-card.open {
@@ -508,6 +573,12 @@ a {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: background var(--ios-duration) var(--ios-easing), color var(--ios-duration) var(--ios-easing);
+}
+
+.ios-accordion-card.open .accordion-num {
+  background: var(--ios-primary);
+  color: #ffffff;
 }
 
 .accordion-title {
@@ -544,12 +615,29 @@ a {
   width: 17px;
   height: 17px;
   color: var(--ios-muted);
-  transition: transform 0.25s ease;
+  transition: transform var(--ios-duration) var(--ios-easing), color var(--ios-duration) var(--ios-easing);
 }
 
 .ios-accordion-card.open .ios-chevron-icon {
   transform: rotate(180deg);
   color: var(--ios-primary);
+}
+
+/* Pure CSS Grid Smooth Height Expansion */
+.ios-accordion-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ios-duration) var(--ios-easing), opacity var(--ios-duration) ease;
+  opacity: 0;
+}
+
+.ios-accordion-card.open .ios-accordion-collapse {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.ios-accordion-inner {
+  overflow: hidden;
 }
 
 .ios-accordion-body {
@@ -573,6 +661,11 @@ a {
   gap: 12px;
   flex-wrap: wrap;
   box-shadow: var(--ios-shadow-card);
+  transition: transform 0.2s var(--ios-easing), box-shadow 0.2s ease;
+}
+
+.ios-result-card:hover {
+  transform: translateY(-1px);
 }
 
 .ios-result-card .who {
@@ -671,6 +764,7 @@ a {
   color: var(--ios-text);
   min-height: 44px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  transition: border-color var(--ios-duration) var(--ios-easing), box-shadow var(--ios-duration) var(--ios-easing);
 }
 
 .ios-field input:focus, .ios-field select:focus {
@@ -727,7 +821,7 @@ a {
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(244, 63, 94, 0.35);
   min-height: 46px;
-  transition: all 0.2s ease;
+  transition: all var(--ios-duration) var(--ios-easing);
 }
 
 .ios-submit-btn:active {
@@ -751,7 +845,7 @@ a {
   font-weight: 600;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all 0.2s ease;
+  transition: all 0.25s var(--ios-easing);
 }
 
 .btn:active {
@@ -798,6 +892,11 @@ a {
   border-radius: var(--ios-radius-md);
   padding: 16px;
   box-shadow: var(--ios-shadow-card);
+  transition: transform 0.25s var(--ios-easing);
+}
+
+.ios-grade-card:hover {
+  transform: translateY(-2px);
 }
 
 .ios-grade-card h3 {

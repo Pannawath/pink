@@ -14,13 +14,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/attendance.css?v=3" />
+  <link rel="stylesheet" href="css/attendance.css?v=4" />
 
   <!-- Scripts -->
-  <script defer src="js/config.js?v=3"></script>
-  <script defer src="js/api.js?v=3"></script>
-  <script defer src="js/store.js?v=3"></script>
-  <script defer src="js/app.js?v=3"></script>
+  <script defer src="js/config.js?v=4"></script>
+  <script defer src="js/api.js?v=4"></script>
+  <script defer src="js/store.js?v=4"></script>
+  <script defer src="js/app.js?v=4"></script>
 </head>
 <body>
   <!-- TOP CAPSULE HEADER -->
@@ -51,16 +51,18 @@
     </div>
   </header>
 
-  <!-- VIEW CONTAINER -->
+  <!-- VIEW CONTAINER WITH FLUID ENTRANCE TRANSITION -->
   <main id="view-container">
     <div style="text-align:center; padding: 70px 20px; color: var(--ios-muted); font-size: 14.5px;">
       กำลังโหลดข้อมูลคณะสี...
     </div>
   </main>
 
-  <!-- FLOATING LIQUID GLASS DOCK (iOS 27 STYLE) -->
+  <!-- FLOATING LIQUID GLASS DOCK WITH SMOOTH SLIDING GLIDER -->
   <nav class="floating-glass-dock" aria-label="แถบควบคุมลอยสไตล์ iOS">
     <div class="dock-grid">
+      <div class="dock-slider-glider" id="dockGlider"></div>
+
       <button type="button" class="dock-item active" data-dock-view="home" onclick="AttendanceApp.navigate('home')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>

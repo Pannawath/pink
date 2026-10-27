@@ -19,6 +19,24 @@ function getVal(elementIdentifier) {
   return targetElement ? targetElement.value : '';
 }
 
+function updateDockGlider(targetViewName) {
+  const dockGliderElement = document.getElementById('dockGlider');
+  if (!dockGliderElement) return;
+
+  const viewIndices = { home: 0, register: 1, classes: 2, departments: 3 };
+  const targetIndex = viewIndices[targetViewName] != null ? viewIndices[targetViewName] : 0;
+  dockGliderElement.style.transform = `translateX(${targetIndex * 100}%)`;
+}
+
+function updateSegmentedGlider(subTabIdentifier) {
+  const gliderElement = document.getElementById('segmentedGlider');
+  if (!gliderElement) return;
+
+  const subTabIndices = { overview: 0, structure: 1, stats: 2 };
+  const targetIndex = subTabIndices[subTabIdentifier] != null ? subTabIndices[subTabIdentifier] : 0;
+  gliderElement.style.transform = `translateX(${targetIndex * 100}%)`;
+}
+
 function renderHeroBanner(registeredCount) {
   return `
   <section><div class="wrap">
@@ -44,9 +62,13 @@ function renderHeroBanner(registeredCount) {
 }
 
 function renderHomeSegmentedTabs() {
+  const subTabIndices = { overview: 0, structure: 1, stats: 2 };
+  const currentIndex = subTabIndices[activeHomeSubTab] != null ? subTabIndices[activeHomeSubTab] : 0;
+
   return `
   <div class="wrap">
     <div class="ios-segmented-wrap">
+      <div class="ios-segmented-glider" id="segmentedGlider" style="transform: translateX(${currentIndex * 100}%);"></div>
       <button class="ios-segmented-btn ${activeHomeSubTab === 'overview' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('overview')">ภาพรวมระดับชั้น</button>
       <button class="ios-segmented-btn ${activeHomeSubTab === 'structure' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('structure')">โครงสร้างฝ่ายงาน</button>
       <button class="ios-segmented-btn ${activeHomeSubTab === 'stats' ? 'active' : ''}" onclick="AttendanceApp.switchHomeTab('stats')">สถิติล่าสุด</button>
@@ -63,7 +85,7 @@ function renderGradeOverview() {
     </div>`).join('');
 
   return `
-  <section><div class="wrap">
+  <section class="view-enter-anim"><div class="wrap">
     <div class="ios-section-head"><h2>กลุ่มห้องเรียนที่เข้าร่วม</h2><p>เลือกดูห้องเรียนและสิทธิ์การลงทะเบียนของแต่ละระดับชั้น</p></div>
     <div class="ios-grade-grid">${cardsHtml}</div>
   </div></section>`;
@@ -80,7 +102,7 @@ function renderDeptStructure() {
     </div>`).join('');
 
   return `
-  <section><div class="wrap">
+  <section class="view-enter-anim"><div class="wrap">
     <div class="ios-section-head"><h2>โครงสร้างตำแหน่งคณะสี</h2><p>การจัดสรรและอัตรากำลังคนของแต่ละฝ่าย</p></div>
     <div class="ios-grade-card" style="margin-bottom:12px;">
       <h3 style="font-size:15px;margin:0 0 8px;color:var(--ios-primary-deep);">ตำแหน่งบริหารคณะสี (ตำแหน่งละ 1 คน)</h3>
@@ -108,7 +130,7 @@ function renderLiveStats(appState) {
   }).join('');
 
   return `
-  <section><div class="wrap">
+  <section class="view-enter-anim"><div class="wrap">
     <div class="ios-section-head"><h2>รายงานจำนวนสมาชิกล่าสุด</h2><p>อัปเดตแบบเรียลไทม์จากข้อมูลจริง</p></div>
     <div class="live-grid">
       <div class="live-card">
@@ -216,7 +238,7 @@ function groupAndRenderStudents(studentRecords) {
     <div class="ios-result-card">
       <div>
         <div class="who">${esc(studentItem.fullName)} <span style="color:var(--ios-muted);font-weight:400;">(${esc(studentItem.nickname)})</span></div>
-        <div class="sub">ห้อง ${studentItem.classRoom} · เลขที่ ${studentItem.numberLabel}${studentItem.roles.length > 1 ? ` · ${studentItem.roles.length} บทบาท` : ''}</div>
+        <div class="sub">ห้อง ${studentItem.classRoom} · เลขที่ ${studentItem.numberLabel}${studentItem.roles.length > 1 ? ` · ลงทะเบียน ${studentItem.roles.length} บทบาท` : ''}</div>
       </div>
       <div class="badge-group">${badgesHtml}</div>
     </div>`;
@@ -234,7 +256,7 @@ function renderClasses(appState) {
   }
 
   return `
-  <div class="wrap" style="padding-top:6px;">
+  <div class="wrap view-enter-anim" style="padding-top:6px;">
     <div class="ios-section-head">
       <h2>ค้นหาและดูข้อมูลตามห้อง</h2>
       <p>พบรายชื่อนักเรียน ${filteredList.length} รายการ</p>
@@ -251,11 +273,9 @@ function renderDepartments(appState) {
     const deptMembers = appState.regs.filter(entry => entry.department === deptMetadata.name);
 
     let detailContentHtml = '';
-    if (isOpen) {
-      if (deptMetadata.hasSports) detailContentHtml = buildSportsDeptDetail(deptMembers);
-      else if (deptMetadata.isStand) detailContentHtml = buildStandDeptDetail(deptMembers);
-      else detailContentHtml = buildGeneralDeptDetail(deptMetadata, deptMembers);
-    }
+    if (deptMetadata.hasSports) detailContentHtml = buildSportsDeptDetail(deptMembers);
+    else if (deptMetadata.isStand) detailContentHtml = buildStandDeptDetail(deptMembers);
+    else detailContentHtml = buildGeneralDeptDetail(deptMetadata, deptMembers);
 
     return `
     <div class="ios-accordion-card ${isOpen ? 'open' : ''}">
@@ -274,12 +294,16 @@ function renderDepartments(appState) {
           </svg>
         </div>
       </button>
-      ${isOpen ? `<div class="ios-accordion-body">${detailContentHtml}</div>` : ''}
+      <div class="ios-accordion-collapse">
+        <div class="ios-accordion-inner">
+          <div class="ios-accordion-body">${detailContentHtml}</div>
+        </div>
+      </div>
     </div>`;
   }).join('');
 
   return `
-  <div class="wrap" style="padding-top:6px;">
+  <div class="wrap view-enter-anim" style="padding-top:6px;">
     <div class="ios-section-head">
       <h2>รายชื่อสมาชิกแยกตามฝ่ายงาน</h2>
       <p>แตะเพื่อเปิดดูรายชื่อประธาน สตาฟ และสมาชิกในแต่ละฝ่าย</p>
@@ -339,7 +363,7 @@ function buildGeneralDeptDetail(deptMetadata, deptMembers) {
 
 function renderRegister() {
   return `
-  <div class="wrap" style="padding-top:6px;">
+  <div class="wrap view-enter-anim" style="padding-top:6px;">
     <div class="ios-form-card">
       <div class="ios-section-head" style="margin-bottom:14px;">
         <h2>ลงทะเบียนข้อมูลและฝ่ายงาน</h2>
@@ -534,12 +558,13 @@ function renderCurrentView() {
     else tabButton.classList.remove('active');
   });
 
-  // Sync Floating iOS 27 Glass Dock Items
+  // Sync Floating iOS 27 Glass Dock Items & Animate Glider
   document.querySelectorAll('.floating-glass-dock .dock-item').forEach(dockItem => {
     const dockRoute = dockItem.getAttribute('data-dock-view');
     if (dockRoute === appState.view) dockItem.classList.add('active');
     else dockItem.classList.remove('active');
   });
+  updateDockGlider(appState.view);
 
   if (appState.view === 'home') mainContainer.innerHTML = renderHome(appState);
   else if (appState.view === 'register') mainContainer.innerHTML = renderRegister();
@@ -624,6 +649,7 @@ const AttendanceApp = {
 
   switchHomeTab(subTabIdentifier) {
     activeHomeSubTab = subTabIdentifier;
+    updateSegmentedGlider(subTabIdentifier);
     renderCurrentView();
   },
 
