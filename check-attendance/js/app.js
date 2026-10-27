@@ -44,9 +44,11 @@ function updateDockGlider(targetViewName) {
   const dockGliderElement = document.getElementById('dockGlider');
   if (!dockGliderElement) return;
 
-  const viewIndices = { home: 0, register: 1, classes: 2, departments: 3 };
-  const targetIndex = viewIndices[targetViewName] != null ? viewIndices[targetViewName] : 0;
-  dockGliderElement.style.transform = `translateX(${targetIndex * 100}%)`;
+  const targetBtn = document.querySelector(`.dock-item[data-dock-view="${targetViewName}"]`);
+  if (!targetBtn) return;
+
+  dockGliderElement.style.width = `${targetBtn.offsetWidth}px`;
+  dockGliderElement.style.transform = `translateX(${targetBtn.offsetLeft}px)`;
 }
 
 function updateRoleGlider(categoryKey) {
@@ -608,8 +610,10 @@ function renderCurrentView() {
     if (dockRoute === appState.view) dockItem.classList.add('active');
     else dockItem.classList.remove('active');
   });
-  updateDockGlider(appState.view);
-  requestAnimationFrame(() => updateDesktopGlider(appState.view));
+  requestAnimationFrame(() => {
+    updateDockGlider(appState.view);
+    updateDesktopGlider(appState.view);
+  });
 
   if (appState.view === 'home') mainContainer.innerHTML = renderHome(appState);
   else if (appState.view === 'register') mainContainer.innerHTML = renderRegister();

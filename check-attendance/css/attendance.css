@@ -286,13 +286,13 @@ a {
   top: 0;
   bottom: 0;
   left: 0;
-  width: calc(25% - 3px);
+  width: 25%;
   background: rgba(244, 63, 94, 0.12);
   border: 1px solid var(--ios-primary-border);
   border-radius: var(--ios-radius-pill);
   z-index: 1;
   pointer-events: none;
-  transition: transform var(--ios-duration) var(--ios-easing);
+  transition: transform var(--ios-duration) var(--ios-easing), width var(--ios-duration) var(--ios-easing);
 }
 
 .dock-item {
