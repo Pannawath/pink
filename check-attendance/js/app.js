@@ -281,7 +281,7 @@ function groupAndRenderStudents(studentRecords) {
     <div class="ios-result-card">
       <div>
         <div class="who">${esc(studentItem.fullName)} <span style="color:var(--ios-muted);font-weight:400;">(${esc(studentItem.nickname)})</span></div>
-        <div class="sub">ห้อง ${studentItem.classRoom} · เลขที่ ${studentItem.numberLabel}${studentItem.roles.length > 1 ? ` · ลงทะเบียน ${studentItem.roles.length} บทบาท` : ''}</div>
+        <div class="sub">ห้อง ${esc(studentItem.classRoom)} · เลขที่ ${esc(studentItem.numberLabel)}${studentItem.roles.length > 1 ? ` · ลงทะเบียน ${studentItem.roles.length} บทบาท` : ''}</div>
       </div>
       <div class="badge-group">${badgesHtml}</div>
     </div>`;

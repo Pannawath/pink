@@ -259,13 +259,68 @@ function bindPersonalizationEvents() {
   }
 
   if (DOM.btnRandomNumber) {
+    let isRolling = false;
     DOM.btnRandomNumber.addEventListener('click', () => {
-      const luckyList = ['07', '09', '10', '11', '14', '20', '23', '26', '77', '99'];
-      const chosenNumber = luckyList[Math.floor(Math.random() * luckyList.length)];
-      AppState.screenNumber = chosenNumber;
-      DOM.inputScreenNumber.value = chosenNumber;
-      clearFieldError(DOM.inputScreenNumber);
-      updateLivePreview();
+      if (isRolling) return;
+      isRolling = true;
+
+      const luckyList = [
+        { num: '07', title: 'ปีกขวาความเร็วสูง', blessing: 'คล่องแคล่ว ว่องไว ชัยชนะอยู่แค่เอื้อม' },
+        { num: '08', title: 'อินฟินิตี้พลังไม่รู้จบ', blessing: 'มั่งคั่ง โชคลาภ พลังกายไม่มีหมด' },
+        { num: '09', title: 'ศูนย์หน้าเพชฌฆาต', blessing: 'ก้าวหน้า แม่นยำ คว้าชัยทุกสนาม' },
+        { num: '10', title: 'จอมทัพเพลย์เมกเกอร์', blessing: 'ผู้นำวิสัยทัศน์ ศูนย์รวมจิตใจของทีม' },
+        { num: '11', title: 'จรวดทางเรียบ', blessing: 'ทะลุทะลวง พุ่งทะยานสู่ความสำเร็จ' },
+        { num: '14', title: 'คลาสสิกมาสเตอร์', blessing: 'สุขุม รอบคอบ เล่นสวย ชนะใส' },
+        { num: '23', title: 'หมายเลขแห่งตำนาน', blessing: 'กล้าหาญ โดดเด่น เหนือทุกความคาดหมาย' },
+        { num: '26', title: 'พิงค์สตูดิโอ 2026', blessing: 'รุ่นแห่งชัยชนะ ประสานพลังสามัคคี' },
+        { num: '77', title: 'ดับเบิลเซเว่นนำโชค', blessing: 'โชคดีคูณสอง เมตตามหานิยม' },
+        { num: '88', title: 'มหาโชคมหาลาภ', blessing: 'ร่ำรวย เงินทอง รุ่งโรจน์ทุกทิศ' },
+        { num: '99', title: 'พลังขั้นสุด', blessing: 'ก้าวหน้าสูงสุด ไร้พ่ายตลอดกาล' }
+      ];
+
+      const chosen = luckyList[Math.floor(Math.random() * luckyList.length)];
+      const icon = DOM.btnRandomNumber.querySelector('i');
+      if (icon) icon.classList.add('fa-spin');
+      DOM.btnRandomNumber.classList.add('scale-95', 'opacity-80');
+
+      let tick = 0;
+      const maxTicks = 8;
+      const ticker = setInterval(() => {
+        tick++;
+        const randTemp = String(Math.floor(Math.random() * 99)).padStart(2, '0');
+        DOM.inputScreenNumber.value = randTemp;
+        AppState.screenNumber = randTemp;
+        updateLivePreview();
+
+        if (tick >= maxTicks) {
+          clearInterval(ticker);
+          AppState.screenNumber = chosen.num;
+          DOM.inputScreenNumber.value = chosen.num;
+          clearFieldError(DOM.inputScreenNumber);
+          updateLivePreview();
+
+          if (icon) icon.classList.remove('fa-spin');
+          DOM.btnRandomNumber.classList.remove('scale-95', 'opacity-80');
+          isRolling = false;
+
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            try { navigator.vibrate([20, 30, 20]); } catch (e) {}
+          }
+
+          [DOM.svgBackNumber, DOM.svgBothNumber].forEach(el => {
+            if (el) {
+              el.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+              el.style.transformOrigin = 'center';
+              el.style.transform = 'scale(1.15)';
+              setTimeout(() => {
+                if (el) el.style.transform = 'scale(1)';
+              }, 250);
+            }
+          });
+
+          showToast(`โชคดีวันนี้: เบอร์ ${chosen.num} (${chosen.title}) - ${chosen.blessing}`, 'success');
+        }
+      }, 45);
     });
   }
 
@@ -1212,31 +1267,37 @@ function buildOrderRecordFromRaw(raw, email) {
   };
 }
 
-async function syncOrdersCache() {
-  if (!AppState.gasUrl) return;
-  try {
-    const listUrl = `${AppState.gasUrl}?action=list`;
-    const resp = await fetch(listUrl);
-    if (!resp.ok) return;
-    const json = await resp.json();
-    if (json && json.status === 'success' && Array.isArray(json.orders)) {
-      AppState.ordersCache.clear();
-      json.orders.forEach(orderEntry => {
-        const emailKey = (orderEntry.email || '').trim().toLowerCase();
-        if (emailKey) {
-          AppState.ordersCache.set(emailKey, orderEntry);
-        }
-      });
-      AppState.isCacheReady = true;
-    }
-  } catch (err) {
-    // Silent fail for background sync
+// Security helper: HTML entity escaping (XSS prevention)
+function esc(sourceString) {
+  if (sourceString == null) return '';
+  return String(sourceString).replace(/[&<>"']/g, matchChar => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[matchChar]));
+}
+
+// Security helper: URL scheme sanitizer
+function sanitizeMediaUrl(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== 'string') return '';
+  const trimmed = rawUrl.trim();
+  if (/^data:image\/(jpeg|png|webp|gif);base64,[a-zA-Z0-9+/=]+$/i.test(trimmed)) {
+    return trimmed;
   }
+  if (/^https:\/\/[a-zA-Z0-9\-._~:/?#\[\]@!$'()*+,;=%]+$/i.test(trimmed)) {
+    return trimmed;
+  }
+  return '';
+}
+
+async function syncOrdersCache() {
+  // Full database pre-fetching removed to protect student PII (excessive data exposure prevention).
 }
 
 function startPeriodicCacheSync() {
-  syncOrdersCache();
-  setInterval(syncOrdersCache, 30000);
+  // Background polling removed to protect student privacy and conserve quota.
 }
 
 function applyExistingOrder(record) {
@@ -1569,7 +1630,7 @@ function showFieldError(inputElement, message) {
   // Create error message element
   const errorEl = document.createElement('p');
   errorEl.className = 'field-error-message text-xs text-red-600 mt-1 flex items-center gap-1';
-  errorEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${message}`;
+  errorEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${esc(message)}`;
 
   // Insert after input's parent
   const parent = inputElement.parentElement;
@@ -1698,12 +1759,21 @@ function renderOrdersList() {
     return;
   }
 
-  DOM.ordersListContainer.innerHTML = AppState.orders.map((o, idx) => `
+  DOM.ordersListContainer.innerHTML = AppState.orders.map((o, idx) => {
+    const safeSlip = sanitizeMediaUrl(o.slipImage);
+    const safeName = esc(o.name);
+    const safeNumber = esc(o.number);
+    const safeSize = esc(o.size);
+    const safeClassroom = esc(o.classroom);
+    const safeEmail = esc(o.email);
+    const safePrice = esc(o.price);
+
+    return `
     <div class="p-3.5 rounded-2xl bg-white border border-pink-100 shadow-sm flex items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
-        ${o.slipImage ? `
+        ${safeSlip ? `
           <div class="w-10 h-12 rounded-lg bg-slate-100 border border-pink-100 overflow-hidden shrink-0 cursor-pointer" onclick="viewOrderSlipFull(${idx})" title="คลิกเพื่อดูสลิป">
-            <img src="${o.slipImage}" alt="Slip" class="w-full h-full object-cover">
+            <img src="${safeSlip}" alt="Slip" class="w-full h-full object-cover">
           </div>
         ` : `
           <div class="w-10 h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-300 text-xs shrink-0" title="ไม่มีสลิป">
@@ -1712,12 +1782,12 @@ function renderOrdersList() {
         `}
         <div class="space-y-1">
           <div class="flex items-center gap-2">
-            <span class="font-black text-slate-900 text-sm font-sport-bold">${o.name}</span>
-            <span class="px-2 py-0.5 rounded-md bg-pink-100 text-pink-700 font-mono font-bold text-xs">#${o.number}</span>
-            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs">Size ${o.size}</span>
-            ${o.classroom ? `<span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 font-bold text-xs">ห้อง ${o.classroom}</span>` : ''}
+            <span class="font-black text-slate-900 text-sm font-sport-bold">${safeName}</span>
+            <span class="px-2 py-0.5 rounded-md bg-pink-100 text-pink-700 font-mono font-bold text-xs">#${safeNumber}</span>
+            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs">Size ${safeSize}</span>
+            ${safeClassroom ? `<span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 font-bold text-xs">ห้อง ${safeClassroom}</span>` : ''}
           </div>
-          <p class="text-[11px] text-slate-500 font-mono">${o.email} &bull; ฿${o.price}</p>
+          <p class="text-[11px] text-slate-500 font-mono">${safeEmail} &bull; ฿${safePrice}</p>
         </div>
       </div>
       <div class="flex items-center gap-1.5">
@@ -1729,7 +1799,8 @@ function renderOrdersList() {
         </button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 window.viewOrderSlipFull = function (idx) {
@@ -1955,7 +2026,7 @@ function showToast(msg, type = 'info') {
   };
 
   toast.className = `px-4 py-2.5 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 pointer-events-auto transition transform translate-y-2 opacity-0 ${bgColors[type] || bgColors.info}`;
-  toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${msg}</span>`;
+  toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${esc(msg)}</span>`;
 
   DOM.toastContainer.appendChild(toast);
   setTimeout(() => {
