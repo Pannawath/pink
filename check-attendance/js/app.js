@@ -1,3 +1,24 @@
+
+  let brandTapCount = 0;
+  let brandTapTimer = null;
+  function setupSecretAdminTap() {
+    const brandCapsule = document.querySelector('.brand-capsule');
+    if (!brandCapsule) return;
+    brandCapsule.style.cursor = 'pointer';
+    brandCapsule.addEventListener('click', () => {
+      brandTapCount++;
+      clearTimeout(brandTapTimer);
+      if (brandTapCount >= 3) {
+        brandTapCount = 0;
+        window.location.href = 'admin.html';
+      } else {
+        brandTapTimer = setTimeout(() => {
+          brandTapCount = 0;
+        }, 1200);
+      }
+    });
+  }
+
 let activeHomeSubTab = 'overview';
 let activeRoleCategory = 'department';
 let studentSearchQuery = '';
@@ -888,6 +909,7 @@ const AttendanceApp = {
     });
     AttendanceStore.setRegs(cacheResult.records);
     requestAnimationFrame(() => updateDesktopGlider(AttendanceStore.getState().view));
+    setupSecretAdminTap();
   }
 };
 

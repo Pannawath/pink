@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>อยุธยาสีชมพู 2569 · ศูนย์ควบคุมผู้ดูแลระบบ (Admin)</title>
+  
+  <link rel="icon" type="image/png" href="../assets/images/school_crest.png">
+  <link rel="apple-touch-icon" href="../assets/images/school_crest.png">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/admin.css?v=1" />
+
+  <!-- Scripts -->
+  <script defer src="js/config.js?v=14"></script>
+  <script defer src="js/api.js?v=14"></script>
+  <script defer src="js/store.js?v=14"></script>
+  <script defer src="js/admin.js?v=1"></script>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="admin-header">
+    <div class="header-inner">
+      <div class="brand-wrap">
+        <div class="brand-badge">PK</div>
+        <div>
+          <div class="brand-title">อยุธยาสีชมพู 2569</div>
+          <div class="brand-subtitle">ศูนย์ควบคุมระบบเช็คชื่อและจัดสรรฝ่ายงาน (Admin)</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">กลับหน้าหลัก</a>
+        <button class="btn btn-danger" onclick="PinkAdmin.logout()">ออกจากระบบ</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="admin-nav-bar" aria-label="แท็บเมนูผู้ดูแลระบบ">
+    <div class="nav-tabs-wrapper">
+      <button class="tab-btn active" data-tab="dashboard" onclick="PinkAdmin.switchTab('dashboard')">
+        ภาพรวมแดชบอร์ด
+      </button>
+      <button class="tab-btn" data-tab="duplicates" onclick="PinkAdmin.switchTab('duplicates')">
+        จัดการคนลงซ้ำ <span class="tab-count-pill alert" id="dupeTabBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab-btn" data-tab="quotas" onclick="PinkAdmin.switchTab('quotas')">
+        ตั้งค่าโควตา & ฝ่ายงาน
+      </button>
+      <button class="tab-btn" data-tab="directory" onclick="PinkAdmin.switchTab('directory')">
+        รายชื่อนักเรียนทั้งหมด
+      </button>
+      <button class="tab-btn" data-tab="export" onclick="PinkAdmin.switchTab('export')">
+        ส่งออก & พิมพ์ A4
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN TAB CONTENT CONTAINER -->
+  <main class="admin-main" id="adminTabContent">
+    <!-- Populated by admin.js -->
+  </main>
+
+  <!-- PIN AUTHENTICATION OVERLAY -->
+  <div class="pin-overlay" id="pinOverlay">
+    <div class="glass-panel pin-box">
+      <div class="brand-badge" style="margin:0 auto 16px;width:48px;height:48px;font-size:20px;">PK</div>
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">เข้าสู่ระบบผู้ดูแลระบบ</h2>
+      <p style="font-size:13px;color:var(--admin-text-muted);">กรุณากรอกรหัส PIN สตาฟ 4 หลักเพื่อความปลอดภัย</p>
+      
+      <div class="pin-inputs">
+        <input type="password" maxlength="1" class="pin-digit" autofocus pattern="[0-9]*" inputmode="numeric" />
+        <input type="password" maxlength="1" class="pin-digit" pattern="[0-9]*" inputmode="numeric" />
+        <input type="password" maxlength="1" class="pin-digit" pattern="[0-9]*" inputmode="numeric" />
+        <input type="password" maxlength="1" class="pin-digit" pattern="[0-9]*" inputmode="numeric" />
+      </div>
+
+      <div style="font-size:12px;color:var(--admin-text-muted);">
+        (รหัสเริ่มต้น: <strong>2569</strong>)
+      </div>
+      <div style="margin-top:20px;">
+        <a href="index.html" style="font-size:12.5px;color:var(--admin-primary);text-decoration:none;">กลับสู่หน้านักเรียนทั่วไป</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

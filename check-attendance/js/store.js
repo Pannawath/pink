@@ -51,13 +51,8 @@ const AttendanceStore = {
     this.notify();
   },
 
-  setSubmitting(submissionFlag) {
-    this.state.isSubmitting = Boolean(submissionFlag);
-    this.notify();
-  },
-
-  setFormMsg(messageObject) {
-    this.state.formMsg = messageObject;
+  setSubmitting(submissionStatus) {
+    this.state.isSubmitting = submissionStatus;
     this.notify();
   },
 
@@ -69,8 +64,8 @@ const AttendanceStore = {
     return this.state.regs.find(entry => entry.department === targetDepartment && entry.position === 'ประธานฝ่าย');
   },
 
-  isDeputyTaken(targetDepartment, targetTitle) {
-    return this.state.regs.find(entry => entry.department === targetDepartment && entry.position === targetTitle);
+  isDeputyTaken(targetDepartment, positionLabel) {
+    return this.state.regs.find(entry => entry.department === targetDepartment && entry.position === positionLabel);
   },
 
   isSportCaptainTaken(targetSport) {
@@ -123,21 +118,31 @@ const AttendanceStore = {
     return this.countUniqueDept(targetDepartment);
   },
 
+  getActiveDepartments() {
+    if (typeof AttendanceConfig !== 'undefined') {
+      if (typeof AttendanceConfig.refreshSettings === 'function') {
+        AttendanceConfig.refreshSettings();
+      }
+      return AttendanceConfig.DEPARTMENTS || [];
+    }
+    if (typeof require !== 'undefined') {
+      const config = require('./config.js');
+      return config.DEPARTMENTS || [];
+    }
+    return [];
+  },
+
   isDeptFull(targetDepartment) {
-    const configSource = (typeof AttendanceConfig !== 'undefined')
-      ? AttendanceConfig
-      : (typeof require !== 'undefined' ? require('./config.js') : {});
-    const deptDef = (configSource.DEPARTMENTS || []).find(d => d.name === targetDepartment);
+    const depts = this.getActiveDepartments();
+    const deptDef = depts.find(d => d.name === targetDepartment);
     if (!deptDef || typeof deptDef.maxCapacity !== 'number') return false;
     const currentCount = this.countDept(targetDepartment);
     return currentCount >= deptDef.maxCapacity;
   },
 
   getDeptCapacity(targetDepartment) {
-    const configSource = (typeof AttendanceConfig !== 'undefined')
-      ? AttendanceConfig
-      : (typeof require !== 'undefined' ? require('./config.js') : {});
-    const deptDef = (configSource.DEPARTMENTS || []).find(d => d.name === targetDepartment);
+    const depts = this.getActiveDepartments();
+    const deptDef = depts.find(d => d.name === targetDepartment);
     const currentCount = this.countDept(targetDepartment);
     const maxCapacity = deptDef && typeof deptDef.maxCapacity === 'number' ? deptDef.maxCapacity : null;
     return {

@@ -21,7 +21,7 @@ const CENTRAL_POSITIONS = [
   'รองเลขานุการ'
 ];
 
-const DEPARTMENTS = [
+const DEFAULT_DEPARTMENTS = [
   { name: 'ฝ่ายอุปกรณ์' },
   { name: 'ฝ่ายผู้นำเชียร์ (หลีด)', maxCapacity: 18 },
   { name: 'ฝ่ายสวัสดิการ', deputyLabel: 'รองประธานฝ่ายสวัสดิการ' },
@@ -55,19 +55,83 @@ const NUMBERS = (() => {
   return arr;
 })();
 
+const SETTINGS_STORAGE_KEY = 'pink_admin_dynamic_settings_v1';
+const DEFAULT_ADMIN_PIN = '2569';
+
+function loadDynamicSettings() {
+  const defaults = {
+    departments: JSON.parse(JSON.stringify(DEFAULT_DEPARTMENTS)),
+    strictOnePerson: true,
+    m1StandOnly: true,
+    lockM1Registration: true,
+    adminPin: DEFAULT_ADMIN_PIN,
+    updatedAt: Date.now()
+  };
+
+  if (typeof localStorage === 'undefined') return defaults;
+
+  try {
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (!raw) return defaults;
+    const parsed = JSON.parse(raw);
+    return {
+      departments: Array.isArray(parsed.departments) ? parsed.departments : defaults.departments,
+      strictOnePerson: typeof parsed.strictOnePerson === 'boolean' ? parsed.strictOnePerson : defaults.strictOnePerson,
+      m1StandOnly: typeof parsed.m1StandOnly === 'boolean' ? parsed.m1StandOnly : defaults.m1StandOnly,
+      lockM1Registration: typeof parsed.lockM1Registration === 'boolean' ? parsed.lockM1Registration : defaults.lockM1Registration,
+      adminPin: parsed.adminPin || defaults.adminPin,
+      updatedAt: parsed.updatedAt || Date.now()
+    };
+  } catch (err) {
+    console.warn('[AttendanceConfig] Failed to load dynamic settings:', err);
+    return defaults;
+  }
+}
+
+function saveDynamicSettings(settings) {
+  if (typeof localStorage === 'undefined') return false;
+  try {
+    const payload = {
+      ...settings,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
+    // Update active in-memory DEPARTMENTS
+    if (Array.isArray(payload.departments)) {
+      AttendanceConfig.DEPARTMENTS = payload.departments;
+    }
+    return true;
+  } catch (err) {
+    console.error('[AttendanceConfig] Failed to save dynamic settings:', err);
+    return false;
+  }
+}
+
+const activeSettings = loadDynamicSettings();
+
 const AttendanceConfig = {
   API_URL,
   GRADES,
   ALL_ROOMS,
   LOCKED_ROOMS,
   CENTRAL_POSITIONS,
-  DEPARTMENTS,
+  DEFAULT_DEPARTMENTS,
+  DEPARTMENTS: activeSettings.departments,
   NO_STAFF_DEPARTMENTS,
   SPORT_TYPES,
   NUMBERS,
   CACHE_KEY: 'pink_attendance_cache_v1',
   CACHE_TIME_KEY: 'pink_attendance_cache_time_v1',
-  CACHE_TTL_MS: 30000 // 30 seconds fresh window before bg revalidation
+  CACHE_TTL_MS: 30000, // 30 seconds fresh window before bg revalidation
+  SETTINGS_STORAGE_KEY,
+  DEFAULT_ADMIN_PIN,
+  getSettings: loadDynamicSettings,
+  saveSettings: saveDynamicSettings,
+  refreshSettings() {
+    const fresh = loadDynamicSettings();
+    this.DEPARTMENTS = fresh.departments;
+    return fresh;
+  }
 };
 
 if (typeof window !== 'undefined') {

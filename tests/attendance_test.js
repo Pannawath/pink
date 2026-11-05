@@ -1,3 +1,11 @@
+
+let mockLocalStorage = {};
+global.localStorage = {
+  getItem: (k) => mockLocalStorage[k] || null,
+  setItem: (k, v) => { mockLocalStorage[k] = String(v); },
+  removeItem: (k) => { delete mockLocalStorage[k]; }
+};
+
 /**
  * [TEST] Attendance System Unit & Integration Test
  * ทดสอบความถูกต้องของโมดูลระบบเช็คชื่อ (Check Attendance)
@@ -185,5 +193,31 @@ assert.strictEqual(dupes['ม.5/3|18 ก'].length, 2, 'ต้องมี 2 ร�
 assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 18, 'จำนวนโควตาหลีดยังคงต้องนับแบบ unique เท่ากับ 18');
 
 console.log('  -> ผ่านการทดสอบ: ระบบโควตา ป้องกันลงซ้ำ และปิดรับกีฬา ทำงานถูกต้อง 100%');
+
+
+// 7. ทดสอบ Dynamic Admin Settings
+console.log('[TEST 7/7] ทดสอบ Dynamic Admin Settings และ Quota Mutation...');
+const currentSettings = AttendanceConfig.getSettings();
+assert.ok(currentSettings, 'ต้องโหลด settings ได้');
+assert.strictEqual(typeof currentSettings.adminPin, 'string', 'ต้องมี admin PIN');
+
+// จำลองการปรับโควตากีฬาใน Admin
+const testDept = currentSettings.departments.find(d => d.name === 'ฝ่ายกีฬา');
+assert.strictEqual(testDept.isClosed, true, 'ฝ่ายกีฬาต้องปิดรับตามค่าเริ่มต้น');
+
+testDept.isClosed = false;
+testDept.maxCapacity = 50;
+AttendanceConfig.saveSettings(currentSettings);
+
+assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายกีฬา'), false);
+const sportsCapacity = AttendanceStore.getDeptCapacity('ฝ่ายกีฬา');
+assert.strictEqual(sportsCapacity.maxCapacity, 50, 'โควตาใหม่ต้องเป็น 50 คน');
+
+// Revert back
+testDept.isClosed = true;
+testDept.maxCapacity = null;
+AttendanceConfig.saveSettings(currentSettings);
+
+console.log('  -> ผ่านการทดสอบ: Dynamic Admin Settings ซิงก์เข้า AttendanceStore สมบูรณ์ 100%');
 
 console.log('=== [การทดสอบทั้งหมดเสร็จสิ้น: ผ่านทุกข้อ 100% PASS] ===');
