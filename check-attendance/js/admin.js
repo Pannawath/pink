@@ -34,13 +34,27 @@
   }
 
   function showPinScreen() {
-    const pinEl = document.getElementById('pinOverlay');
-    if (pinEl) pinEl.style.display = 'flex';
+    const loginSection = document.getElementById('loginSection');
+    const adminHeader = document.getElementById('adminHeader');
+    const adminNavBar = document.getElementById('adminNavBar');
+    const adminContent = document.getElementById('adminTabContent');
+
+    if (loginSection) loginSection.style.display = 'block';
+    if (adminHeader) adminHeader.style.display = 'none';
+    if (adminNavBar) adminNavBar.style.display = 'none';
+    if (adminContent) adminContent.style.display = 'none';
   }
 
   function hidePinScreen() {
-    const pinEl = document.getElementById('pinOverlay');
-    if (pinEl) pinEl.style.display = 'none';
+    const loginSection = document.getElementById('loginSection');
+    const adminHeader = document.getElementById('adminHeader');
+    const adminNavBar = document.getElementById('adminNavBar');
+    const adminContent = document.getElementById('adminTabContent');
+
+    if (loginSection) loginSection.style.display = 'none';
+    if (adminHeader) adminHeader.style.display = 'block';
+    if (adminNavBar) adminNavBar.style.display = 'block';
+    if (adminContent) adminContent.style.display = 'block';
   }
 
   function verifyPin(inputPin) {
