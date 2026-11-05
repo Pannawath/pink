@@ -157,7 +157,7 @@
           <div class="meter-bar-fill" style="width:${pct}%;background:${barColor};"></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--admin-text-muted);">
-          <span>ลงทะเบียนแล้ว: <strong style="color:#fff;">${count} คน</strong></span>
+          <span>ลงทะเบียนแล้ว: <strong style="color:var(--admin-text-main);">${count} คน</strong></span>
           <span>${max ? `เหลืออีก ${Math.max(0, max - count)} ที่ (${pct}%)` : 'ไม่จำกัด'}</span>
         </div>
       </div>`;
@@ -178,7 +178,7 @@
       <div class="glass-panel kpi-card">
         <div class="kpi-label">สัดส่วนระดับชั้น</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
-          ${Object.entries(gradeCounts).map(([g, c]) => `<span style="background:rgba(255,255,255,0.08);padding:4px 8px;border-radius:8px;font-size:11.5px;">${g}: <strong>${c}</strong></span>`).join('')}
+          ${Object.entries(gradeCounts).map(([g, c]) => `<span style="background:var(--admin-surface-subtle);border:1px solid var(--admin-border);padding:3px 6px;font-size:11px;">${g}: <strong>${c}</strong></span>`).join('')}
         </div>
       </div>
     </div>
@@ -223,7 +223,7 @@
         return `
         <div class="dupe-role-item">
           <div>
-            <div style="font-weight:600;font-size:13.5px;color:#fff;">${roleStr}</div>
+            <div style="font-weight:600;font-size:13.5px;color:var(--admin-text-main);">${roleStr}</div>
             <div style="font-size:11px;color:var(--admin-text-muted);">เวลาลงทะเบียน: ${timeStr} · ID: ${rec.id.substring(0, 8)}...</div>
           </div>
           <div style="display:flex;gap:6px;">
@@ -236,7 +236,7 @@
       <div class="glass-panel dupe-card">
         <div class="dupe-header">
           <div>
-            <h4 style="font-size:16px;font-weight:700;color:#fff;">${studentName}</h4>
+            <h4 style="font-size:16px;font-weight:700;color:var(--admin-text-main);">${studentName}</h4>
             <div style="font-size:12.5px;color:var(--admin-text-muted);">${roomAndNumber}</div>
           </div>
           <span style="background:rgba(245,158,11,0.2);color:#f59e0b;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;">ลงซ้ำ ${records.length} ฝ่าย</span>
@@ -281,7 +281,7 @@
           <div style="display:flex;flex-direction:column;align-items:flex-end;">
             <label style="font-size:11px;color:var(--admin-text-muted);margin-bottom:2px;">โควตา (คน)</label>
             <input type="number" min="0" placeholder="ไม่จำกัด" value="${capacityVal}" 
-              style="width:90px;background:var(--admin-input-bg);border:1px solid var(--admin-input-border);color:#fff;padding:6px 10px;border-radius:8px;font-size:13px;text-align:center;"
+              style="width:90px;background:#fff;border:1px solid var(--admin-border-dark);color:var(--admin-text-main);padding:6px 10px;border-radius:8px;font-size:13px;text-align:center;"
               onchange="PinkAdmin.updateDeptCapacity(${index}, this.value)" />
           </div>
           <div style="display:flex;flex-direction:column;align-items:center;">
@@ -371,7 +371,7 @@
         </div>
         <div style="display:flex;gap:8px;">
           <input type="text" id="dirSearchInput" placeholder="พิมพ์ชื่อ, ห้อง หรือเลขที่เพื่อกรอง..." 
-            style="background:var(--admin-input-bg);border:1px solid var(--admin-input-border);color:#fff;padding:8px 12px;border-radius:10px;font-size:13px;width:220px;"
+            style="background:#fff;border:1px solid var(--admin-border-dark);color:var(--admin-text-main);padding:8px 12px;border-radius:10px;font-size:13px;width:220px;"
             oninput="PinkAdmin.filterDirectory(this.value)" />
           <button class="btn btn-ghost" onclick="PinkAdmin.refreshRecords()">รีเฟรช</button>
         </div>
@@ -559,15 +559,15 @@
           <h3 style="font-size:18px;font-weight:700;margin-bottom:12px;">แก้ไขข้อมูลนักเรียน</h3>
           <div style="margin-bottom:12px;">
             <label style="font-size:12px;color:var(--admin-text-muted);">ชื่อ-นามสกุล</label>
-            <input type="text" id="editFullName" value="${rec.fullName}" style="width:100%;padding:8px 12px;background:var(--admin-input-bg);border:1px solid var(--admin-input-border);color:#fff;border-radius:8px;font-size:14px;margin-top:4px;" />
+            <input type="text" id="editFullName" value="${rec.fullName}" style="width:100%;padding:8px 12px;background:#fff;border:1px solid var(--admin-border-dark);color:var(--admin-text-main);border-radius:8px;font-size:14px;margin-top:4px;" />
           </div>
           <div style="margin-bottom:12px;">
             <label style="font-size:12px;color:var(--admin-text-muted);">ชื่อเล่น</label>
-            <input type="text" id="editNickname" value="${rec.nickname || ''}" style="width:100%;padding:8px 12px;background:var(--admin-input-bg);border:1px solid var(--admin-input-border);color:#fff;border-radius:8px;font-size:14px;margin-top:4px;" />
+            <input type="text" id="editNickname" value="${rec.nickname || ''}" style="width:100%;padding:8px 12px;background:#fff;border:1px solid var(--admin-border-dark);color:var(--admin-text-main);border-radius:8px;font-size:14px;margin-top:4px;" />
           </div>
           <div style="margin-bottom:16px;">
             <label style="font-size:12px;color:var(--admin-text-muted);">ฝ่ายงาน</label>
-            <select id="editDepartment" style="width:100%;padding:8px 12px;background:var(--admin-input-bg);border:1px solid var(--admin-input-border);color:#fff;border-radius:8px;font-size:14px;margin-top:4px;">
+            <select id="editDepartment" style="width:100%;padding:8px 12px;background:#fff;border:1px solid var(--admin-border-dark);color:var(--admin-text-main);border-radius:8px;font-size:14px;margin-top:4px;">
               ${AttendanceConfig.DEPARTMENTS.map(d => `<option value="${d.name}" ${rec.department === d.name ? 'selected' : ''}>${d.name}</option>`).join('')}
             </select>
           </div>
