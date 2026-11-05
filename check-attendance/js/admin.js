@@ -15,6 +15,8 @@
   let editingRecordId = null;
 
   const AUTH_SESSION_KEY = 'pink_admin_authenticated_v1';
+  const AUTH_STORAGE_KEY = 'pink_admin_auth_token_v2';
+  const AUTH_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 Hours Session Window
 
   function init() {
     checkAuth();
@@ -23,14 +25,29 @@
   }
 
   function checkAuth() {
-    const sessionAuth = sessionStorage.getItem(AUTH_SESSION_KEY);
-    if (sessionAuth === 'true') {
-      isAuthed = true;
-      hidePinScreen();
-      renderActiveTab();
-    } else {
-      showPinScreen();
+    try {
+      const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+      if (raw) {
+        const authData = JSON.parse(raw);
+        const now = Date.now();
+        if (authData && authData.authed && (now - Number(authData.loginTime || 0)) < AUTH_EXPIRY_MS) {
+          isAuthed = true;
+          hidePinScreen();
+          renderActiveTab();
+          return;
+        }
+      }
+      if (sessionStorage.getItem(AUTH_SESSION_KEY) === 'true') {
+        isAuthed = true;
+        hidePinScreen();
+        renderActiveTab();
+        return;
+      }
+    } catch (e) {
+      console.warn('Failed to parse auth token:', e);
     }
+    isAuthed = false;
+    showPinScreen();
   }
 
   function showPinScreen() {
@@ -62,6 +79,11 @@
     if (inputPin === targetPin) {
       isAuthed = true;
       sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+      const authPayload = {
+        authed: true,
+        loginTime: Date.now()
+      };
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authPayload));
       hidePinScreen();
       renderActiveTab();
       return true;
@@ -92,19 +114,15 @@
       dupeBadge.textContent = dupeCount;
       dupeBadge.style.display = dupeCount > 0 ? 'inline-block' : 'none';
     }
-    const bottomBadge = document.getElementById('bottomDupeBadge');
-    if (bottomBadge) {
-      bottomBadge.textContent = dupeCount;
-      bottomBadge.style.display = dupeCount > 0 ? 'inline-block' : 'none';
+    const dupeDrawerBadge = document.getElementById('dupeDrawerBadge');
+    if (dupeDrawerBadge) {
+      dupeDrawerBadge.textContent = dupeCount;
+      dupeDrawerBadge.style.display = dupeCount > 0 ? 'inline-block' : 'none';
     }
   }
 
   function switchTab(tabName) {
     currentTab = tabName;
-    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
-      if (btn.getAttribute('data-tab') === tabName) btn.classList.add('active');
-      else btn.classList.remove('active');
-    });
     document.querySelectorAll('.drawer-item').forEach(btn => {
       if (btn.getAttribute('data-drawer-tab') === tabName) btn.classList.add('active');
       else btn.classList.remove('active');
@@ -121,8 +139,8 @@
     if (currentTab === 'dashboard') container.innerHTML = renderDashboard();
     else if (currentTab === 'duplicates') container.innerHTML = renderDuplicates();
     else if (currentTab === 'quotas') container.innerHTML = renderQuotas();
+    else if (currentTab === 'policies') container.innerHTML = renderPolicies();
     else if (currentTab === 'directory') container.innerHTML = renderDirectory();
-    
 
     updateHeaderCounts();
   }
@@ -194,24 +212,31 @@
         <div class="kpi-value">${totalCount} <span style="font-size:16px;font-weight:500;color:var(--admin-text-muted);">คน</span></div>
         <div class="kpi-sub">ซิงก์สดจาก Google Sheets</div>
       </div>
-      <div class="glass-panel kpi-card">
+      <div class="glass-panel kpi-card" onclick="PinkAdmin.switchTab('duplicates')" style="cursor:pointer;">
         <div class="kpi-label">พบลงทะเบียนซ้ำ <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
         <div class="kpi-value" style="color:${dupeCount > 0 ? '#f59e0b' : '#10b981'};">${dupeCount} <span style="font-size:16px;font-weight:500;color:var(--admin-text-muted);">คน</span></div>
-        <div class="kpi-sub">${dupeCount > 0 ? 'ต้องได้รับการตรวจสอบจากสตาฟ' : 'ข้อมูลเรียบร้อยสมบูรณ์'}</div>
-      </div>
-      <div class="glass-panel kpi-card">
-        <div class="kpi-label">สัดส่วนระดับชั้น</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
-          ${Object.entries(gradeCounts).map(([g, c]) => `<span style="background:var(--admin-surface-subtle);border:1px solid var(--admin-border);padding:3px 6px;font-size:11px;">${g}: <strong>${c}</strong></span>`).join('')}
-        </div>
+        <div class="kpi-sub">${dupeCount > 0 ? 'กดเพื่อไปจัดการคนลงซ้ำ' : 'ข้อมูลสมบูรณ์'}</div>
       </div>
     </div>
 
-    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
-      <h3 style="font-size:17px;font-weight:700;">สถานะโควตารายฝ่ายงาน</h3>
-      <button class="btn btn-ghost" onclick="PinkAdmin.switchTab('quotas')">ตั้งค่าโควตา</button>
+    <!-- สัดส่วนระดับชั้น -->
+    <div class="glass-panel" style="padding:14px 16px;margin-bottom:14px;border:1px solid var(--admin-border);">
+      <div style="font-size:12px;font-weight:700;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">สัดส่วนจำนวนนักเรียนรายชั้น</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(80px, 1fr));gap:8px;">
+        ${Object.entries(gradeCounts).map(([g, c]) => `
+          <div style="background:var(--admin-surface-alt);border:1px solid var(--admin-border);padding:8px 10px;text-align:center;">
+            <div style="font-size:11px;color:var(--admin-text-muted);">${g}</div>
+            <div style="font-size:18px;font-weight:800;color:var(--admin-text-main);line-height:1.2;">${c}</div>
+          </div>
+        `).join('')}
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px;">
+
+    <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="font-size:15px;font-weight:700;">สถานะโควตารายฝ่ายงาน</h3>
+      <button class="btn btn-ghost" onclick="PinkAdmin.switchTab('quotas')">ปรับแต่งโควตา</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:10px;">
       ${quotaCardsHtml}
     </div>`;
   }
@@ -286,7 +311,7 @@
   }
 
   /* -------------------------------------------------------------
-     TAB 3: QUOTAS & POLICIES CONTROL
+     TAB 3: QUOTAS CONTROL
      ------------------------------------------------------------- */
   function renderQuotas() {
     const depts = adminSettings.departments || AttendanceConfig.DEPARTMENTS;
@@ -294,18 +319,19 @@
     const deptRowsHtml = depts.map((d, index) => {
       const isClosed = Boolean(d.isClosed);
       const capacityVal = typeof d.maxCapacity === 'number' ? d.maxCapacity : '';
+      const registeredCount = AttendanceStore.countDept(d.name);
 
       return `
       <div class="setting-row">
         <div class="setting-info" style="flex:1;">
           <h4>${d.name}</h4>
-          <p>${d.isStand ? 'ฝ่ายสแตนเชียร์' : (d.hasSports ? 'ฝ่ายกีฬา (มี 10 ชนิดกีฬา)' : 'ฝ่ายงานทั่วไป')}</p>
+          <p>${d.isStand ? 'ฝ่ายสแตนเชียร์' : (d.hasSports ? 'ฝ่ายกีฬา (10 ชนิดกีฬา)' : 'ฝ่ายงานทั่วไป')} · สมัครแล้ว <strong style="color:var(--admin-primary);">${registeredCount}</strong> คน</p>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
           <div style="display:flex;flex-direction:column;align-items:flex-end;">
             <label style="font-size:11px;color:var(--admin-text-muted);margin-bottom:2px;">โควตา (คน)</label>
             <input type="number" min="0" placeholder="ไม่จำกัด" value="${capacityVal}" 
-              style="width:90px;background:#fff;border:1px solid var(--admin-border-dark);color:var(--admin-text-main);padding:6px 10px;border-radius:8px;font-size:13px;text-align:center;"
+              style="width:90px;background:#fff;border:1px solid var(--admin-border-dark);color:var(--admin-text-main);padding:6px 10px;font-size:13px;text-align:center;"
               onchange="PinkAdmin.updateDeptCapacity(${index}, this.value)" />
           </div>
           <div style="display:flex;flex-direction:column;align-items:center;">
@@ -322,10 +348,16 @@
     return `
     <div class="glass-panel settings-section">
       <div class="settings-section-title">ตั้งค่าโควตาและการเปิด/ปิดรับสมัครรายฝ่าย</div>
-      <div class="settings-section-desc">ปรับเปลี่ยนตัวเลขจำนวนคนที่รับ หรือเปิด/ปิดรับสมัครฝ่ายงานได้แบบไดนามิกทันทีโดยไม่ต้องแก้โค้ด</div>
+      <div class="settings-section-desc">ปรับเปลี่ยนตัวเลขจำนวนคนที่รับ หรือเปิด/ปิดรับสมัครฝ่ายงานได้แบบทันที</div>
       ${deptRowsHtml}
-    </div>
+    </div>`;
+  }
 
+  /* -------------------------------------------------------------
+     TAB 4: POLICIES & SECURITY
+     ------------------------------------------------------------- */
+  function renderPolicies() {
+    return `
     <div class="glass-panel settings-section">
       <div class="settings-section-title">นโยบายและกฎการลงทะเบียน</div>
       <div class="settings-section-desc">ควบคุมความเข้มงวดของระบบลงทะเบียนสำหรับนักเรียนทุกคน</div>
@@ -457,8 +489,26 @@
     init,
     switchTab,
     refreshRecords: loadLiveRecords,
+    toggleDrawer(forceState) {
+      const drawer = document.getElementById('drawerSidebar');
+      const backdrop = document.getElementById('drawerBackdrop');
+      if (!drawer || !backdrop) return;
+      const willOpen = typeof forceState === 'boolean' ? forceState : !drawer.classList.contains('open');
+      if (willOpen) {
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+      } else {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+      }
+    },
+    onDrawerSelect(tabName) {
+      this.toggleDrawer(false);
+      this.switchTab(tabName);
+    },
     logout() {
       sessionStorage.removeItem(AUTH_SESSION_KEY);
+      localStorage.removeItem(AUTH_STORAGE_KEY);
       location.reload();
     },
     updateDeptCapacity(deptIndex, newCapacity) {
