@@ -166,12 +166,12 @@
     return `
     <div class="kpi-grid">
       <div class="glass-panel kpi-card">
-        <div class="kpi-label">ผู้ลงทะเบียนทั้งหมด <span>SVG_USER</span></div>
+        <div class="kpi-label">ผู้ลงทะเบียนทั้งหมด <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
         <div class="kpi-value">${totalCount} <span style="font-size:16px;font-weight:500;color:var(--admin-text-muted);">คน</span></div>
         <div class="kpi-sub">ซิงก์สดจาก Google Sheets</div>
       </div>
       <div class="glass-panel kpi-card">
-        <div class="kpi-label">พบลงทะเบียนซ้ำ <span>SVG_ALERT</span></div>
+        <div class="kpi-label">พบลงทะเบียนซ้ำ <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
         <div class="kpi-value" style="color:${dupeCount > 0 ? '#f59e0b' : '#10b981'};">${dupeCount} <span style="font-size:16px;font-weight:500;color:var(--admin-text-muted);">คน</span></div>
         <div class="kpi-sub">${dupeCount > 0 ? 'ต้องได้รับการตรวจสอบจากสตาฟ' : 'ข้อมูลเรียบร้อยสมบูรณ์'}</div>
       </div>
@@ -202,7 +202,7 @@
     if (dupeKeys.length === 0) {
       return `
       <div class="glass-panel" style="padding:48px 20px;text-align:center;">
-        <div style="width:48px;height:48px;border-radius:50%;background:rgba(16,185,129,0.15);color:#10b981;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;font-weight:bold;">OK</div>
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(16,185,129,0.1);color:#10b981;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid rgba(16,185,129,0.2);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
         <h3 style="font-size:18px;margin-bottom:6px;">ไม่พบรายการลงทะเบียนซ้ำซ้อน</h3>
         <p style="font-size:13px;color:var(--admin-text-muted);">นักเรียนทุกคนในระบบลงทะเบียนเพียง 1 สิทธิ์ 1 ฝ่ายงานอย่างถูกต้อง</p>
       </div>`;
