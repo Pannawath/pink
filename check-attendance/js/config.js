@@ -23,11 +23,11 @@ const CENTRAL_POSITIONS = [
 
 const DEPARTMENTS = [
   { name: 'ฝ่ายอุปกรณ์' },
-  { name: 'ฝ่ายผู้นำเชียร์ (หลีด)', maxCapacity: 10 },
+  { name: 'ฝ่ายผู้นำเชียร์ (หลีด)' },
   { name: 'ฝ่ายสวัสดิการ', deputyLabel: 'รองประธานฝ่ายสวัสดิการ' },
   { name: 'ฝ่ายกราฟิก' },
   { name: 'ฝ่ายกีฬา', hasSports: true },
-  { name: 'ฝ่ายสแตนเชียร์', isStand: true, maxCapacity: 15 },
+  { name: 'ฝ่ายสแตนเชียร์', isStand: true },
   { name: 'ฝ่ายขบวน' },
   { name: 'ฝ่ายดรัมเมเยอร์' },
 ];
