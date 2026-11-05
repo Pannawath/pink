@@ -1,34 +1,36 @@
 /* ========================================================
-   HIGH-TECH BOUTIQUE CLEAN DESIGN SYSTEM
-   Precision Architecture: 1px Crisp Borders, Zero Blur Clutter
-   WCAG 2.2 AAA Contrast (Text #0F172A on #FAFAFA / #FFFFFF)
+   PREMIUM FROSTED GLASS (GLASSMORPHISM) DESIGN SYSTEM
+   Modern Translucent Depth, Optic Glass Surface (blur 16px)
+   Specular 1px Light Border & High Text Contrast (WCAG 2.2 AA)
    ======================================================== */
 
 :root {
-  --ios-bg: #fafafa;
+  --ios-bg: radial-gradient(circle at 15% 15%, rgba(254, 205, 211, 0.45) 0%, transparent 40%),
+            radial-gradient(circle at 85% 75%, rgba(251, 113, 133, 0.25) 0%, transparent 45%),
+            #fbfbfe;
   --ios-primary: #e11d48;
   --ios-primary-deep: #9f1239;
-  --ios-primary-soft: #fff1f2;
-  --ios-primary-border: #fecdd3;
+  --ios-primary-soft: rgba(255, 241, 242, 0.85);
+  --ios-primary-border: rgba(244, 63, 94, 0.22);
   --ios-accent: #f43f5e;
   --ios-text: #0f172a;
   --ios-text-secondary: #334155;
   --ios-muted: #64748b;
-  --ios-glass: #ffffff;
-  --ios-glass-card: #ffffff;
-  --ios-glass-border: #e2e8f0;
-  --ios-border-soft: #f1f5f9;
-  --ios-shadow-float: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --ios-shadow-dock: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.03);
-  --ios-shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 6px 16px -4px rgba(15, 23, 42, 0.03);
-  --ios-radius-sm: 10px;
-  --ios-radius-md: 14px;
-  --ios-radius-lg: 18px;
+  --ios-glass: rgba(255, 255, 255, 0.75);
+  --ios-glass-card: rgba(255, 255, 255, 0.82);
+  --ios-glass-border: rgba(255, 255, 255, 0.75);
+  --ios-border-soft: rgba(226, 232, 240, 0.6);
+  --ios-shadow-float: 0 10px 30px -4px rgba(225, 29, 72, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --ios-shadow-dock: 0 16px 36px -6px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(225, 29, 72, 0.08);
+  --ios-shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --ios-radius-sm: 12px;
+  --ios-radius-md: 18px;
+  --ios-radius-lg: 24px;
   --ios-radius-pill: 9999px;
-  --ios-blur: none;
-  --dock-height: 60px;
+  --ios-blur: blur(16px) saturate(180%);
+  --dock-height: 62px;
   --ios-easing: cubic-bezier(0.16, 1, 0.3, 1);
-  --ios-duration: 0.25s;
+  --ios-duration: 0.28s;
 }
 
 * {
@@ -98,9 +100,11 @@ a {
 }
 
 .top-capsule-inner {
-  background: #ffffff;
+  background: var(--ios-glass);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 4px 12px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.8);
   border-radius: var(--ios-radius-pill);
   padding: 8px 16px;
   display: flex;
@@ -255,7 +259,7 @@ a {
   box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 
-/* FLOATING HIGH-TECH BOUTIQUE DOCK WITH SLIDING GLIDER */
+/* FLOATING FROSTED GLASS DOCK WITH SLIDING GLIDER */
 .floating-glass-dock {
   position: fixed;
   bottom: 16px;
@@ -264,11 +268,13 @@ a {
   z-index: 60;
   width: calc(100% - 32px);
   max-width: 440px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
-  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.1), 0 2px 6px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.9);
   border-radius: var(--ios-radius-pill);
-  padding: 5px 6px;
+  padding: 6px 7px;
 }
 
 .dock-grid {
@@ -421,13 +427,15 @@ a {
   color: var(--ios-primary-deep);
 }
 
-/* HERO BOUTIQUE CLEAN CARD */
+/* HERO FROSTED GLASS CARD */
 .ios-hero-card {
-  background: #ffffff;
+  background: var(--ios-glass-card);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-lg);
   padding: 26px 24px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.03);
+  box-shadow: var(--ios-shadow-card), inset 0 1px 1px rgba(255, 255, 255, 0.9);
   margin-top: 6px;
   transition: transform var(--ios-duration) var(--ios-easing);
 }
@@ -436,8 +444,8 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid var(--ios-primary-border);
   color: var(--ios-primary-deep);
   font-size: 12px;
   font-weight: 700;
@@ -471,7 +479,7 @@ a {
   flex-wrap: wrap;
 }
 
-/* COMPACT STATS ROW - BOUTIQUE BENTO GRID */
+/* COMPACT STATS ROW - FROSTED GLASS BENTO GRID */
 .ios-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -480,19 +488,21 @@ a {
 }
 
 .ios-stat-pill {
-  background: #ffffff;
+  background: var(--ios-glass);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-md);
   padding: 14px 10px;
   text-align: center;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
   transition: transform 0.2s var(--ios-easing), border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ios-stat-pill:hover {
   transform: translateY(-2px);
-  border-color: #cbd5e1;
-  box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.06);
+  border-color: rgba(244, 63, 94, 0.3);
+  box-shadow: 0 8px 24px -4px rgba(225, 29, 72, 0.12);
 }
 
 .ios-stat-pill .num {
@@ -551,10 +561,12 @@ a {
   padding: 12px 14px 12px 40px;
   border-radius: var(--ios-radius-md);
   border: 1px solid var(--ios-glass-border);
-  background: #ffffff;
+  background: var(--ios-glass);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   font-size: 14px;
   color: var(--ios-text);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
   transition: border-color var(--ios-duration) var(--ios-easing), box-shadow var(--ios-duration) var(--ios-easing);
   min-height: 44px;
 }
@@ -580,7 +592,9 @@ a {
 
 .ios-chip-btn {
   border: 1px solid var(--ios-glass-border);
-  background: #ffffff;
+  background: var(--ios-glass);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   color: var(--ios-text);
   padding: 8px 16px;
   border-radius: var(--ios-radius-pill);
@@ -589,7 +603,7 @@ a {
   cursor: pointer;
   white-space: nowrap;
   min-height: 40px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.8);
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
@@ -621,17 +635,19 @@ a {
 }
 
 .ios-accordion-card {
-  background: #ffffff;
+  background: var(--ios-glass-card);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-md);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
   overflow: hidden;
   transition: border-color var(--ios-duration) var(--ios-easing), box-shadow var(--ios-duration) var(--ios-easing);
 }
 
 .ios-accordion-card.open {
   border-color: var(--ios-primary);
-  box-shadow: 0 4px 14px -2px rgba(225, 29, 72, 0.12);
+  box-shadow: 0 8px 24px -4px rgba(225, 29, 72, 0.15);
 }
 
 .ios-accordion-header {
@@ -744,9 +760,11 @@ a {
   padding-top: 14px;
 }
 
-/* RESULT CARDS - BOUTIQUE CRISP ROWS */
+/* RESULT CARDS - FROSTED GLASS ROWS */
 .ios-result-card {
-  background: #ffffff;
+  background: var(--ios-glass-card);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-md);
   padding: 14px 18px;
@@ -756,13 +774,13 @@ a {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ios-result-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  border-color: rgba(244, 63, 94, 0.3);
+  box-shadow: 0 4px 16px -2px rgba(225, 29, 72, 0.1);
 }
 
 .ios-result-card .who {
@@ -779,7 +797,7 @@ a {
 }
 
 .ios-badge {
-  background: #fff1f2;
+  background: rgba(255, 241, 242, 0.9);
   color: var(--ios-primary-deep);
   border: 1px solid #fecdd3;
   border-radius: var(--ios-radius-pill);
@@ -803,13 +821,15 @@ a {
   justify-content: flex-end;
 }
 
-/* FORM CARD - BOUTIQUE PRECISION */
+/* FORM CARD - FROSTED GLASS PRECISION */
 .ios-form-card {
-  background: #ffffff;
+  background: var(--ios-glass-card);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-lg);
   padding: 28px 24px;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+  box-shadow: var(--ios-shadow-card), inset 0 1px 1px rgba(255, 255, 255, 0.9);
   max-width: 640px;
   margin: 6px auto 30px;
 }
@@ -1001,17 +1021,20 @@ a {
 }
 
 .ios-grade-card {
-  background: #ffffff;
+  background: var(--ios-glass-card);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-md);
   padding: 18px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
-  transition: transform 0.2s var(--ios-easing), border-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  transition: transform 0.2s var(--ios-easing), border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ios-grade-card:hover {
   transform: translateY(-2px);
-  border-color: #cbd5e1;
+  border-color: rgba(244, 63, 94, 0.3);
+  box-shadow: 0 8px 20px -4px rgba(225, 29, 72, 0.12);
 }
 
 .ios-grade-card h3 {
@@ -1055,11 +1078,13 @@ a {
 }
 
 .live-card {
-  background: #ffffff;
+  background: var(--ios-glass-card);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--ios-glass-border);
   border-radius: var(--ios-radius-md);
   padding: 20px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
 .live-card h4 {
