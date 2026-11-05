@@ -213,22 +213,7 @@ function renderHome(appState) {
   else if (activeHomeSubTab === 'structure') subContentHtml = renderDeptStructure();
   else if (activeHomeSubTab === 'stats') subContentHtml = renderLiveStats(appState);
 
-  const duplicateMap = AttendanceStore.getDuplicateStudents();
-  const dupeCount = Object.keys(duplicateMap).length;
-  let dupeNoticeHtml = '';
-  if (dupeCount > 0) {
-    dupeNoticeHtml = `
-    <div class="wrap" style="padding-top:10px;">
-      <div style="background:rgba(245, 158, 11, 0.12);border:1px solid rgba(245, 158, 11, 0.35);color:#b45309;padding:12px 16px;border-radius:14px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <div>
-          <strong>แจ้งเตือนฝ่ายทะเบียน:</strong> พบนักเรียนลงทะเบียนซ้ำซ้อน <strong>${dupeCount} คน</strong> (ระบบนับโควตาแบบ 1 คน 1 สิทธิ์อัตโนมัติ สตาฟสามารถตรวจสอบและปรับแก้ใน Google Sheets ได้)
-        </div>
-        <button onclick="AttendanceApp.navigate('classes')" style="white-space:nowrap;background:#d97706;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">ดูรายชื่อ</button>
-      </div>
-    </div>`;
-  }
-
-  return renderHeroBanner(appState.regs.length) + dupeNoticeHtml + renderHomeSegmentedTabs() + subContentHtml;
+  return renderHeroBanner(appState.regs.length) + renderHomeSegmentedTabs() + subContentHtml;
 }
 
 function renderClassFilters() {
