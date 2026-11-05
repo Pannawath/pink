@@ -2,6 +2,9 @@
 
 ระบบเว็บแอปพลิเคชันสำหรับการสั่งจอง ปรับแต่งชื่อ-เบอร์สกรีนเสื้อแบบ 2D/3D Real-time ตรวจสอบสลิปด้วย OCR และบันทึกข้อมูลลง Google Sheets / Google Drive อัตโนมัติ พร้อมระบบเช็กชื่อลงทะเบียนกิจกรรม สำหรับคณะสีชมพู (อยุธยา) โรงเรียนสารคามพิทยาคม
 
+- **เว็บไซต์สั่งจองเสื้อ**: [https://pannawath.github.io/pink/](https://pannawath.github.io/pink/)
+- **ระบบเช็กชื่อและลงทะเบียนกิจกรรม**: [https://pannawath.github.io/pink/check-attendance/](https://pannawath.github.io/pink/check-attendance/)
+
 ---
 
 ## 1. ภาพรวมระบบ (System Overview)
