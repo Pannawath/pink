@@ -124,10 +124,12 @@ console.log('  -> ผ่านการทดสอบ: app.js มีโคร�
 console.log('[TEST 6/6] ทดสอบโควตารายฝ่าย (สแตน 25 คน, หลีด 18 คน)...');
 const cheerDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายผู้นำเชียร์ (หลีด)');
 const standDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายสแตนเชียร์');
+const drumDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายดรัมเมเยอร์');
 const equipDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายอุปกรณ์');
 
 assert.strictEqual(cheerDept.maxCapacity, 18, 'ฝ่ายผู้นำเชียร์ (หลีด) ต้องจำกัด 18 คน');
 assert.strictEqual(standDept.maxCapacity, 25, 'ฝ่ายสแตนเชียร์ ต้องจำกัด 25 คน');
+assert.strictEqual(drumDept.maxCapacity, 12, 'ฝ่ายดรัมเมเยอร์ ต้องจำกัด 12 คน');
 assert.strictEqual(equipDept.maxCapacity, undefined, 'ฝ่ายอุปกรณ์ต้องไม่จำกัดโควตา');
 
 // จำลองการลงทะเบียนหลีด 17 คน (ยังไม่เต็ม)

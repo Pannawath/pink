@@ -29,7 +29,7 @@ const DEPARTMENTS = [
   { name: 'ฝ่ายกีฬา', hasSports: true },
   { name: 'ฝ่ายสแตนเชียร์', maxCapacity: 25, isStand: true },
   { name: 'ฝ่ายขบวน' },
-  { name: 'ฝ่ายดรัมเมเยอร์' },
+  { name: 'ฝ่ายดรัมเมเยอร์', maxCapacity: 12 },
 ];
 
 const NO_STAFF_DEPARTMENTS = ['ฝ่ายอุปกรณ์', 'ฝ่ายสวัสดิการ', 'ฝ่ายกราฟิก'];
