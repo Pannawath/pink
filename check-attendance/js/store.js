@@ -77,20 +77,50 @@ const AttendanceStore = {
     return this.state.regs.find(entry => entry.department === 'ฝ่ายกีฬา' && entry.sportType === targetSport && entry.position === 'หัวหน้ากีฬา');
   },
 
-  isSameRoleAlreadyTaken(candidateRecord) {
+  isAlreadyRegistered(candidateRecord) {
     return this.state.regs.find(entry =>
       entry.classRoom === candidateRecord.classRoom &&
-      entry.numberLabel === candidateRecord.numberLabel &&
-      (entry.roleCategory || '') === (candidateRecord.roleCategory || '') &&
-      (entry.centralPosition || '') === (candidateRecord.centralPosition || '') &&
-      (entry.department || '') === (candidateRecord.department || '') &&
-      (entry.position || '') === (candidateRecord.position || '') &&
-      (entry.sportType || '') === (candidateRecord.sportType || '')
+      entry.numberLabel === candidateRecord.numberLabel
     );
   },
 
+  isSameRoleAlreadyTaken(candidateRecord) {
+    return this.isAlreadyRegistered(candidateRecord);
+  },
+
+  getDuplicateStudents() {
+    const map = {};
+    this.state.regs.forEach(entry => {
+      const key = `${entry.classRoom}|${entry.numberLabel}`;
+      if (!map[key]) map[key] = [];
+      map[key].push(entry);
+    });
+    const dupes = {};
+    Object.entries(map).forEach(([key, list]) => {
+      if (list.length > 1) {
+        dupes[key] = list;
+      }
+    });
+    return dupes;
+  },
+
+  countUniqueDept(targetDepartment) {
+    const seen = new Set();
+    let count = 0;
+    this.state.regs.forEach(entry => {
+      if (entry.department === targetDepartment) {
+        const studentKey = `${entry.classRoom}|${entry.numberLabel}`;
+        if (!seen.has(studentKey)) {
+          seen.add(studentKey);
+          count++;
+        }
+      }
+    });
+    return count;
+  },
+
   countDept(targetDepartment) {
-    return this.state.regs.filter(entry => entry.department === targetDepartment).length;
+    return this.countUniqueDept(targetDepartment);
   },
 
   isDeptFull(targetDepartment) {

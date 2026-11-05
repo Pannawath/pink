@@ -26,8 +26,8 @@ const DEPARTMENTS = [
   { name: 'ฝ่ายผู้นำเชียร์ (หลีด)', maxCapacity: 18 },
   { name: 'ฝ่ายสวัสดิการ', deputyLabel: 'รองประธานฝ่ายสวัสดิการ' },
   { name: 'ฝ่ายกราฟิก' },
-  { name: 'ฝ่ายกีฬา', hasSports: true },
-  { name: 'ฝ่ายสแตนเชียร์', maxCapacity: 25, isStand: true },
+  { name: 'ฝ่ายกีฬา', hasSports: true, isClosed: true, closedNote: 'รอประกาศคัดตัวนักกีฬา' },
+  { name: 'ฝ่ายสแตนเชียร์', maxCapacity: 25, isStand: true, m1Only: true },
   { name: 'ฝ่ายขบวน' },
   { name: 'ฝ่ายดรัมเมเยอร์', maxCapacity: 12 },
 ];

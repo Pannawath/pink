@@ -192,7 +192,22 @@ function renderHome(appState) {
   else if (activeHomeSubTab === 'structure') subContentHtml = renderDeptStructure();
   else if (activeHomeSubTab === 'stats') subContentHtml = renderLiveStats(appState);
 
-  return renderHeroBanner(appState.regs.length) + renderHomeSegmentedTabs() + subContentHtml;
+  const duplicateMap = AttendanceStore.getDuplicateStudents();
+  const dupeCount = Object.keys(duplicateMap).length;
+  let dupeNoticeHtml = '';
+  if (dupeCount > 0) {
+    dupeNoticeHtml = `
+    <div class="wrap" style="padding-top:10px;">
+      <div style="background:rgba(245, 158, 11, 0.12);border:1px solid rgba(245, 158, 11, 0.35);color:#b45309;padding:12px 16px;border-radius:14px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div>
+          <strong>แจ้งเตือนฝ่ายทะเบียน:</strong> พบนักเรียนลงทะเบียนซ้ำซ้อน <strong>${dupeCount} คน</strong> (ระบบนับโควตาแบบ 1 คน 1 สิทธิ์อัตโนมัติ สตาฟสามารถตรวจสอบและปรับแก้ใน Google Sheets ได้)
+        </div>
+        <button onclick="AttendanceApp.navigate('classes')" style="white-space:nowrap;background:#d97706;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">ดูรายชื่อ</button>
+      </div>
+    </div>`;
+  }
+
+  return renderHeroBanner(appState.regs.length) + dupeNoticeHtml + renderHomeSegmentedTabs() + subContentHtml;
 }
 
 function renderClassFilters() {
@@ -282,7 +297,7 @@ function groupAndRenderStudents(studentRecords) {
     <div class="ios-result-card">
       <div>
         <div class="who">${esc(studentItem.fullName)} <span style="color:var(--ios-muted);font-weight:400;">(${esc(studentItem.nickname)})</span></div>
-        <div class="sub">ห้อง ${esc(studentItem.classRoom)} · เลขที่ ${esc(studentItem.numberLabel)}${studentItem.roles.length > 1 ? ` · ลงทะเบียน ${studentItem.roles.length} บทบาท` : ''}</div>
+        <div class="sub">ห้อง ${esc(studentItem.classRoom)} · เลขที่ ${esc(studentItem.numberLabel)}${studentItem.roles.length > 1 ? ` <span style="display:inline-block;padding:2px 8px;margin-left:4px;border-radius:6px;background:rgba(245,158,11,0.15);color:#d97706;font-weight:600;font-size:11px;">⚠️ ลงทะเบียนซ้ำ ${studentItem.roles.length} รายการ (รอสตาฟตรวจ)</span>` : ''}</div>
       </div>
       <div class="badge-group">${badgesHtml}</div>
     </div>`;
@@ -328,7 +343,7 @@ function renderDepartments(appState) {
           <div class="accordion-num">${String(deptIndex + 1).padStart(2, '0')}</div>
           <div>
             <h3 class="accordion-title">${deptMetadata.name}</h3>
-            <div class="accordion-sub">${AttendanceConfig.NO_STAFF_DEPARTMENTS.includes(deptMetadata.name) ? 'ประธานฝ่าย · สมาชิก' : 'ประธานฝ่าย · สตาฟ · สมาชิก'}</div>
+            <div class="accordion-sub">${deptMetadata.hasSports ? 'ประธานฝ่าย · สตาฟ · นักกีฬา <span style="color:#f59e0b;font-weight:600;">(รอผลคัดตัว)</span>' : (AttendanceConfig.NO_STAFF_DEPARTMENTS.includes(deptMetadata.name) ? 'ประธานฝ่าย · สมาชิก' : 'ประธานฝ่าย · สตาฟ · สมาชิก')}</div>
           </div>
         </div>
         <div class="accordion-meta-block">
@@ -531,11 +546,25 @@ function buildSportRoleDropdown(sportTitle) {
     <option value="">เลือกตำแหน่ง</option>${optionsHtml}</select></div>`;
 }
 
-function formatDeptOption(deptItem, selectedDeptName) {
+function formatDeptOption(deptItem, selectedDeptName, selectedRoom) {
   const isSelected = selectedDeptName === deptItem.name;
   const capacityInfo = AttendanceStore.getDeptCapacity(deptItem.name);
   let label = deptItem.name;
   let disabledAttr = '';
+
+  // Check if sports closed
+  if (deptItem.isClosed) {
+    label += ` (ปิดรับชั่วคราว - ${deptItem.closedNote || 'รอคัดตัว'})`;
+    if (!isSelected) disabledAttr = 'disabled';
+    return `<option value="${deptItem.name}" ${disabledAttr} ${isSelected ? 'selected' : ''}>${label}</option>`;
+  }
+
+  // Check if stand is only for M.1 and user is not M.1
+  const isM1 = selectedRoom && selectedRoom.startsWith('ม.1');
+  if (deptItem.m1Only && !isM1) {
+    // Hide stand from M.2-M.6
+    return '';
+  }
 
   if (capacityInfo.maxCapacity !== null) {
     if (capacityInfo.isFull) {
@@ -551,15 +580,16 @@ function formatDeptOption(deptItem, selectedDeptName) {
   return `<option value="${deptItem.name}" ${disabledAttr} ${isSelected ? 'selected' : ''}>${label}</option>`;
 }
 
-function buildDepartmentFields() {
+function buildDepartmentFields(selectedRoom) {
   const selectedDeptName = getVal('department');
+  const roomValue = selectedRoom || getVal('classRoom');
   if (!selectedDeptName) {
     return `
     <div class="ios-field-grid">
       <div class="ios-field"><label>ฝ่ายงาน <span class="req">*</span></label>
         <select id="department" onchange="AttendanceApp.onRoleChange()">
           <option value="">เลือกฝ่ายงาน</option>
-          ${AttendanceConfig.DEPARTMENTS.map(deptItem => formatDeptOption(deptItem, '')).join('')}
+          ${AttendanceConfig.DEPARTMENTS.map(deptItem => formatDeptOption(deptItem, '', roomValue)).join('')}
         </select>
       </div>
       <div class="ios-field"><label>ตำแหน่ง <span class="req">*</span></label><select disabled><option>เลือกฝ่ายงานก่อน</option></select></div>
@@ -573,7 +603,7 @@ function buildDepartmentFields() {
       <div class="ios-field"><label>ฝ่ายงาน <span class="req">*</span></label>
         <select id="department" onchange="AttendanceApp.onRoleChange()">
           <option value="">เลือกฝ่ายงาน</option>
-          ${AttendanceConfig.DEPARTMENTS.map(deptItem => formatDeptOption(deptItem, selectedDeptName)).join('')}
+          ${AttendanceConfig.DEPARTMENTS.map(deptItem => formatDeptOption(deptItem, selectedDeptName, roomValue)).join('')}
         </select>
       </div>
     </div>
@@ -585,7 +615,7 @@ function buildDepartmentFields() {
     <div class="ios-field"><label>ฝ่ายงาน <span class="req">*</span></label>
       <select id="department" onchange="AttendanceApp.onRoleChange()">
         <option value="">เลือกฝ่ายงาน</option>
-        ${AttendanceConfig.DEPARTMENTS.map(deptItem => formatDeptOption(deptItem, selectedDeptName)).join('')}
+        ${AttendanceConfig.DEPARTMENTS.map(deptItem => formatDeptOption(deptItem, selectedDeptName, roomValue)).join('')}
       </select>
     </div>
     ${buildDeptPositionField(deptMetadata)}
@@ -613,7 +643,7 @@ function buildRoleSectionHTML(selectedRoom) {
 
   return selectedCategory === 'central'
     ? categoryFieldHtml + buildCentralPositionField()
-    : categoryFieldHtml + buildDepartmentFields();
+    : categoryFieldHtml + buildDepartmentFields(selectedRoom);
 }
 
 function renderCurrentView() {
@@ -686,11 +716,21 @@ function assembleRecord(fullName, nickname, classRoom, numberLabel) {
 }
 
 function validateConflict(candidateRecord) {
+  if (AttendanceStore.isAlreadyRegistered(candidateRecord)) {
+    return 'ท่านได้ลงทะเบียนไปเรียบร้อยแล้ว ไม่สามารถลงทะเบียนซ้ำได้';
+  }
+  const deptMeta = AttendanceConfig.DEPARTMENTS.find(d => d.name === candidateRecord.department);
+  if (deptMeta && deptMeta.isClosed) {
+    return `ฝ่าย${candidateRecord.department} ปิดรับชั่วคราว (${deptMeta.closedNote || 'รอคัดตัว'})`;
+  }
+  if (deptMeta && deptMeta.m1Only && !(candidateRecord.classRoom || '').startsWith('ม.1')) {
+    return 'ฝ่ายสแตนเชียร์เปิดรับเฉพาะนักเรียนระดับชั้น ม.1 เท่านั้น';
+  }
   if (candidateRecord.department && AttendanceStore.isDeptFull(candidateRecord.department)) {
     const info = AttendanceStore.getDeptCapacity(candidateRecord.department);
     return `ขออภัย ${candidateRecord.department} มีผู้ลงทะเบียนครบตามจำนวนแล้ว (${info.maxCapacity} คน)`;
   }
-  if (AttendanceStore.isSameRoleAlreadyTaken(candidateRecord)) return `เลขที่ ${candidateRecord.numberLabel} ห้อง ${candidateRecord.classRoom} ได้ลงทะเบียนตำแหน่งนี้ไปแล้ว กรุณาเลือกตำแหน่งอื่น`;
+  if (AttendanceStore.isSameRoleAlreadyTaken(candidateRecord)) return 'ท่านได้ลงทะเบียนไปเรียบร้อยแล้ว ไม่สามารถลงทะเบียนซ้ำได้';
   if (candidateRecord.roleCategory === 'central' && AttendanceStore.isCentralTaken(candidateRecord.centralPosition)) return 'ตำแหน่งนี้มีผู้รับแล้ว กรุณาเลือกตำแหน่งอื่น';
   if (candidateRecord.position === 'ประธานฝ่าย' && AttendanceStore.isDeptPresidentTaken(candidateRecord.department)) return 'ตำแหน่งประธานฝ่ายนี้มีผู้รับแล้ว';
   if (candidateRecord.department === 'ฝ่ายสวัสดิการ' && candidateRecord.position === 'รองประธานฝ่ายสวัสดิการ' && AttendanceStore.isDeputyTaken(candidateRecord.department, 'รองประธานฝ่ายสวัสดิการ')) return 'ตำแหน่งนี้มีผู้รับแล้ว';

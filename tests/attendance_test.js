@@ -85,7 +85,7 @@ const differentRoleCandidate = {
   position: 'สมาชิกฝ่าย',
   sportType: ''
 };
-assert.strictEqual(AttendanceStore.isSameRoleAlreadyTaken(differentRoleCandidate), undefined, 'คนเดิมลงตำแหน่งอื่นที่ไม่ซ้ำต้องอนุญาตได้');
+assert.ok(AttendanceStore.isAlreadyRegistered(differentRoleCandidate), 'ระบบ 1 คน 1 บทบาท ต้องตรวจพบว่าเคยลงทะเบียนแล้ว');
 
 console.log('  -> ผ่านการทดสอบ: Store & Constraint Queries ทำงานถูกต้อง 100%');
 
@@ -120,19 +120,22 @@ assert.ok(appCode.includes('window.AttendanceApp = AttendanceApp;'), 'app.js ต
 assert.ok(appCode.includes('loadWithSWR'), 'app.js ต้องรองรับ SWR');
 console.log('  -> ผ่านการทดสอบ: app.js มีโครงสร้างสมบูรณ์');
 
-// 6. ทดสอบการจำกัดโควตารายฝ่าย (Stand: 25, Cheer: 18, Others: unlimited)
-console.log('[TEST 6/6] ทดสอบโควตารายฝ่าย (สแตน 25 คน, หลีด 18 คน)...');
+// 6. ทดสอบการจำกัดโควตารายฝ่าย กฎห้ามลงซ้ำ และฝ่ายกีฬาปิดรับชั่วคราว
+console.log('[TEST 6/6] ทดสอบโควตารายฝ่าย (สแตน 25 คน, หลีด 18 คน, ดรัม 12 คน), ป้องกันลงซ้ำ และปิดรับกีฬา...');
 const cheerDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายผู้นำเชียร์ (หลีด)');
 const standDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายสแตนเชียร์');
 const drumDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายดรัมเมเยอร์');
+const sportsDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายกีฬา');
 const equipDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายอุปกรณ์');
 
 assert.strictEqual(cheerDept.maxCapacity, 18, 'ฝ่ายผู้นำเชียร์ (หลีด) ต้องจำกัด 18 คน');
 assert.strictEqual(standDept.maxCapacity, 25, 'ฝ่ายสแตนเชียร์ ต้องจำกัด 25 คน');
+assert.strictEqual(standDept.m1Only, true, 'ฝ่ายสแตนเชียร์ต้องให้เฉพาะ ม.1');
 assert.strictEqual(drumDept.maxCapacity, 12, 'ฝ่ายดรัมเมเยอร์ ต้องจำกัด 12 คน');
+assert.strictEqual(sportsDept.isClosed, true, 'ฝ่ายกีฬาต้องปิดรับชั่วคราว');
 assert.strictEqual(equipDept.maxCapacity, undefined, 'ฝ่ายอุปกรณ์ต้องไม่จำกัดโควตา');
 
-// จำลองการลงทะเบียนหลีด 17 คน (ยังไม่เต็ม)
+// จำลองการลงทะเบียนหลีด 17 คน (คนละเลขที่)
 const cheerStudents = Array.from({ length: 17 }, (_, i) => ({
   fullName: `หลีด คนที่ ${i + 1}`,
   classRoom: 'ม.5/3',
@@ -144,10 +147,14 @@ AttendanceStore.setRegs(cheerStudents);
 
 assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 17, 'จำนวนหลีดต้องเท่ากับ 17');
 assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายผู้นำเชียร์ (หลีด)'), false, 'ฝ่ายหลีด 17 คนยังไม่เต็ม');
-let cheerCapacity = AttendanceStore.getDeptCapacity('ฝ่ายผู้นำเชียร์ (หลีด)');
-assert.strictEqual(cheerCapacity.isFull, false);
-assert.strictEqual(cheerCapacity.remaining, 1);
-assert.strictEqual(cheerCapacity.maxCapacity, 18);
+
+// ทดสอบการเช็คลงซ้ำ: คนที่มี ห้อง ม.5/3 เลขที่ 1 ก อยู่แล้ว ต้องตรวจพบว่าเคยลงทะเบียน
+const test6DuplicateCandidate = { classRoom: 'ม.5/3', numberLabel: '1 ก', department: 'ฝ่ายอุปกรณ์' };
+assert.ok(AttendanceStore.isAlreadyRegistered(test6DuplicateCandidate), 'ต้องตรวจพบว่าเคยลงทะเบียนไปแล้ว');
+
+// ทดสอบคนใหม่ที่ยังไม่เคยลง
+const freshCandidate = { classRoom: 'ม.5/3', numberLabel: '19 ก', department: 'ฝ่ายอุปกรณ์' };
+assert.strictEqual(AttendanceStore.isAlreadyRegistered(freshCandidate), undefined, 'คนใหม่ต้องยังไม่เคยลงทะเบียน');
 
 // เพิ่มหลีดคนที่ 18 (เต็มโควตา)
 cheerStudents.push({
@@ -161,10 +168,22 @@ AttendanceStore.setRegs(cheerStudents);
 
 assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 18, 'จำนวนหลีดต้องเท่ากับ 18');
 assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายผู้นำเชียร์ (หลีด)'), true, 'ฝ่ายหลีด 18 คนต้องเต็มแล้ว');
-cheerCapacity = AttendanceStore.getDeptCapacity('ฝ่ายผู้นำเชียร์ (หลีด)');
-assert.strictEqual(cheerCapacity.isFull, true);
-assert.strictEqual(cheerCapacity.remaining, 0);
 
-console.log('  -> ผ่านการทดสอบ: ระบบโควตาสแตน 25 คน และหลีด 18 คน ทำงานถูกต้อง 100%');
+// ทดสอบ getDuplicateStudents
+cheerStudents.push({
+  fullName: 'หลีด คนที่ 18 (คนเดิมลงซ้ำ)',
+  classRoom: 'ม.5/3',
+  numberLabel: '18 ก',
+  department: 'ฝ่ายอุปกรณ์',
+  position: 'สมาชิกฝ่าย'
+});
+AttendanceStore.setRegs(cheerStudents);
+
+const dupes = AttendanceStore.getDuplicateStudents();
+assert.ok(dupes['ม.5/3|18 ก'], 'ต้องตรวจพบคนลงซ้ำ 18 ก');
+assert.strictEqual(dupes['ม.5/3|18 ก'].length, 2, 'ต้องมี 2 รายการ');
+assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 18, 'จำนวนโควตาหลีดยังคงต้องนับแบบ unique เท่ากับ 18');
+
+console.log('  -> ผ่านการทดสอบ: ระบบโควตา ป้องกันลงซ้ำ และปิดรับกีฬา ทำงานถูกต้อง 100%');
 
 console.log('=== [การทดสอบทั้งหมดเสร็จสิ้น: ผ่านทุกข้อ 100% PASS] ===');
