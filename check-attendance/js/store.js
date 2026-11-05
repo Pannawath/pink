@@ -91,6 +91,31 @@ const AttendanceStore = {
 
   countDept(targetDepartment) {
     return this.state.regs.filter(entry => entry.department === targetDepartment).length;
+  },
+
+  isDeptFull(targetDepartment) {
+    const configSource = (typeof AttendanceConfig !== 'undefined')
+      ? AttendanceConfig
+      : (typeof require !== 'undefined' ? require('./config.js') : {});
+    const deptDef = (configSource.DEPARTMENTS || []).find(d => d.name === targetDepartment);
+    if (!deptDef || typeof deptDef.maxCapacity !== 'number') return false;
+    const currentCount = this.countDept(targetDepartment);
+    return currentCount >= deptDef.maxCapacity;
+  },
+
+  getDeptCapacity(targetDepartment) {
+    const configSource = (typeof AttendanceConfig !== 'undefined')
+      ? AttendanceConfig
+      : (typeof require !== 'undefined' ? require('./config.js') : {});
+    const deptDef = (configSource.DEPARTMENTS || []).find(d => d.name === targetDepartment);
+    const currentCount = this.countDept(targetDepartment);
+    const maxCapacity = deptDef && typeof deptDef.maxCapacity === 'number' ? deptDef.maxCapacity : null;
+    return {
+      currentCount,
+      maxCapacity,
+      isFull: maxCapacity !== null && currentCount >= maxCapacity,
+      remaining: maxCapacity !== null ? Math.max(0, maxCapacity - currentCount) : null
+    };
   }
 };
 

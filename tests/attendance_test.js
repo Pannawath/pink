@@ -113,11 +113,41 @@ assert.strictEqual(cachedResult.isStale, false, 'แคชเพิ่งบั�
 console.log('  -> ผ่านการทดสอบ: SWR Cache บันทึกและดึงข้อมูลได้สมบูรณ์ (0ms payload)');
 
 // 5. ตรวจสอบ Syntax ของ app.js
-console.log('[TEST 5/5] ทดสอบ Syntax ของ app.js...');
+console.log('[TEST 5/6] ทดสอบ Syntax ของ app.js...');
 const fs = require('fs');
 const appCode = fs.readFileSync('check-attendance/js/app.js', 'utf8');
 assert.ok(appCode.includes('window.AttendanceApp = AttendanceApp;'), 'app.js ต้องเปิดเผย AttendanceApp');
 assert.ok(appCode.includes('loadWithSWR'), 'app.js ต้องรองรับ SWR');
 console.log('  -> ผ่านการทดสอบ: app.js มีโครงสร้างสมบูรณ์');
+
+// 6. ทดสอบระบบจำกัดโควตาฝ่าย (Department Quota Limit)
+console.log('[TEST 6/6] ทดสอบระบบ Quota Management (สแตนเชียร์ 15 คน, หลีด 10 คน)...');
+const cheerDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายผู้นำเชียร์ (หลีด)');
+const standDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายสแตนเชียร์');
+assert.strictEqual(cheerDept.maxCapacity, 10, 'ฝ่ายผู้นำเชียร์ (หลีด) ต้องมีโควตา 10 คน');
+assert.strictEqual(standDept.maxCapacity, 15, 'ฝ่ายสแตนเชียร์ ต้องมีโควตา 15 คน');
+
+// สร้าง Mock นักเรียนลงหลีด 10 คน
+const cheerStudents = Array.from({ length: 10 }, (_, i) => ({
+  fullName: `หลีด คนที่ ${i + 1}`,
+  classRoom: 'ม.5/3',
+  numberLabel: `${i + 1} ก`,
+  department: 'ฝ่ายผู้นำเชียร์ (หลีด)',
+  position: 'สมาชิกฝ่าย'
+}));
+AttendanceStore.setRegs(cheerStudents);
+
+assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 10, 'จำนวนหลีดต้องเท่ากับ 10');
+assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายผู้นำเชียร์ (หลีด)'), true, 'ฝ่ายหลีดต้องรายงานว่าเต็มแล้ว');
+const cheerCapacity = AttendanceStore.getDeptCapacity('ฝ่ายผู้นำเชียร์ (หลีด)');
+assert.strictEqual(cheerCapacity.isFull, true);
+assert.strictEqual(cheerCapacity.remaining, 0);
+
+// ฝ่ายสแตนเชียร์ยังไม่มีคน
+assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายสแตนเชียร์'), false, 'ฝ่ายสแตนเชียร์ต้องยังไม่เต็ม');
+const standCapacity = AttendanceStore.getDeptCapacity('ฝ่ายสแตนเชียร์');
+assert.strictEqual(standCapacity.remaining, 15);
+
+console.log('  -> ผ่านการทดสอบ: ระบบจำกัดโควตาทำงานถูกต้องสมบูรณ์ 100%');
 
 console.log('=== [การทดสอบทั้งหมดเสร็จสิ้น: ผ่านทุกข้อ 100% PASS] ===');
