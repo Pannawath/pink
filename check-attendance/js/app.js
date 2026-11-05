@@ -435,7 +435,10 @@ function renderRegister() {
       </div>
       <div class="ios-form-title">02 ตำแหน่งและฝ่ายงาน</div>
       <div id="roleSection">${buildRoleSectionHTML('')}</div>
-      <div class="ios-note-box">ตำแหน่งสำคัญรับได้ตำแหน่งละ 1 คน ระบบตรวจสอบตำแหน่งว่างแบบเรียลไทม์จากข้อมูลจริง</div>
+      <div class="ios-note-box" style="margin-bottom:8px;">ตำแหน่งสำคัญรับได้ตำแหน่งละ 1 คน ระบบตรวจสอบตำแหน่งว่างแบบเรียลไทม์จากข้อมูลจริง</div>
+      <div class="ios-note-box" style="background:#fffbeb;border-color:rgba(217,119,6,0.25);color:#92400e;margin-top:0;font-size:11.5px;line-height:1.5;">
+        <strong>ข้อชี้แจง:</strong> หากมีผู้เข้าใช้งานพร้อมกันเป็นจำนวนมาก อาจพบปัญหาการหน่วงหรือบันทึกไม่สำเร็จชั่วคราวจากข้อจำกัดของ Google Sheets (จำกัดการประมวลผลพร้อมกัน) หากบันทึกไม่ผ่าน กรุณารอสักครู่แล้วกดลองใหม่อีกครั้ง
+      </div>
       <button class="ios-submit-btn" id="submitBtn" onclick="AttendanceApp.submitRegistration()">บันทึกข้อมูล</button>
     </div>
   </div>`;
@@ -708,7 +711,7 @@ async function executeRecordPersistence(candidateRecord, submitButton) {
 
   const isSuccess = await AttendanceAPI.appendRecord(candidateRecord);
   if (!isSuccess) {
-    showFormMsg('error', 'บันทึกข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+    showFormMsg('error', 'บันทึกข้อมูลไม่สำเร็จ (อาจเกิดจากมีผู้ใช้งานพร้อมกันจำนวนมาก ทำให้ Google Sheets จำกัดการประมวลผลชั่วคราว) กรุณารอสักครู่แล้วกดลองใหม่อีกครั้ง');
     AttendanceStore.setSubmitting(false);
     setButtonState(submitButton, false, 'บันทึกข้อมูล');
     return;
