@@ -13,7 +13,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
   
-  <!-- Direct Inline White Theme Styles (No cache delay, 100% Guaranteed Pure White Flat) -->
   <style>
     :root {
       --admin-bg: #f8fafc;
@@ -39,6 +38,7 @@
       --admin-danger-light: #fef2f2;
 
       --admin-font: 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --bottom-bar-height: 64px;
     }
 
     * {
@@ -49,255 +49,362 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
-      font-family: var(--admin-font);
+    html, body {
       background: #f8fafc !important;
+      background-color: #f8fafc !important;
       background-image: none !important;
       color: #0f172a !important;
+      font-family: var(--admin-font);
       min-height: 100vh;
       line-height: 1.5;
       font-size: 14px;
     }
 
-    /* Sharp White Card Surface */
-    .glass-panel {
-      background: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      box-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
+    body {
+      padding-bottom: calc(var(--bottom-bar-height) + 16px);
     }
 
-    /* Header */
-    .admin-header {
+    /* Top App Bar */
+    .mobile-app-bar {
       position: sticky;
       top: 0;
       z-index: 100;
-      padding: 12px 16px;
       background: #ffffff !important;
       border-bottom: 2px solid #e2e8f0 !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-    }
-
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
 
-    .brand-wrap {
+    .app-brand {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .brand-badge {
+    .app-logo-badge {
+      width: 34px;
+      height: 34px;
+      background: var(--admin-primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
-      background: #be185d !important;
-      color: #ffffff !important;
+    }
+
+    .app-title-wrap h1 {
+      font-size: 14.5px;
       font-weight: 700;
-      font-size: 13px;
-      box-shadow: none !important;
+      color: var(--admin-text-main);
+      line-height: 1.2;
     }
 
-    .brand-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #0f172a !important;
+    .app-title-wrap p {
+      font-size: 11px;
+      color: var(--admin-text-muted);
+      line-height: 1.2;
     }
 
-    .brand-subtitle {
-      font-size: 11.5px;
-      color: #64748b !important;
-    }
-
-    .header-actions {
+    .app-bar-actions {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    /* Nav Tabs */
-    .admin-nav-bar {
-      max-width: 1200px;
-      margin: 12px auto 0;
-      padding: 0 16px;
-    }
-
-    .nav-tabs-wrapper {
+    .icon-action-btn {
+      width: 36px;
+      height: 36px;
+      background: #ffffff;
+      border: 1px solid var(--admin-border-dark);
+      color: var(--admin-text-secondary);
       display: flex;
       align-items: center;
-      background: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      padding: 0;
-      gap: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
+      justify-content: center;
+      cursor: pointer;
     }
 
-    .nav-tabs-wrapper::-webkit-scrollbar {
+    .icon-action-btn:hover {
+      background: var(--admin-surface-alt);
+      color: var(--admin-text-main);
+    }
+
+    /* Drawer Sidebar Menu (Inspired by Mobile Template) */
+    .drawer-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      z-index: 200;
       display: none;
     }
 
-    .tab-btn {
+    .drawer-backdrop.open {
+      display: block;
+    }
+
+    .drawer-sidebar {
+      position: fixed;
+      top: 0; left: -280px; bottom: 0;
+      width: 280px;
+      background: #ffffff;
+      border-right: 2px solid var(--admin-border);
+      z-index: 210;
+      display: flex;
+      flex-direction: column;
+      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .drawer-sidebar.open {
+      left: 0;
+    }
+
+    .drawer-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--admin-border);
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 11px 16px;
-      border: none;
-      background: transparent;
-      color: #334155 !important;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      border-bottom: 2px solid transparent;
-      border-right: 1px solid #e2e8f0 !important;
+      justify-content: space-between;
+      background: var(--admin-surface-alt);
     }
 
-    .tab-btn:hover {
-      background: #f1f5f9 !important;
-      color: #0f172a !important;
+    .drawer-nav-list {
+      padding: 12px 0;
+      flex: 1;
+      overflow-y: auto;
     }
 
-    .tab-btn.active {
-      background: #ffffff !important;
-      color: #be185d !important;
-      border-bottom: 2px solid #be185d !important;
-      box-shadow: none !important;
-    }
-
-    .tab-count-pill {
-      padding: 1px 6px;
-      font-size: 10.5px;
+    .drawer-category {
+      font-size: 11px;
       font-weight: 700;
-      background: #f1f5f9 !important;
-      border: 1px solid #e2e8f0 !important;
-      color: #334155 !important;
+      color: var(--admin-text-muted);
+      text-transform: uppercase;
+      padding: 8px 16px 4px;
+      letter-spacing: 0.5px;
     }
 
-    .tab-count-pill.alert {
-      background: #fffbeb !important;
-      color: #b45309 !important;
-      border-color: #fde68a !important;
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      text-align: left;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--admin-text-secondary);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .drawer-item:hover {
+      background: var(--admin-surface-alt);
+      color: var(--admin-text-main);
+    }
+
+    .drawer-item.active {
+      background: var(--admin-primary-light);
+      color: var(--admin-primary);
+      border-left-color: var(--admin-primary);
+    }
+
+    .drawer-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--admin-border);
+      background: var(--admin-surface-alt);
+    }
+
+    /* Fixed Bottom App Navigation (Mobile Friendly) */
+    .mobile-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-bar-height);
+      background: #ffffff;
+      border-top: 2px solid var(--admin-border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 4px;
+    }
+
+    .bottom-nav-btn {
+      flex: 1;
+      height: 100%;
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-family: inherit;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--admin-text-muted);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .bottom-nav-btn svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .bottom-nav-btn.active {
+      color: var(--admin-primary);
+      background: var(--admin-primary-light);
+      border-top: 2px solid var(--admin-primary);
+    }
+
+    .bottom-badge {
+      position: absolute;
+      top: 6px;
+      right: 22%;
+      background: var(--admin-warning);
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 4px;
+      line-height: 1;
     }
 
     /* Main Container */
     .admin-main {
-      max-width: 1200px;
-      margin: 16px auto 60px;
-      padding: 0 16px;
+      max-width: 900px;
+      margin: 12px auto 0;
+      padding: 0 12px;
     }
 
-    /* Section for Login State */
+    /* Login Section */
     .login-section-card {
-      max-width: 400px;
+      max-width: 360px;
       margin: 40px auto;
-      padding: 32px 24px;
-      background: #ffffff !important;
-      border: 1px solid #cbd5e1 !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      padding: 28px 20px;
+      background: #ffffff;
+      border: 1px solid var(--admin-border-dark);
       text-align: center;
     }
 
     .login-crest {
-      width: 52px;
-      height: 52px;
+      width: 50px;
+      height: 50px;
       margin: 0 auto 12px;
       display: block;
     }
 
-    /* KPI Cards */
+    .pin-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0 14px;
+    }
+
+    .pin-digit {
+      width: 44px;
+      height: 48px;
+      border: 1.5px solid var(--admin-border-dark);
+      background: #fff;
+      color: var(--admin-text-main);
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+    }
+
+    .pin-digit:focus {
+      border-color: var(--admin-primary);
+    }
+
+    /* Mobile KPI Cards */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .kpi-card {
-      padding: 16px;
-      border: 1px solid #e2e8f0 !important;
-      background: #ffffff !important;
+      padding: 12px 14px;
+      border: 1px solid var(--admin-border);
+      background: #ffffff;
     }
 
     .kpi-label {
-      font-size: 12px;
-      color: #64748b !important;
+      font-size: 11px;
+      color: var(--admin-text-muted);
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
     .kpi-value {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 800;
-      color: #0f172a !important;
-      letter-spacing: -0.5px;
+      color: var(--admin-text-main);
+      line-height: 1.1;
     }
 
     .kpi-sub {
       margin-top: 4px;
-      font-size: 11px;
-      color: #64748b !important;
+      font-size: 10.5px;
+      color: var(--admin-text-muted);
     }
 
     /* Meter Cards */
     .meter-card {
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      border: 1px solid #e2e8f0 !important;
-      background: #ffffff !important;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      border: 1px solid var(--admin-border);
+      background: #ffffff;
     }
 
     .meter-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .meter-title {
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 700;
-      color: #0f172a !important;
+      color: var(--admin-text-main);
     }
 
     .meter-badge {
-      font-size: 11px;
-      padding: 2px 6px;
+      font-size: 10.5px;
+      padding: 2px 5px;
       font-weight: 700;
       border: 1px solid;
     }
 
     .meter-badge.full {
-      background: #fef2f2 !important;
-      color: #b91c1c !important;
-      border-color: #fecaca !important;
+      background: var(--admin-danger-light);
+      color: var(--admin-danger);
+      border-color: #fecaca;
     }
 
     .meter-badge.open {
-      background: #ecfdf5 !important;
-      color: #047857 !important;
-      border-color: #a7f3d0 !important;
+      background: var(--admin-accent-light);
+      color: var(--admin-accent);
+      border-color: #a7f3d0;
     }
 
     .meter-bar-track {
       width: 100%;
-      height: 8px;
-      background: #f1f5f9 !important;
-      border: 1px solid #e2e8f0 !important;
+      height: 7px;
+      background: var(--admin-surface-alt);
+      border: 1px solid var(--admin-border);
       margin-bottom: 6px;
     }
 
@@ -307,64 +414,64 @@
 
     /* Duplicates */
     .dupe-card {
-      padding: 16px;
-      margin-bottom: 12px;
-      border: 1px solid #e2e8f0 !important;
-      border-left: 4px solid #b45309 !important;
-      background: #ffffff !important;
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 1px solid var(--admin-border);
+      border-left: 4px solid var(--admin-warning);
+      background: #ffffff;
     }
 
     .dupe-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .dupe-roles-list {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .dupe-role-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 12px;
-      background: #f1f5f9 !important;
-      border: 1px solid #e2e8f0 !important;
+      padding: 8px 10px;
+      background: var(--admin-surface-alt);
+      border: 1px solid var(--admin-border);
+      font-size: 12.5px;
     }
 
     /* Settings */
     .settings-section {
-      padding: 16px 20px;
-      margin-bottom: 16px;
-      border: 1px solid #e2e8f0 !important;
-      background: #ffffff !important;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--admin-border);
+      background: #ffffff;
     }
 
     .settings-section-title {
-      font-size: 15.5px;
+      font-size: 14.5px;
       font-weight: 700;
       margin-bottom: 2px;
-      color: #0f172a !important;
     }
 
     .settings-section-desc {
-      font-size: 12px;
-      color: #64748b !important;
-      margin-bottom: 14px;
+      font-size: 11.5px;
+      color: var(--admin-text-muted);
+      margin-bottom: 12px;
     }
 
     .setting-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #e2e8f0 !important;
-      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--admin-border);
+      gap: 10px;
     }
 
     .setting-row:last-child {
@@ -372,18 +479,17 @@
     }
 
     .setting-info h4 {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 600;
       margin-bottom: 2px;
-      color: #0f172a !important;
     }
 
     .setting-info p {
-      font-size: 11.5px;
-      color: #64748b !important;
+      font-size: 11px;
+      color: var(--admin-text-muted);
     }
 
-    /* Switch (Sharp Flat) */
+    /* Switch */
     .switch {
       position: relative;
       display: inline-block;
@@ -402,8 +508,8 @@
       position: absolute;
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #cbd5e1 !important;
-      border: 1px solid #94a3b8 !important;
+      background-color: #cbd5e1;
+      border: 1px solid var(--admin-border-dark);
       transition: .15s ease;
     }
 
@@ -414,14 +520,14 @@
       width: 18px;
       left: 2px;
       bottom: 2px;
-      background-color: #ffffff !important;
+      background-color: #fff;
       transition: .15s ease;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     }
 
     input:checked + .slider {
-      background-color: #047857 !important;
-      border-color: #059669 !important;
+      background-color: var(--admin-accent);
+      border-color: #059669;
     }
 
     input:checked + .slider:before {
@@ -432,34 +538,30 @@
     .table-responsive {
       width: 100%;
       overflow-x: auto;
-      border: 1px solid #e2e8f0 !important;
+      border: 1px solid var(--admin-border);
     }
 
     .admin-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 12.5px;
-      background: #ffffff !important;
+      font-size: 12px;
+      background: #ffffff;
     }
 
     .admin-table th {
-      background: #f1f5f9 !important;
-      padding: 10px 12px;
-      color: #0f172a !important;
+      background: var(--admin-surface-alt);
+      padding: 8px 10px;
+      color: var(--admin-text-main);
       font-weight: 700;
-      border-bottom: 2px solid #e2e8f0 !important;
+      border-bottom: 2px solid var(--admin-border);
       white-space: nowrap;
     }
 
     .admin-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #e2e8f0 !important;
-      color: #334155 !important;
-    }
-
-    .admin-table tr:hover td {
-      background: #f8fafc !important;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--admin-border);
+      color: var(--admin-text-secondary);
     }
 
     /* Buttons */
@@ -467,160 +569,150 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 8px 14px;
+      gap: 5px;
+      padding: 6px 12px;
       font-family: inherit;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 600;
       border: 1px solid transparent;
       cursor: pointer;
       white-space: nowrap;
-      box-shadow: none !important;
     }
 
     .btn-primary {
-      background: #be185d !important;
-      color: #ffffff !important;
-      border-color: #9d174d !important;
-    }
-
-    .btn-primary:hover {
-      background: #9d174d !important;
+      background: var(--admin-primary);
+      color: #fff;
+      border-color: var(--admin-primary-hover);
     }
 
     .btn-ghost {
-      background: #ffffff !important;
-      color: #334155 !important;
-      border: 1px solid #cbd5e1 !important;
-    }
-
-    .btn-ghost:hover {
-      background: #f1f5f9 !important;
-      color: #0f172a !important;
+      background: #fff;
+      color: var(--admin-text-secondary);
+      border: 1px solid var(--admin-border-dark);
     }
 
     .btn-danger {
-      background: #fef2f2 !important;
-      color: #b91c1c !important;
-      border: 1px solid #fecaca !important;
-    }
-
-    .btn-danger:hover {
-      background: #b91c1c !important;
-      color: #ffffff !important;
+      background: var(--admin-danger-light);
+      color: var(--admin-danger);
+      border: 1px solid #fecaca;
     }
 
     .btn-success {
-      background: #ecfdf5 !important;
-      color: #047857 !important;
-      border: 1px solid #a7f3d0 !important;
+      background: var(--admin-accent-light);
+      color: var(--admin-accent);
+      border: 1px solid #a7f3d0;
     }
 
-    .btn-success:hover {
-      background: #047857 !important;
-      color: #ffffff !important;
-    }
-
-    .pin-inputs {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin: 16px 0 14px;
-    }
-
-    .pin-digit {
-      width: 44px;
-      height: 48px;
-      border: 1.5px solid #cbd5e1 !important;
-      background: #ffffff !important;
-      color: #0f172a !important;
-      font-size: 20px;
-      font-weight: 700;
-      text-align: center;
-      outline: none;
-    }
-
-    .pin-digit:focus {
-      border-color: #be185d !important;
-    }
-
-    /* Modals */
+    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, 0.5);
       z-index: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 14px;
     }
 
     .modal-content {
       width: 100%;
-      max-width: 440px;
+      max-width: 420px;
       max-height: 90vh;
       overflow-y: auto;
-      padding: 20px;
-      background: #ffffff !important;
-      border: 1px solid #cbd5e1 !important;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--admin-border-dark);
     }
   </style>
 
-  <!-- External style with fresh timestamp cache buster -->
-  
-
   <!-- Scripts -->
-  <script defer src="js/config.js?t=1793889000"></script>
-  <script defer src="js/api.js?t=1793889000"></script>
-  <script defer src="js/store.js?t=1793889000"></script>
-  <script defer src="js/admin.js?t=1793889000"></script>
+  <script defer src="js/config.js?t=1793890000"></script>
+  <script defer src="js/api.js?t=1793890000"></script>
+  <script defer src="js/store.js?t=1793890000"></script>
+  <script defer src="js/admin.js?t=1793890000"></script>
 </head>
 <body>
 
-  <!-- TOP HEADER (Only shown when authenticated) -->
-  <header class="admin-header" id="adminHeader" style="display:none;">
-    <div class="header-inner">
-      <div class="brand-wrap">
-        <div class="brand-badge">PK</div>
-        <div>
-          <div class="brand-title">อยุธยาสีชมพู 2569</div>
-          <div class="brand-subtitle">ศูนย์ควบคุมระบบเช็คชื่อและจัดสรรฝ่ายงาน (Admin)</div>
-        </div>
+  <!-- MOBILE APP HEADER (Sticky Top) -->
+  <header class="mobile-app-bar" id="adminHeader" style="display:none;">
+    <div class="app-brand">
+      <button class="icon-action-btn" onclick="PinkAdmin.toggleDrawer()" title="เมนูนำทาง" aria-label="เปิดเมนู">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="app-logo-badge">PK</div>
+      <div class="app-title-wrap">
+        <h1>อยุธยาสีชมพู 2569</h1>
+        <p>Admin Mobile Dashboard</p>
       </div>
-      <div class="header-actions">
-        <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">กลับหน้าหลัก</a>
-        <button class="btn btn-danger" onclick="PinkAdmin.logout()">ออกจากระบบ</button>
-      </div>
+    </div>
+    <div class="app-bar-actions">
+      <a href="index.html" class="icon-action-btn" title="กลับหน้านักเรียน" style="text-decoration:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </a>
+      <button class="icon-action-btn" onclick="PinkAdmin.refreshRecords()" title="รีเฟรชข้อมูล">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
     </div>
   </header>
 
-  <!-- NAVIGATION TABS (Only shown when authenticated) -->
-  <nav class="admin-nav-bar" id="adminNavBar" style="display:none;" aria-label="แท็บเมนูผู้ดูแลระบบ">
-    <div class="nav-tabs-wrapper">
-      <button class="tab-btn active" data-tab="dashboard" onclick="PinkAdmin.switchTab('dashboard')">
+  <!-- DRAWER SIDEBAR (Mobile Slide-out) -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="PinkAdmin.toggleDrawer(false)"></div>
+  <aside class="drawer-sidebar" id="drawerSidebar">
+    <div class="drawer-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="app-logo-badge">PK</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;">อยุธยาสีชมพู</div>
+          <div style="font-size:11px;color:var(--admin-text-muted);">Admin Menu</div>
+        </div>
+      </div>
+      <button class="icon-action-btn" style="width:30px;height:30px;" onclick="PinkAdmin.toggleDrawer(false)">✕</button>
+    </div>
+    <div class="drawer-nav-list">
+      <div class="drawer-category">เมนูหลัก</div>
+      <button class="drawer-item active" data-drawer-tab="dashboard" onclick="PinkAdmin.onDrawerSelect('dashboard')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
         ภาพรวมแดชบอร์ด
       </button>
-      <button class="tab-btn" data-tab="duplicates" onclick="PinkAdmin.switchTab('duplicates')">
-        จัดการคนลงซ้ำ <span class="tab-count-pill alert" id="dupeTabBadge" style="display:none;">0</span>
+      <button class="drawer-item" data-drawer-tab="duplicates" onclick="PinkAdmin.onDrawerSelect('duplicates')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        จัดการคนลงซ้ำ
       </button>
-      <button class="tab-btn" data-tab="quotas" onclick="PinkAdmin.switchTab('quotas')">
+      <button class="drawer-item" data-drawer-tab="quotas" onclick="PinkAdmin.onDrawerSelect('quotas')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line></svg>
         ตั้งค่าโควตา & ฝ่ายงาน
       </button>
-      <button class="tab-btn" data-tab="directory" onclick="PinkAdmin.switchTab('directory')">
+      <button class="drawer-item" data-drawer-tab="directory" onclick="PinkAdmin.onDrawerSelect('directory')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         รายชื่อนักเรียนทั้งหมด
       </button>
-      <button class="tab-btn" data-tab="export" onclick="PinkAdmin.switchTab('export')">
+      <button class="drawer-item" data-drawer-tab="export" onclick="PinkAdmin.onDrawerSelect('export')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
         ส่งออก & พิมพ์ A4
       </button>
     </div>
-  </nav>
+    <div class="drawer-footer">
+      <button class="btn btn-danger" style="width:100%;" onclick="PinkAdmin.logout()">ออกจากระบบ</button>
+    </div>
+  </aside>
 
-  <!-- LOGIN SECTION (Displayed when NOT authenticated) -->
+  <!-- LOGIN SECTION (Shown when NOT logged in) -->
   <section class="login-section-card" id="loginSection">
     <img src="../assets/images/school_crest.png" alt="School Crest" class="login-crest" />
-    <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;color:#0f172a;">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</h2>
-    <p style="font-size:13px;color:#64748b;margin-bottom:16px;">กรอกรหัส PIN สตาฟ 4 หลักเพื่อเข้าสู่ศูนย์ควบคุม</p>
+    <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;color:#0f172a;">เข้าสู่ระบบ Admin</h2>
+    <p style="font-size:12.5px;color:#64748b;margin-bottom:14px;">ใส่รหัส PIN 4 หลักเพื่อใช้งานบนมือถือ</p>
     
     <div class="pin-inputs">
       <input type="password" maxlength="1" class="pin-digit" autofocus pattern="[0-9]*" inputmode="numeric" />
@@ -629,8 +721,8 @@
       <input type="password" maxlength="1" class="pin-digit" pattern="[0-9]*" inputmode="numeric" />
     </div>
 
-    <div style="font-size:12px;color:#94a3b8;margin-bottom:18px;">
-      ระบบความปลอดภัยคณะสีชมพู 2569
+    <div style="font-size:11.5px;color:#94a3b8;margin-bottom:16px;">
+      (รหัสเริ่มต้น: <strong>2569</strong>)
     </div>
 
     <div>
@@ -638,10 +730,35 @@
     </div>
   </section>
 
-  <!-- MAIN TAB CONTENT CONTAINER (Displayed when authenticated) -->
+  <!-- MAIN TAB CONTENT CONTAINER -->
   <main class="admin-main" id="adminTabContent" style="display:none;">
     <!-- Populated by admin.js -->
   </main>
+
+  <!-- MOBILE BOTTOM NAVIGATION BAR (Sticky Bottom - Easy One-Handed Use) -->
+  <nav class="mobile-bottom-bar" id="adminBottomBar" style="display:none;" aria-label="เมนูแท็บบาร์ล่าง">
+    <button class="bottom-nav-btn active" data-tab="dashboard" onclick="PinkAdmin.switchTab('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      แดชบอร์ด
+    </button>
+    <button class="bottom-nav-btn" data-tab="duplicates" onclick="PinkAdmin.switchTab('duplicates')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      คนลงซ้ำ
+      <span class="bottom-badge" id="bottomDupeBadge" style="display:none;">0</span>
+    </button>
+    <button class="bottom-nav-btn" data-tab="quotas" onclick="PinkAdmin.switchTab('quotas')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line></svg>
+      คุมโควตา
+    </button>
+    <button class="bottom-nav-btn" data-tab="directory" onclick="PinkAdmin.switchTab('directory')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      รายชื่อ
+    </button>
+    <button class="bottom-nav-btn" data-tab="export" onclick="PinkAdmin.switchTab('export')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      ส่งออก
+    </button>
+  </nav>
 
 </body>
 </html>

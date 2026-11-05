@@ -36,24 +36,24 @@
   function showPinScreen() {
     const loginSection = document.getElementById('loginSection');
     const adminHeader = document.getElementById('adminHeader');
-    const adminNavBar = document.getElementById('adminNavBar');
+    const adminBottomBar = document.getElementById('adminBottomBar');
     const adminContent = document.getElementById('adminTabContent');
 
     if (loginSection) loginSection.style.display = 'block';
     if (adminHeader) adminHeader.style.display = 'none';
-    if (adminNavBar) adminNavBar.style.display = 'none';
+    if (adminBottomBar) adminBottomBar.style.display = 'none';
     if (adminContent) adminContent.style.display = 'none';
   }
 
   function hidePinScreen() {
     const loginSection = document.getElementById('loginSection');
     const adminHeader = document.getElementById('adminHeader');
-    const adminNavBar = document.getElementById('adminNavBar');
+    const adminBottomBar = document.getElementById('adminBottomBar');
     const adminContent = document.getElementById('adminTabContent');
 
     if (loginSection) loginSection.style.display = 'none';
-    if (adminHeader) adminHeader.style.display = 'block';
-    if (adminNavBar) adminNavBar.style.display = 'block';
+    if (adminHeader) adminHeader.style.display = 'flex';
+    if (adminBottomBar) adminBottomBar.style.display = 'flex';
     if (adminContent) adminContent.style.display = 'block';
   }
 
@@ -92,15 +92,25 @@
       dupeBadge.textContent = dupeCount;
       dupeBadge.style.display = dupeCount > 0 ? 'inline-block' : 'none';
     }
+    const bottomBadge = document.getElementById('bottomDupeBadge');
+    if (bottomBadge) {
+      bottomBadge.textContent = dupeCount;
+      bottomBadge.style.display = dupeCount > 0 ? 'inline-block' : 'none';
+    }
   }
 
   function switchTab(tabName) {
     currentTab = tabName;
-    document.querySelectorAll('.nav-tabs-wrapper .tab-btn').forEach(btn => {
+    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
       if (btn.getAttribute('data-tab') === tabName) btn.classList.add('active');
       else btn.classList.remove('active');
     });
+    document.querySelectorAll('.drawer-item').forEach(btn => {
+      if (btn.getAttribute('data-drawer-tab') === tabName) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
     renderActiveTab();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function renderActiveTab() {
