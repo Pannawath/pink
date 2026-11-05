@@ -303,7 +303,7 @@ function groupAndRenderStudents(studentRecords) {
     <div class="ios-result-card">
       <div>
         <div class="who">${esc(studentItem.fullName)} <span style="color:var(--ios-muted);font-weight:400;">(${esc(studentItem.nickname)})</span></div>
-        <div class="sub">ห้อง ${esc(studentItem.classRoom)} · เลขที่ ${esc(studentItem.numberLabel)}${studentItem.roles.length > 1 ? ` <span style="display:inline-block;padding:2px 8px;margin-left:4px;border-radius:6px;background:rgba(245,158,11,0.15);color:#d97706;font-weight:600;font-size:11px;">⚠️ ลงทะเบียนซ้ำ ${studentItem.roles.length} รายการ (รอสตาฟตรวจ)</span>` : ''}</div>
+        <div class="sub">ห้อง ${esc(studentItem.classRoom)} · เลขที่ ${esc(studentItem.numberLabel)}${studentItem.roles.length > 1 ? ` <span style="display:inline-block;padding:2px 8px;margin-left:4px;border-radius:6px;background:rgba(245,158,11,0.15);color:#d97706;font-weight:600;font-size:11px;">ลงทะเบียนซ้ำ ${studentItem.roles.length} รายการ (รอสตาฟตรวจ)</span>` : ''}</div>
       </div>
       <div class="badge-group">${badgesHtml}</div>
     </div>`;
