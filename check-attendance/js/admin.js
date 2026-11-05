@@ -14,7 +14,8 @@
   let isAuthed = false;
   let editingRecordId = null;
 
-  const AUTH_SESSION_KEY = 'pink_admin_authenticated_v1';
+  const AUTH_STORAGE_KEY = 'pink_admin_auth_token_v2';
+  const AUTH_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 Hours Session Window
 
   function init() {
     checkAuth();
@@ -23,14 +24,23 @@
   }
 
   function checkAuth() {
-    const sessionAuth = sessionStorage.getItem(AUTH_SESSION_KEY);
-    if (sessionAuth === 'true') {
-      isAuthed = true;
-      hidePinScreen();
-      renderActiveTab();
-    } else {
-      showPinScreen();
+    try {
+      const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+      if (raw) {
+        const authData = JSON.parse(raw);
+        const now = Date.now();
+        if (authData && authData.authed && (now - Number(authData.loginTime || 0)) < AUTH_EXPIRY_MS) {
+          isAuthed = true;
+          hidePinScreen();
+          renderActiveTab();
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse auth token:', e);
     }
+    isAuthed = false;
+    showPinScreen();
   }
 
   function showPinScreen() {
@@ -61,7 +71,11 @@
     const targetPin = adminSettings.adminPin || AttendanceConfig.DEFAULT_ADMIN_PIN;
     if (inputPin === targetPin) {
       isAuthed = true;
-      sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+      const authPayload = {
+        authed: true,
+        loginTime: Date.now()
+      };
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authPayload));
       hidePinScreen();
       renderActiveTab();
       return true;
@@ -478,7 +492,8 @@
     switchTab,
     refreshRecords: loadLiveRecords,
     logout() {
-      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      sessionStorage.removeItem('pink_admin_authenticated_v1');
       location.reload();
     },
     updateDeptCapacity(deptIndex, newCapacity) {
