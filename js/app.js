@@ -342,21 +342,14 @@ function bindPersonalizationEvents() {
 function bindSizeAndStatusEvents() {
   DOM.sizeBtns.forEach(sizeElement => {
     sizeElement.addEventListener('click', () => {
-      DOM.sizeBtns.forEach(btnItem => btnItem.classList.remove('active'));
-      sizeElement.classList.add('active');
-      AppState.size = sizeElement.getAttribute('data-size');
+      showToast('ระบบปิดรับการจองแล้ว ไม่สามารถเปลี่ยนไซส์เสื้อได้', 'info');
     });
   });
 
   DOM.quickSelectSizeBtns.forEach(quickElement => {
     quickElement.addEventListener('click', () => {
-      const targetSize = quickElement.getAttribute('data-select-size');
-      AppState.size = targetSize;
-      DOM.sizeBtns.forEach(btnItem => {
-        btnItem.classList.toggle('active', btnItem.getAttribute('data-size') === targetSize);
-      });
       if (DOM.modalSizeGuide) DOM.modalSizeGuide.classList.add('hidden');
-      showToast(`เลือกไซส์ ${targetSize} เรียบร้อยแล้ว`, 'success');
+      showToast('ระบบปิดรับการจองแล้ว ไม่สามารถเปลี่ยนไซส์เสื้อได้', 'info');
     });
   });
 
@@ -1244,9 +1237,8 @@ function hideFormContent() {
 function showFormContent() {
   if (DOM.formContentSection) DOM.formContentSection.classList.remove('hidden');
   if (DOM.paymentStatusSection) DOM.paymentStatusSection.classList.remove('hidden');
-  if (DOM.submitButtonSection) DOM.submitButtonSection.classList.remove('hidden');
+  if (DOM.submitButtonSection) DOM.submitButtonSection.style.display = 'none';
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.add('hidden');
-  updateSubmitButtonAvailability();
 }
 
 function buildOrderRecordFromRaw(raw, email) {
@@ -1310,10 +1302,11 @@ function applyExistingOrder(record) {
 function applyNewOrderPrompt() {
   DOM.emailLoadingSpinner.classList.add('hidden');
   resetToNewMode();
-  showFormContent();
+  hideFormContent();
   DOM.emailStatusBadge.classList.remove('hidden');
-  DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-check text-emerald-500 mr-1"></i>อีเมลใหม่ พร้อมสั่งจอง';
-  showToast('ไม่พบประวัติการจองเดิม กรุณากรอกข้อมูลใหม่', 'info');
+  DOM.emailStatusBadge.className = 'text-[11px] font-semibold text-rose-600';
+  DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i>ไม่พบประวัติการสั่งจอง (ปิดรับจองแล้ว)';
+  showToast('ไม่พบประวัติการสั่งจองของอีเมลนี้ (ระบบปิดรับการสั่งจองแล้ว)', 'warning');
 }
 
 async function lookupEmailAndShowForm(email) {
@@ -1372,15 +1365,42 @@ function populateEditModeFields(orderRecord) {
   AppState.classroom = orderRecord.classroom || '';
   AppState.screenNumber = orderRecord.number || '10';
   AppState.size = orderRecord.size || 'L';
-  AppState.orderStatus = orderRecord.status || 'รอชำระเงิน';
+  AppState.orderStatus = orderRecord.status || 'รอตรวจสอบสลิป';
 
-  if (DOM.inputStudentNumber) DOM.inputStudentNumber.value = orderRecord.studentNumber || '';
-  DOM.inputScreenName.value = orderRecord.name || '';
-  if (DOM.selectClassroom) DOM.selectClassroom.value = orderRecord.classroom || '';
-  DOM.inputScreenNumber.value = orderRecord.number || '10';
+  if (DOM.inputStudentNumber) {
+    DOM.inputStudentNumber.value = orderRecord.studentNumber || '';
+    DOM.inputStudentNumber.readOnly = true;
+    DOM.inputStudentNumber.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.inputStudentNumber.style.cursor = 'default';
+  }
+  if (DOM.inputScreenName) {
+    DOM.inputScreenName.value = orderRecord.name || '';
+    DOM.inputScreenName.readOnly = true;
+    DOM.inputScreenName.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.inputScreenName.style.cursor = 'default';
+  }
+  if (DOM.selectClassroom) {
+    DOM.selectClassroom.value = orderRecord.classroom || '';
+    DOM.selectClassroom.disabled = true;
+    DOM.selectClassroom.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.selectClassroom.style.cursor = 'default';
+  }
+  if (DOM.inputScreenNumber) {
+    DOM.inputScreenNumber.value = orderRecord.number || '10';
+    DOM.inputScreenNumber.readOnly = true;
+    DOM.inputScreenNumber.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.inputScreenNumber.style.cursor = 'default';
+  }
 
   DOM.sizeBtns.forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-size') === AppState.size);
+    const isSelected = btn.getAttribute('data-size') === AppState.size;
+    btn.classList.toggle('active', isSelected);
+    btn.style.cursor = 'default';
+    if (!isSelected) {
+      btn.style.opacity = '0.5';
+    } else {
+      btn.style.opacity = '1';
+    }
   });
 
   const statusBtns = document.querySelectorAll('.status-btn');
@@ -1389,6 +1409,12 @@ function populateEditModeFields(orderRecord) {
   });
 
   renderOrderStatus(AppState.orderStatus);
+
+  // Hide upload dropzone, change slip, remove slip in read-only mode
+  if (DOM.slipDropzone) DOM.slipDropzone.style.display = 'none';
+  if (DOM.btnChangeSlip) DOM.btnChangeSlip.style.display = 'none';
+  if (DOM.btnRemoveSlip) DOM.btnRemoveSlip.style.display = 'none';
+  if (DOM.submitButtonSection) DOM.submitButtonSection.style.display = 'none';
 }
 
 function syncEditModeSlip(orderRecord) {
@@ -1417,8 +1443,7 @@ function syncEditModeSlip(orderRecord) {
 
 function updateEditModeBanners(orderRecord) {
   DOM.modeStatusBanner.classList.remove('hidden');
-  DOM.btnSubmitText.textContent = 'บันทึกการแก้ไขข้อมูล';
-  DOM.btnSubmitIcon.className = 'fa-solid fa-floppy-disk mr-1.5';
+  if (DOM.submitButtonSection) DOM.submitButtonSection.style.display = 'none';
 
   if (!orderRecord.status) {
     DOM.paymentStatusDisplay.classList.add('hidden');
@@ -1715,7 +1740,8 @@ async function sendOrderToGoogleSheets(submissionRecord) {
 }
 
 async function handleFormSubmit() {
-  if (!validateForm()) return;
+  showToast('ระบบปิดรับการจองและแก้ไขข้อมูลเรียบร้อยแล้ว', 'warning');
+  return;
 
   const email = DOM.inputEmail.value.trim();
   const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';

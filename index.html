@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>จองเสื้อกีฬาสี - Pink Jersey Studio 2026</title>
+  <title>ตรวจสอบข้อมูลการจองเสื้อ - Pink Jersey Studio 2026</title>
   <meta name="description"
-    content="สั่งจองเสื้อกีฬาสีชมพู พร้อมสกรีนชื่อและเบอร์ - Sarakhampittayakhom 2026">
+    content="ระบบตรวจสอบข้อมูลและสถานะการสั่งจองเสื้อกีฬาสีชมพู - Sarakhampittayakhom 2026">
   
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/school_crest.png">
@@ -151,7 +151,7 @@
           class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition border border-white/40">
         <div class="flex items-center gap-1.5">
           <span class="app-brand-copy">
-            <span class="app-brand-title text-lg sm:text-2xl font-extrabold tracking-tight">จองเสื้อกีฬาสี</span>
+            <span class="app-brand-title text-lg sm:text-2xl font-extrabold tracking-tight">ตรวจสอบข้อมูลเสื้อกีฬาสี</span>
           </span>
           <button type="button" onclick="if(window.showDevToolsPasswordPrompt) window.showDevToolsPasswordPrompt()" title="Admin Developer Access" class="text-slate-400/40 hover:text-pink-600 text-[10px] p-1 transition cursor-pointer">
             <i class="fa-solid fa-shield-halved"></i>
@@ -172,17 +172,28 @@
   <!-- ================= MAIN STUDIO & CONFIGURATOR ================= -->
   <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-2 sm:py-8 space-y-4 relative z-10">
 
+    
+    <!-- System Notice: Closed for new orders, lookup only -->
+    <div class="apple-glass-card p-3.5 border border-pink-200/80 bg-gradient-to-r from-pink-50/90 to-rose-50/90 text-pink-950 rounded-2xl flex items-center gap-3 shadow-2xs">
+      <div class="w-8 h-8 rounded-xl bg-pink-500 text-white flex items-center justify-center text-sm shrink-0 shadow-xs">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <div class="text-xs leading-relaxed">
+        <span class="font-bold text-pink-900 block">ปิดรับการสั่งจองเสื้อแล้ว (โหมดตรวจสอบข้อมูล)</span>
+        <span class="text-pink-800/90 text-[11px]">ระบบปิดรับการสั่งซื้อและแก้ไขข้อมูลแล้ว สามารถกรอกอีเมลด้านล่างเพื่อตรวจสอบข้อมูลและสถานะคำสั่งจองของคุณ</span>
+      </div>
+    </div>
+
     <!-- Mode Status Alert Banner (Shown when email matches past record) -->
     <div id="modeStatusBanner"
-      class="apple-glass-card p-4 border border-amber-300/80 bg-amber-50/80 text-amber-900 flex items-center justify-between gap-4 hidden transition-all duration-300">
+      class="apple-glass-card p-4 border border-emerald-300/80 bg-emerald-50/80 text-emerald-900 flex items-center justify-between gap-4 hidden transition-all duration-300">
       <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 rounded-xl bg-amber-200 text-amber-800 flex items-center justify-center text-sm shrink-0">
-          <i class="fa-solid fa-pen-to-square"></i>
+        <div class="w-8 h-8 rounded-xl bg-emerald-200 text-emerald-800 flex items-center justify-center text-sm shrink-0">
+          <i class="fa-solid fa-circle-check"></i>
         </div>
         <div>
-          <span class="text-xs font-bold text-amber-900 block">พบประวัติการสั่งจองเดิม (โหมดแก้ไข)</span>
-          <p class="text-[11px] text-amber-800/90">ระบบดึงข้อมูลเสื้อของคุณมาแล้ว สามารถแก้ไขชื่อ เบอร์ หรือไซส์
-            แล้วกดบันทึกได้ทันที</p>
+          <span class="text-xs font-bold text-emerald-900 block">พบประวัติการสั่งจองของคุณ</span>
+          <p class="text-[11px] text-emerald-800/90">ระบบดึงข้อมูลเสื้อและสถานะคำสั่งซื้อของคุณมาแสดงเรียบร้อยแล้ว (โหมดตรวจสอบข้อมูล)</p>
           <div id="paymentStatusDisplay" class="mt-2 hidden">
             <span class="text-xs font-semibold text-amber-900 mr-2">สถานะการชำระเงิน:</span>
             <span id="paymentStatusText" class="text-xs font-bold px-2 py-0.5 rounded-md bg-amber-200/70 text-amber-900"></span>
@@ -320,7 +331,7 @@
             <!-- คำแนะนำการใช้งาน -->
             <div id="onboardingHintStep1" class="onboarding-hint" style="margin-bottom: 12px;">
               <i class="fa-solid fa-arrow-down"></i>
-              <strong>ขั้นตอนที่ 1:</strong> กรอกอีเมลเพื่อเริ่มจองเสื้อ
+              <strong>ขั้นตอนที่ 1:</strong> กรอกอีเมลเพื่อตรวจสอบข้อมูลคำสั่งจอง
             </div>
             
             <div class="flex items-center justify-between">
@@ -332,7 +343,7 @@
               </span>
             </div>
             <div class="relative">
-              <input type="email" id="inputEmail" placeholder="กรุณากรอกอีเมลก่อน..." 
+              <input type="email" id="inputEmail" placeholder="กรอกอีเมลเพื่อตรวจสอบข้อมูล..." 
                 aria-label="อีเมลของคุณ"
                 required 
                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
@@ -343,7 +354,7 @@
               </div>
             </div>
             <p class="text-[11px] text-slate-500">
-              <i class="fa-solid fa-info-circle mr-1"></i>กรอกอีเมลเพื่อเริ่มจอง (ถ้ามีข้อมูลเดิมจะดึงมาให้อัตโนมัติ)
+              <i class="fa-solid fa-info-circle mr-1"></i>กรอกอีเมลเพื่อค้นหาและตรวจสอบข้อมูลคำสั่งจองของคุณ
             </p>
           </div>
 
@@ -445,7 +456,7 @@
                   <label for="inputScreenName" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
                     <span>ชื่อสกรีนหลังเสื้อ (A-Z)</span> <span class="text-red-500">*</span>
                   </label>
-                  <button type="button" id="btnCapsName"
+                  <button type="button" id="btnCapsName" class="hidden"
                     class="text-[10px] text-pink-600 hover:text-pink-700 font-semibold cursor-pointer">
                     A-Z
                   </button>
@@ -465,7 +476,7 @@
                   <label for="inputScreenNumber" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
                     <span>เบอร์เสื้อ</span> <span class="text-red-500">*</span>
                   </label>
-                  <button type="button" id="btnRandomNumber" title="สุ่มเบอร์โชคดีวันนี้"
+                  <button type="button" id="btnRandomNumber" title="สุ่มเบอร์โชคดีวันนี้" style="display: none !important;"
                     class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500/10 to-rose-500/10 hover:from-pink-500/20 hover:to-rose-500/20 border border-pink-300/60 text-[11px] text-pink-700 font-bold transition active:scale-95 cursor-pointer shadow-xs">
                     <i class="fa-solid fa-dice text-pink-600 transition-transform"></i>
                     <span>โชคดีวันนี้</span>
