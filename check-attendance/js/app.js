@@ -139,6 +139,7 @@ function renderDeptStructure() {
       <div style="font-size:12px;color:var(--ios-muted);">${AttendanceConfig.NO_STAFF_DEPARTMENTS.includes(deptDefinition.name) ? 'ประธานฝ่าย · สมาชิกฝ่าย' : 'ประธานฝ่าย · สตาฟ · สมาชิก'}</div>
       ${deptDefinition.deputyLabel ? `<div style="font-size:11.5px;color:var(--ios-primary);margin-top:6px;">${deptDefinition.deputyLabel} 1 คน</div>` : ''}
       ${deptDefinition.isStand ? `<div style="font-size:11.5px;color:var(--ios-primary);margin-top:6px;">ม.1 เข้าเป็นสมาชิกฝ่าย</div>` : ''}
+      ${typeof deptDefinition.maxCapacity === 'number' ? `<div style="font-size:11.5px;color:var(--ios-primary);margin-top:6px;font-weight:600;">รับจำกัด ${deptDefinition.maxCapacity} คน (ลงทะเบียนแล้ว ${AttendanceStore.countDept(deptDefinition.name)} คน)</div>` : ''}
     </div>`).join('');
 
   return `
@@ -532,7 +533,22 @@ function buildSportRoleDropdown(sportTitle) {
 
 function formatDeptOption(deptItem, selectedDeptName) {
   const isSelected = selectedDeptName === deptItem.name;
-  return `<option value="${deptItem.name}" ${isSelected ? 'selected' : ''}>${deptItem.name}</option>`;
+  const capacityInfo = AttendanceStore.getDeptCapacity(deptItem.name);
+  let label = deptItem.name;
+  let disabledAttr = '';
+
+  if (capacityInfo.maxCapacity !== null) {
+    if (capacityInfo.isFull) {
+      label += ` (เต็มแล้ว ${capacityInfo.currentCount}/${capacityInfo.maxCapacity} คน)`;
+      if (!isSelected) {
+        disabledAttr = 'disabled';
+      }
+    } else {
+      label += ` (เหลือ ${capacityInfo.remaining} ที่ - ${capacityInfo.currentCount}/${capacityInfo.maxCapacity} คน)`;
+    }
+  }
+
+  return `<option value="${deptItem.name}" ${disabledAttr} ${isSelected ? 'selected' : ''}>${label}</option>`;
 }
 
 function buildDepartmentFields() {
@@ -670,6 +686,10 @@ function assembleRecord(fullName, nickname, classRoom, numberLabel) {
 }
 
 function validateConflict(candidateRecord) {
+  if (candidateRecord.department && AttendanceStore.isDeptFull(candidateRecord.department)) {
+    const info = AttendanceStore.getDeptCapacity(candidateRecord.department);
+    return `ขออภัย ${candidateRecord.department} มีผู้ลงทะเบียนครบตามจำนวนแล้ว (${info.maxCapacity} คน)`;
+  }
   if (AttendanceStore.isSameRoleAlreadyTaken(candidateRecord)) return `เลขที่ ${candidateRecord.numberLabel} ห้อง ${candidateRecord.classRoom} ได้ลงทะเบียนตำแหน่งนี้ไปแล้ว กรุณาเลือกตำแหน่งอื่น`;
   if (candidateRecord.roleCategory === 'central' && AttendanceStore.isCentralTaken(candidateRecord.centralPosition)) return 'ตำแหน่งนี้มีผู้รับแล้ว กรุณาเลือกตำแหน่งอื่น';
   if (candidateRecord.position === 'ประธานฝ่าย' && AttendanceStore.isDeptPresidentTaken(candidateRecord.department)) return 'ตำแหน่งประธานฝ่ายนี้มีผู้รับแล้ว';

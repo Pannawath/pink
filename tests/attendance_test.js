@@ -120,15 +120,18 @@ assert.ok(appCode.includes('window.AttendanceApp = AttendanceApp;'), 'app.js ต
 assert.ok(appCode.includes('loadWithSWR'), 'app.js ต้องรองรับ SWR');
 console.log('  -> ผ่านการทดสอบ: app.js มีโครงสร้างสมบูรณ์');
 
-// 6. ทดสอบการปลดล็อกโควตาฝ่าย (Unlimited Department Capacity)
-console.log('[TEST 6/6] ทดสอบการปลดล็อกโควตารายฝ่าย (สามารถลงทะเบียนได้อิสระ)...');
+// 6. ทดสอบการจำกัดโควตารายฝ่าย (Stand: 25, Cheer: 18, Others: unlimited)
+console.log('[TEST 6/6] ทดสอบโควตารายฝ่าย (สแตน 25 คน, หลีด 18 คน)...');
 const cheerDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายผู้นำเชียร์ (หลีด)');
 const standDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายสแตนเชียร์');
-assert.strictEqual(cheerDept.maxCapacity, undefined, 'ฝ่ายผู้นำเชียร์ (หลีด) ต้องไม่จำกัดโควตา');
-assert.strictEqual(standDept.maxCapacity, undefined, 'ฝ่ายสแตนเชียร์ ต้องไม่จำกัดโควตา');
+const equipDept = AttendanceConfig.DEPARTMENTS.find(d => d.name === 'ฝ่ายอุปกรณ์');
 
-// สร้าง Mock นักเรียนลงหลีด 15 คน
-const cheerStudents = Array.from({ length: 15 }, (_, i) => ({
+assert.strictEqual(cheerDept.maxCapacity, 18, 'ฝ่ายผู้นำเชียร์ (หลีด) ต้องจำกัด 18 คน');
+assert.strictEqual(standDept.maxCapacity, 25, 'ฝ่ายสแตนเชียร์ ต้องจำกัด 25 คน');
+assert.strictEqual(equipDept.maxCapacity, undefined, 'ฝ่ายอุปกรณ์ต้องไม่จำกัดโควตา');
+
+// จำลองการลงทะเบียนหลีด 17 คน (ยังไม่เต็ม)
+const cheerStudents = Array.from({ length: 17 }, (_, i) => ({
   fullName: `หลีด คนที่ ${i + 1}`,
   classRoom: 'ม.5/3',
   numberLabel: `${i + 1} ก`,
@@ -137,12 +140,29 @@ const cheerStudents = Array.from({ length: 15 }, (_, i) => ({
 }));
 AttendanceStore.setRegs(cheerStudents);
 
-assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 15, 'จำนวนหลีดต้องเท่ากับ 15');
-assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายผู้นำเชียร์ (หลีด)'), false, 'ฝ่ายหลีดต้องไม่ถูกบล็อกว่าเต็ม');
-const cheerCapacity = AttendanceStore.getDeptCapacity('ฝ่ายผู้นำเชียร์ (หลีด)');
+assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 17, 'จำนวนหลีดต้องเท่ากับ 17');
+assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายผู้นำเชียร์ (หลีด)'), false, 'ฝ่ายหลีด 17 คนยังไม่เต็ม');
+let cheerCapacity = AttendanceStore.getDeptCapacity('ฝ่ายผู้นำเชียร์ (หลีด)');
 assert.strictEqual(cheerCapacity.isFull, false);
-assert.strictEqual(cheerCapacity.maxCapacity, null);
+assert.strictEqual(cheerCapacity.remaining, 1);
+assert.strictEqual(cheerCapacity.maxCapacity, 18);
 
-console.log('  -> ผ่านการทดสอบ: ปลดล็อกโควตารายฝ่ายสำเร็จ 100%');
+// เพิ่มหลีดคนที่ 18 (เต็มโควตา)
+cheerStudents.push({
+  fullName: 'หลีด คนที่ 18',
+  classRoom: 'ม.5/3',
+  numberLabel: '18 ก',
+  department: 'ฝ่ายผู้นำเชียร์ (หลีด)',
+  position: 'สมาชิกฝ่าย'
+});
+AttendanceStore.setRegs(cheerStudents);
+
+assert.strictEqual(AttendanceStore.countDept('ฝ่ายผู้นำเชียร์ (หลีด)'), 18, 'จำนวนหลีดต้องเท่ากับ 18');
+assert.strictEqual(AttendanceStore.isDeptFull('ฝ่ายผู้นำเชียร์ (หลีด)'), true, 'ฝ่ายหลีด 18 คนต้องเต็มแล้ว');
+cheerCapacity = AttendanceStore.getDeptCapacity('ฝ่ายผู้นำเชียร์ (หลีด)');
+assert.strictEqual(cheerCapacity.isFull, true);
+assert.strictEqual(cheerCapacity.remaining, 0);
+
+console.log('  -> ผ่านการทดสอบ: ระบบโควตาสแตน 25 คน และหลีด 18 คน ทำงานถูกต้อง 100%');
 
 console.log('=== [การทดสอบทั้งหมดเสร็จสิ้น: ผ่านทุกข้อ 100% PASS] ===');
