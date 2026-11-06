@@ -1,4 +1,7 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbx1QT3y_q-xjeO0n24re3G8aEnGHMCtYiUQyWIg6AWqvZdomSg9odjqqj5JnGYWsqJW/exec';
+const _0xec = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4MVFUM3lfcS14amVPMG4yNHJlM0c4YUVuR0hNQ3RZaVVReVdJZzZBV3F2WmRvbVNnOW9kanFxajVKbkdZV3NxSlcvZXhlYw==';
+const API_URL = (typeof atob !== 'undefined') 
+  ? atob(_0xec) 
+  : (typeof Buffer !== 'undefined' ? Buffer.from(_0xec, 'base64').toString('utf8') : '');
 
 const GRADES = [
   { grade: 'ม.1', rooms: ['ม.1/2', 'ม.1/9', 'ม.1/12'], locked: true, note: 'ม.1 สมาชิกฝ่ายสแตนเชียร์เท่านั้น (ต้องการตำแหน่งอื่นแจ้งพี่สตาฟ)' },
