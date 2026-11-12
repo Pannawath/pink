@@ -35,6 +35,7 @@ function doPost(e) {
     var slipUrl = data.slipUrl || ""; // URL ของรูปที่อัปโหลดไว้แล้ว
     var status = data.status || (data.slipImage || data.slipUrl ? "รอตรวจสอบสลิป" : "รอชำระเงิน");
     var timestamp = new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" });
+    var isNewOrder = data.isNewOrder === true || data.mode === "new" || data.action === "create";
 
     if (!email) {
       return createJsonResponse({
@@ -79,11 +80,14 @@ function doPost(e) {
     }
 
     var foundRowIndex = -1;
-    for (var i = 1; i < values.length; i++) {
-      var rowEmail = (values[i][colMap.email - 1] || "").toString().trim().toLowerCase();
-      if (rowEmail === email) {
-        foundRowIndex = i + 1;
-        break;
+    // ถ้าสั่งเพิ่มอีกตัว (isNewOrder = true) จะข้ามการค้นหาแถวเดิม เพื่อให้ appendRow เป็นแถวใหม่เสมอ
+    if (!isNewOrder) {
+      for (var i = 1; i < values.length; i++) {
+        var rowEmail = (values[i][colMap.email - 1] || "").toString().trim().toLowerCase();
+        if (rowEmail === email) {
+          foundRowIndex = i + 1;
+          break;
+        }
       }
     }
 
@@ -132,7 +136,6 @@ function doPost(e) {
         data: {
           timestamp: timestamp,
           email: email,
-          fullName: fullName,
           studentNumber: studentNumber,
           name: name,
           classroom: classroom,

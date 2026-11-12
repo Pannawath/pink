@@ -1833,6 +1833,7 @@ async function fetchDriveImageViaGAS(fileId) {
 // ==========================================
 function buildOrderSubmissionRecord(email, studentNumber, name, number, classroom, nowTimestamp) {
   const shouldSendSlip = (AppState.mode === 'new' || AppState.slipChanged) && AppState.slipImage;
+  const isNewOrder = AppState.mode === 'new';
   return {
     email: email,
     productTitle: 'เสื้อแข่งขันทีมสีชมพู 2026',
@@ -1843,7 +1844,10 @@ function buildOrderSubmissionRecord(email, studentNumber, name, number, classroo
     size: AppState.size,
     price: 275,
     timestamp: nowTimestamp,
-    status: AppState.orderStatus || 'รอชำระเงิน',
+    status: isNewOrder ? (shouldSendSlip ? 'รอตรวจสอบสลิป' : 'รอชำระเงิน') : (AppState.orderStatus || 'รอชำระเงิน'),
+    isNewOrder: isNewOrder,
+    action: isNewOrder ? 'create' : 'update',
+    mode: AppState.mode,
     slipImage: shouldSendSlip ? AppState.slipImage : null,
     slipUrl: (!shouldSendSlip && AppState.slipUrl) ? AppState.slipUrl : null,
     slipFileName: AppState.slipFileName || null,
