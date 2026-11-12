@@ -343,14 +343,30 @@ function bindPersonalizationEvents() {
 function bindSizeAndStatusEvents() {
   DOM.sizeBtns.forEach(sizeElement => {
     sizeElement.addEventListener('click', () => {
-      showToast('ระบบปิดรับการจองแล้ว ไม่สามารถเปลี่ยนไซส์เสื้อได้', 'info');
+      if (AppState.mode === 'edit') {
+        showToast('ข้อมูลเดิมถูกล็อก (หากต้องการสั่งตัวใหม่ กรุณากดปุ่ม "สั่งเพิ่มอีกตัว" ด้านบน)', 'info');
+        return;
+      }
+      DOM.sizeBtns.forEach(btnItem => btnItem.classList.remove('active'));
+      sizeElement.classList.add('active');
+      AppState.size = sizeElement.getAttribute('data-size');
+      updateLivePreview();
     });
   });
 
   DOM.quickSelectSizeBtns.forEach(quickElement => {
     quickElement.addEventListener('click', () => {
+      if (AppState.mode === 'edit') {
+        showToast('ข้อมูลเดิมถูกล็อก (หากต้องการสั่งตัวใหม่ กรุณากดปุ่ม "สั่งเพิ่มอีกตัว" ด้านบน)', 'info');
+        return;
+      }
+      const targetSize = quickElement.getAttribute('data-select-size');
+      AppState.size = targetSize;
+      DOM.sizeBtns.forEach(btnItem => {
+        btnItem.classList.toggle('active', btnItem.getAttribute('data-size') === targetSize);
+      });
       if (DOM.modalSizeGuide) DOM.modalSizeGuide.classList.add('hidden');
-      showToast('ระบบปิดรับการจองแล้ว ไม่สามารถเปลี่ยนไซส์เสื้อได้', 'info');
+      updateLivePreview();
     });
   });
 
@@ -398,12 +414,21 @@ function bindOrderActionEvents() {
   if (DOM.btnDownloadJersey) {
     DOM.btnDownloadJersey.addEventListener('click', downloadJerseyMockup);
   }
-    if (DOM.btnCancelEditMode) {
+  if (DOM.btnCancelEditMode) {
     DOM.btnCancelEditMode.addEventListener('click', resetToNewMode);
   }
   if (DOM.btnOrderAnother) {
     DOM.btnOrderAnother.addEventListener('click', switchToOrderAnother);
   }
+
+  // Document delegation fallback for btnOrderAnother
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('#btnOrderAnother');
+    if (btn) {
+      e.preventDefault();
+      switchToOrderAnother();
+    }
+  });
 }
 
 function bindDatabaseModalEvents() {
@@ -1468,31 +1493,42 @@ function updateEditModeBanners(orderRecord) {
 
 
 function unlockFormFieldsForInput() {
+  // Lock classroom and studentNumber as requested
   if (DOM.inputStudentNumber) {
-    DOM.inputStudentNumber.readOnly = false;
-    DOM.inputStudentNumber.style.backgroundColor = '';
-    DOM.inputStudentNumber.style.cursor = '';
+    DOM.inputStudentNumber.readOnly = true;
+    DOM.inputStudentNumber.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.inputStudentNumber.style.cursor = 'default';
   }
+  if (DOM.selectClassroom) {
+    DOM.selectClassroom.disabled = true;
+    DOM.selectClassroom.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.selectClassroom.style.cursor = 'default';
+  }
+
+  // Unlock screenName and screenNumber for the new jersey
   if (DOM.inputScreenName) {
     DOM.inputScreenName.readOnly = false;
     DOM.inputScreenName.style.backgroundColor = '';
-    DOM.inputScreenName.style.cursor = '';
-  }
-  if (DOM.selectClassroom) {
-    DOM.selectClassroom.disabled = false;
-    DOM.selectClassroom.style.backgroundColor = '';
-    DOM.selectClassroom.style.cursor = '';
+    DOM.inputScreenName.style.cursor = 'text';
   }
   if (DOM.inputScreenNumber) {
     DOM.inputScreenNumber.readOnly = false;
     DOM.inputScreenNumber.style.backgroundColor = '';
-    DOM.inputScreenNumber.style.cursor = '';
+    DOM.inputScreenNumber.style.cursor = 'text';
   }
 
+  // Unlock size selector
   DOM.sizeBtns.forEach(btn => {
     btn.style.cursor = 'pointer';
     btn.style.opacity = '1';
   });
+
+  // Hide old payment complete box and show slip upload section for new jersey
+  const paymentNotice = document.getElementById('paymentCompleteInfo');
+  if (paymentNotice) paymentNotice.style.display = 'none';
+
+  const slipSection = document.getElementById('slipUploadSection');
+  if (slipSection) slipSection.style.display = 'block';
 
   if (DOM.slipDropzone) DOM.slipDropzone.style.display = 'block';
   if (DOM.btnChangeSlip) DOM.btnChangeSlip.style.display = '';
