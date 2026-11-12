@@ -1270,13 +1270,30 @@ function showFormContent() {
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.add('hidden');
 }
 
+function normalizeClassroom(raw) {
+  if (!raw) return '';
+  raw = String(raw).trim();
+  if (/^\d\/\d+$/.test(raw)) return raw;
+  if (/^ม\.\s*\d\/\d+$/.test(raw)) return raw.replace(/^ม\.\s*/, '');
+
+  // Google Sheets date-auto-formatted (e.g. 2026-07-05T17:00:00.000Z -> 6/7)
+  if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+    const d = new Date(raw);
+    const thaiDate = new Date(d.getTime() + (7 * 60 * 60 * 1000));
+    const day = thaiDate.getUTCDate();
+    const month = thaiDate.getUTCMonth() + 1;
+    return day + '/' + month;
+  }
+  return raw;
+}
+
 function buildOrderRecordFromRaw(raw, email) {
   return {
     email: raw.email || email,
     fullName: raw.fullName || '',
     studentNumber: raw.studentNumber || '',
     name: raw.name || '',
-    classroom: raw.classroom || '',
+    classroom: normalizeClassroom(raw.classroom || ''),
     number: (raw.number || '10').toString(),
     size: raw.size || 'L',
     price: 275,
@@ -1409,9 +1426,13 @@ function populateEditModeFields(orderRecord) {
     DOM.inputScreenName.style.cursor = 'default';
   }
   if (DOM.selectClassroom) {
-    DOM.selectClassroom.value = orderRecord.classroom || '';
+    const normRoom = normalizeClassroom(orderRecord.classroom || '');
+    DOM.selectClassroom.value = normRoom;
     DOM.selectClassroom.disabled = true;
-    DOM.selectClassroom.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.selectClassroom.style.backgroundColor = '#f1f5f9';
+    DOM.selectClassroom.style.color = '#0f172a';
+    DOM.selectClassroom.style.webkitTextFillColor = '#0f172a';
+    DOM.selectClassroom.style.opacity = '1';
     DOM.selectClassroom.style.cursor = 'default';
   }
   if (DOM.inputScreenNumber) {
@@ -1501,7 +1522,10 @@ function unlockFormFieldsForInput() {
   }
   if (DOM.selectClassroom) {
     DOM.selectClassroom.disabled = true;
-    DOM.selectClassroom.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
+    DOM.selectClassroom.style.backgroundColor = '#f1f5f9';
+    DOM.selectClassroom.style.color = '#0f172a';
+    DOM.selectClassroom.style.webkitTextFillColor = '#0f172a';
+    DOM.selectClassroom.style.opacity = '1';
     DOM.selectClassroom.style.cursor = 'default';
   }
 
@@ -1539,7 +1563,7 @@ function unlockFormFieldsForInput() {
 
 function switchToOrderAnother() {
   const currentEmail = DOM.inputEmail.value.trim();
-  const existingClassroom = DOM.selectClassroom ? DOM.selectClassroom.value : '';
+  const existingClassroom = DOM.selectClassroom ? normalizeClassroom(DOM.selectClassroom.value || AppState.classroom) : '';
   const existingStudentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
 
   AppState.mode = 'new';
