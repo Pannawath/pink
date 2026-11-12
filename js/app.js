@@ -1879,8 +1879,7 @@ async function sendOrderToGoogleSheets(submissionRecord) {
 }
 
 async function handleFormSubmit() {
-  showToast('ระบบปิดรับการจองและแก้ไขข้อมูลเรียบร้อยแล้ว', 'warning');
-  return;
+  if (!validateForm()) return;
 
   const email = DOM.inputEmail.value.trim();
   const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
