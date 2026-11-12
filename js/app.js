@@ -398,8 +398,11 @@ function bindOrderActionEvents() {
   if (DOM.btnDownloadJersey) {
     DOM.btnDownloadJersey.addEventListener('click', downloadJerseyMockup);
   }
-  if (DOM.btnCancelEditMode) {
+    if (DOM.btnCancelEditMode) {
     DOM.btnCancelEditMode.addEventListener('click', resetToNewMode);
+  }
+  if (DOM.btnOrderAnother) {
+    DOM.btnOrderAnother.addEventListener('click', switchToOrderAnother);
   }
 }
 
