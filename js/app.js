@@ -80,6 +80,7 @@ const DOM = {
   // Mode Banner
   modeStatusBanner: document.getElementById('modeStatusBanner'),
   btnCancelEditMode: document.getElementById('btnCancelEditMode'),
+  btnOrderAnother: document.getElementById('btnOrderAnother'),
   paymentStatusDisplay: document.getElementById('paymentStatusDisplay'),
   paymentStatusText: document.getElementById('paymentStatusText'),
 
@@ -1460,6 +1461,81 @@ function updateEditModeBanners(orderRecord) {
   } else {
     DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-700';
   }
+}
+
+
+function unlockFormFieldsForInput() {
+  if (DOM.inputStudentNumber) {
+    DOM.inputStudentNumber.readOnly = false;
+    DOM.inputStudentNumber.style.backgroundColor = '';
+    DOM.inputStudentNumber.style.cursor = '';
+  }
+  if (DOM.inputScreenName) {
+    DOM.inputScreenName.readOnly = false;
+    DOM.inputScreenName.style.backgroundColor = '';
+    DOM.inputScreenName.style.cursor = '';
+  }
+  if (DOM.selectClassroom) {
+    DOM.selectClassroom.disabled = false;
+    DOM.selectClassroom.style.backgroundColor = '';
+    DOM.selectClassroom.style.cursor = '';
+  }
+  if (DOM.inputScreenNumber) {
+    DOM.inputScreenNumber.readOnly = false;
+    DOM.inputScreenNumber.style.backgroundColor = '';
+    DOM.inputScreenNumber.style.cursor = '';
+  }
+
+  DOM.sizeBtns.forEach(btn => {
+    btn.style.cursor = 'pointer';
+    btn.style.opacity = '1';
+  });
+
+  if (DOM.slipDropzone) DOM.slipDropzone.style.display = 'block';
+  if (DOM.btnChangeSlip) DOM.btnChangeSlip.style.display = '';
+  if (DOM.btnRemoveSlip) DOM.btnRemoveSlip.style.display = '';
+  if (DOM.submitButtonSection) DOM.submitButtonSection.style.display = 'block';
+  if (DOM.orderStatusSection) DOM.orderStatusSection.classList.add('hidden');
+}
+
+function switchToOrderAnother() {
+  const currentEmail = DOM.inputEmail.value.trim();
+  const existingClassroom = DOM.selectClassroom ? DOM.selectClassroom.value : '';
+  const existingStudentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
+
+  AppState.mode = 'new';
+  AppState.existingRecord = null;
+  AppState.slipChanged = false;
+  AppState.slipUrl = null;
+  AppState.slipImage = null;
+  AppState.slipFileName = '';
+  AppState.slipUploadedAt = null;
+  AppState.orderStatus = 'รอชำระเงิน';
+
+  // Keep student identity if desired, reset jersey personalization & slip
+  AppState.screenName = '';
+  AppState.screenNumber = '10';
+  AppState.size = 'L';
+  DOM.inputScreenName.value = '';
+  DOM.inputScreenNumber.value = '10';
+  if (DOM.selectClassroom && existingClassroom) DOM.selectClassroom.value = existingClassroom;
+  if (DOM.inputStudentNumber && existingStudentNumber) DOM.inputStudentNumber.value = existingStudentNumber;
+
+  DOM.sizeBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-size') === 'L');
+  });
+
+  unlockFormFieldsForInput();
+  renderSlipPreview();
+
+  DOM.modeStatusBanner.classList.remove('hidden');
+  DOM.paymentStatusDisplay.classList.add('hidden');
+  DOM.btnSubmitText.textContent = 'ยืนยันการสั่งจองเสื้อตัวนี้ (เมลเดิม)';
+  DOM.btnSubmitIcon.className = 'fa-solid fa-cart-plus mr-1.5';
+
+  updateLivePreview();
+  showToast('เปิดฟอร์มสำหรับสั่งเสื้อเพิ่มอีกตัวด้วยอีเมลเดิมเรียบร้อยแล้ว', 'success');
+  if (DOM.inputScreenName) DOM.inputScreenName.focus();
 }
 
 function switchToEditMode(orderRecord) {
