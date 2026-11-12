@@ -173,18 +173,7 @@
   <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-2 sm:py-8 space-y-4 relative z-10">
 
     
-    <!-- System Notice: Booking Status -->
-    <div class="apple-glass-card p-3.5 border border-pink-200/80 bg-gradient-to-r from-pink-50/90 to-rose-50/90 text-pink-950 rounded-2xl flex items-center justify-between gap-3 shadow-2xs">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-xl bg-pink-500 text-white flex items-center justify-center text-sm shrink-0 shadow-xs">
-          <i class="fa-solid fa-shirt"></i>
-        </div>
-        <div class="text-xs leading-relaxed">
-          <span class="font-bold text-pink-900 block">ระบบสั่งจองเสื้อกีฬาสีชมพู 2026</span>
-          <span class="text-pink-800/90 text-[11px]">กรอกอีเมลเพื่อสั่งจองเสื้อ หรือตรวจสอบประวัติคำสั่งซื้อ (ใช้อีเมลเดิมสั่งซ้ำได้ไม่จำกัด)</span>
-        </div>
-      </div>
-    </div>
+    
 
     <!-- Mode Status Alert Banner (Shown when email matches past record) -->
     <div id="modeStatusBanner"
@@ -195,7 +184,7 @@
         </div>
         <div>
           <span class="text-xs font-bold text-emerald-900 block">พบประวัติการสั่งจองของคุณ</span>
-          <p class="text-[11px] text-emerald-800/90">ระบบดึงข้อมูลเสื้อและสถานะคำสั่งซื้อของคุณมาแสดงเรียบร้อยแล้ว (โหมดตรวจสอบข้อมูล)</p>
+          <p class="text-[11px] text-emerald-800/90">ระบบดึงข้อมูลเสื้อและสถานะคำสั่งซื้อของคุณมาแสดงเรียบร้อยแล้ว</p>
           <div id="paymentStatusDisplay" class="mt-2 hidden">
             <span class="text-xs font-semibold text-amber-900 mr-2">สถานะการชำระเงิน:</span>
             <span id="paymentStatusText" class="text-xs font-bold px-2 py-0.5 rounded-md bg-amber-200/70 text-amber-900"></span>
@@ -206,12 +195,9 @@
         <button type="button" id="btnOrderAnother"
           class="text-xs font-bold text-white px-3 py-1.5 rounded-xl bg-pink-600 hover:bg-pink-700 cursor-pointer shadow-xs transition flex items-center gap-1.5">
           <i class="fa-solid fa-plus text-[10px]"></i>
-          <span>สั่งเพิ่มอีกตัว (เมลเดิม)</span>
+          <span>สั่งเพิ่มอีกตัว</span>
         </button>
-        <button type="button" id="btnCancelEditMode"
-          class="text-xs font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1.5 rounded-xl bg-white/80 border border-slate-200 cursor-pointer transition">
-          เปลี่ยนเมล
-        </button>
+        
       </div>
     </div>
 
