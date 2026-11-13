@@ -219,10 +219,44 @@ document.addEventListener('DOMContentLoaded', () => {
 function bindEmailSyncEvents() {
   let emailDebounceTimer;
   let lastSearchedEmail = '';
+  const btnClearEmail = document.getElementById('btnClearEmail');
+
+  const syncClearButtonVisibility = () => {
+    if (!btnClearEmail) return;
+    btnClearEmail.classList.toggle('hidden', !(DOM.inputEmail && DOM.inputEmail.value.trim().length > 0));
+  };
+
+  if (btnClearEmail) {
+    btnClearEmail.addEventListener('click', () => {
+      if (!DOM.inputEmail) return;
+      DOM.inputEmail.value = '';
+      AppState.email = '';
+      lastSearchedEmail = '';
+      clearTimeout(emailDebounceTimer);
+      resetToNewMode();
+      hideFormContent();
+      DOM.emailStatusBadge.classList.add('hidden');
+      syncClearButtonVisibility();
+      DOM.inputEmail.focus();
+    });
+  }
+
+  DOM.inputEmail.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const email = DOM.inputEmail.value.trim();
+      if (isValidEmail(email)) {
+        clearTimeout(emailDebounceTimer);
+        lastSearchedEmail = email;
+        lookupEmailAndShowForm(email);
+      }
+    }
+  });
 
   DOM.inputEmail.addEventListener('input', (event) => {
     AppState.email = event.target.value.trim();
     clearTimeout(emailDebounceTimer);
+    syncClearButtonVisibility();
 
     if (!isValidEmail(AppState.email)) {
       lastSearchedEmail = '';
@@ -968,6 +1002,15 @@ function syncJerseySvgNumber(targetNumberEl, displayNumber, sizeConfig) {
   targetNumberEl.textContent = displayNumber;
 }
 
+function updateLiveOrderSummary() {
+  const summaryEl = document.getElementById('liveSummaryText');
+  if (!summaryEl) return;
+  const size = AppState.size || 'L';
+  const nameText = (AppState.screenName || '').toString().trim().toUpperCase() || 'ยังไม่กรอกชื่อ';
+  const numberText = (AppState.screenNumber || '10').toString().trim() || '10';
+  summaryEl.textContent = `ไซส์ ${size} · สกรีน ${nameText} · เบอร์ ${numberText}`;
+}
+
 function updateLivePreview() {
   const nameText = (AppState.screenName || '').toString().trim();
   const numberText = (AppState.screenNumber || '10').toString().trim();
@@ -983,6 +1026,7 @@ function updateLivePreview() {
   syncJerseySvgNumber(DOM.svgBothNumber, displayNumber, JERSEY_CONFIG.backNumber);
 
   applyNumberStyle();
+  updateLiveOrderSummary();
 }
 
 function applyNumberStyle() {

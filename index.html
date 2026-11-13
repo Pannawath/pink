@@ -325,9 +325,9 @@
           <!-- 1. Email Address (Account Lookup) -->
           <div class="space-y-1.5">
             <!-- คำแนะนำการใช้งาน -->
-            <div id="onboardingHintStep1" class="onboarding-hint" style="margin-bottom: 12px;">
-              <i class="fa-solid fa-arrow-down"></i>
-              <strong>ขั้นตอนที่ 1:</strong> กรอกอีเมลเพื่อตรวจสอบข้อมูลคำสั่งจอง
+            <div id="onboardingHintStep1" class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5 mb-2">
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] font-bold">01</span>
+              <span>กรอกอีเมลเพื่อสั่งจองใหม่ หรือดูประวัติเดิม</span>
             </div>
             
             <div class="flex items-center justify-between">
@@ -339,18 +339,22 @@
               </span>
             </div>
             <div class="relative">
-              <input type="email" id="inputEmail" placeholder="กรอกอีเมลเพื่อตรวจสอบข้อมูล..." 
+              <input type="email" id="inputEmail" placeholder="กรอกอีเมล เช่น student@spk.ac.th..." 
                 aria-label="อีเมลของคุณ"
                 required 
                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                 title="กรุณากรอกอีเมลให้ถูกต้อง เช่น student@spk.ac.th"
-                class="apple-glass-input w-full px-3.5 py-2.5 text-sm">
+                class="apple-glass-input w-full pl-3.5 pr-10 py-2.5 text-sm">
+              <button type="button" id="btnClearEmail" title="ล้างอีเมล" aria-label="ล้างอีเมล"
+                class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-xs"></i>
+              </button>
               <div id="emailLoadingSpinner" class="absolute right-3.5 top-1/2 -translate-y-1/2 hidden text-slate-700">
                 <i class="fa-solid fa-circle-notch fa-spin text-sm"></i>
               </div>
             </div>
             <p class="text-[11px] text-slate-500">
-              <i class="fa-solid fa-info-circle mr-1"></i>กรอกอีเมลเพื่อค้นหาและตรวจสอบข้อมูลคำสั่งจองของคุณ
+              กด Enter หรือรอสักครู่ ระบบจะดึงข้อมูลอัตโนมัติ
             </p>
           </div>
 
@@ -679,9 +683,17 @@
           </div>
 
           <!-- 5. Submit CTA Button (Also hidden until email is valid) -->
-          <div id="submitButtonSection" class="pt-2 border-t border-slate-200/60 space-y-2 hidden">
+          <div id="submitButtonSection" class="pt-3 border-t border-slate-200/60 space-y-2.5 hidden">
+            <!-- Live Order Summary Recap -->
+            <div id="liveOrderSummaryBar" class="studio-subcard rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2 text-xs">
+              <div class="min-w-0 truncate">
+                <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block">สรุปรายการสั่งจอง</span>
+                <span id="liveSummaryText" class="font-bold text-slate-900 truncate block">ไซส์ L · สกรีน YOUR NAME · เบอร์ 10</span>
+              </div>
+              <span class="font-mono font-bold text-sm text-slate-900 shrink-0">฿285</span>
+            </div>
             <div class="flex items-center gap-2.5">
-              <button type="button" id="btnResetForm" class="apple-btn-secondary px-3.5 py-3 text-xs">
+              <button type="button" id="btnResetForm" class="apple-btn-secondary px-4 py-3 text-xs">
                 ล้างค่า
               </button>
               <button type="button" id="btnSubmit"
@@ -1017,7 +1029,7 @@
   <script src="configUI.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=20261113c"></script>
+  <script src="js/app.js?v=20261113d"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>
