@@ -12,28 +12,28 @@
 /* ปุ่มหลัก - เพิ่ม focus-visible outline ชัดเจน */
 .apple-btn-primary:focus-visible,
 .apple-btn-secondary:focus-visible {
-  outline: 3px solid rgba(239, 79, 163, 0.6);
+  outline: 2.5px solid var(--focus-ring, rgba(17, 17, 19, 0.8));
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(239, 79, 163, 0.15);
+  box-shadow: 0 0 0 4px var(--border-hairline, rgba(17, 17, 19, 0.08));
 }
 
 /* ปุ่มไซส์ - focus state */
 .apple-size-btn:focus-visible,
 .size-btn:focus-visible {
-  outline: 3px solid rgba(239, 79, 163, 0.6);
+  outline: 2.5px solid var(--focus-ring, rgba(17, 17, 19, 0.8));
   outline-offset: 2px;
   transform: translateY(-2px);
 }
 
 /* Input fields - focus state (เสริมจาก style.css) */
 .apple-glass-input:focus-visible {
-  outline: 2px solid rgba(239, 79, 163, 0.5);
+  outline: 2px solid var(--focus-ring, rgba(17, 17, 19, 0.8));
   outline-offset: 1px;
 }
 
 /* Segmented control buttons */
 .apple-segmented-btn:focus-visible {
-  outline: 2px solid rgba(239, 79, 163, 0.5);
+  outline: 2px solid var(--focus-ring, rgba(17, 17, 19, 0.8));
   outline-offset: -2px;
   border-radius: 9999px;
 }
