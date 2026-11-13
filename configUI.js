@@ -85,7 +85,7 @@ const CONFIG_UI = {
     // ข้อความส่วนแนบสลิป
     slipSectionTitle: 'หลักฐานการโอนเงิน (สลิปชำระเงิน)',
     slipStatusPendingText: 'รอตรวจสอบสลิป',
-    slipAmountText: 'ยอดโอน ฿275',
+    slipAmountText: 'ยอดโอน ฿285',
 
     // ข้อมูลบัญชีธนาคาร
     bankNameText: 'ธนาคารกสิกรไทย (KBank) / พร้อมเพย์',
@@ -111,7 +111,7 @@ const CONFIG_UI = {
 
     // หัวข้อโมดอลสแกน QR Code
     qrModalTitle: 'สแกน QR Code ชำระเงิน',
-    qrModalSubtitle: 'ยอดชำระ 275 บาท (กีฬาสีทีมสีชมพู 2026)',
+    qrModalSubtitle: 'ยอดชำระ 285 บาท (กีฬาสีทีมสีชมพู 2026)',
 
     // ข้อความแจ้งเตือนคำสั่งซื้อถูกยกเลิก
     cancelledAlertTitle: 'คำสั่งซื้อถูกยกเลิก',
