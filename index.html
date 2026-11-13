@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="dark">
 
 <head>
   <meta charset="UTF-8">
@@ -69,7 +69,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=36">
+  <link rel="stylesheet" href="css/style.css?v=37">
   
   <!-- Accessibility Fixes CSS -->
   <link rel="stylesheet" href="css/accessibility-fixes.css?v=7">
@@ -143,22 +143,16 @@
       <!-- Brand Minimal Logo -->
       <a id="brandLogoLink" href="javascript:(document.querySelector('main')?.scrollTo({top:0,behavior:'smooth'}),document.getElementById('configuratorCard')?.scrollTo({top:0,behavior:'smooth'}),window.scrollTo({top:0,behavior:'smooth'}))" class="flex items-center space-x-2.5 shrink-0 group">
         <img src="assets/images/school_crest.png" alt="ตราโรงเรียนสารคามพิทยาคม"
-          class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition border border-black/10">
+          class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition border border-white/10">
         <div class="flex items-center gap-1.5">
           <span class="app-brand-copy">
             <span class="app-brand-title text-lg sm:text-xl font-bold tracking-tight">ตรวจสอบข้อมูลเสื้อกีฬาสี</span>
           </span>
-          <button type="button" onclick="if(window.showDevToolsPasswordPrompt) window.showDevToolsPasswordPrompt()" title="Admin Developer Access" class="text-slate-400/50 hover:text-slate-700 text-[10px] p-1 transition cursor-pointer">
+          <button type="button" onclick="if(window.showDevToolsPasswordPrompt) window.showDevToolsPasswordPrompt()" title="Admin Developer Access" class="text-slate-400/50 hover:text-slate-300 text-[10px] p-1 transition cursor-pointer">
             <i class="fa-solid fa-shield-halved"></i>
           </button>
         </div>
       </a>
-
-      <!-- Studio Light / Dark Toggle Pill -->
-      <button type="button" id="btnThemeToggle" class="studio-theme-pill shrink-0" aria-label="สลับโหมดสีสตูดิโอ" title="สลับโหมดพื้นหลัง Light / Dark">
-        <i id="themeToggleIcon" class="fa-solid fa-moon text-[11px]"></i>
-        <span id="themeToggleLabel">Dark Studio</span>
-      </button>
 
       <!-- View mode controls integrated into header (Mobile Scrolled Only) -->
       <div id="headerSegmentedControl" class="apple-segmented-control relative flex-1 sm:flex-initial min-w-0 transition-all duration-300" role="group" aria-label="มุมมองเสื้อด้านบน" aria-hidden="true">
@@ -1029,7 +1023,7 @@
   <script src="configUI.js?v=4"></script>
 
   <!-- Main JS -->
-  <script src="js/app.js?v=20261113d"></script>
+  <script src="js/app.js?v=20261114"></script>
 
   <!-- Real WebGL 3D Jersey Stage Viewer -->
   <script src="js/stage3d.js?v=3"></script>

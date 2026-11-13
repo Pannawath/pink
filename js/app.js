@@ -176,35 +176,8 @@ const DOM = {
 // ==========================================
 // 3. INITIALIZATION
 // ==========================================
-function initStudioThemeToggle() {
-  const applyTheme = (theme) => {
-    const normalized = theme === 'dark' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', normalized);
-    localStorage.setItem('PINK_STUDIO_THEME', normalized);
-    const icon = document.getElementById('themeToggleIcon');
-    const label = document.getElementById('themeToggleLabel');
-    if (icon) {
-      icon.className = normalized === 'dark' ? 'fa-solid fa-sun text-[11px]' : 'fa-solid fa-moon text-[11px]';
-    }
-    if (label) {
-      label.textContent = normalized === 'dark' ? 'Light Studio' : 'Dark Studio';
-    }
-  };
-
-  const savedTheme = localStorage.getItem('PINK_STUDIO_THEME') || 'light';
-  applyTheme(savedTheme);
-
-  const btnToggle = document.getElementById('btnThemeToggle');
-  if (btnToggle) {
-    btnToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      applyTheme(current === 'dark' ? 'light' : 'dark');
-    });
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  initStudioThemeToggle();
+  document.documentElement.setAttribute('data-theme', 'dark');
   bindEvents();
   updateLivePreview();
   setJerseyView(AppState.viewSide);
