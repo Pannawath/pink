@@ -41,7 +41,7 @@ const AppState = {
   isSubmitting: false,
   gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.gasUrl) 
     ? CONFIG.backend.gasUrl 
-    : ((typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycbyAs7xoTATagtgljjCUQWqyLJrFOC5kPKAA-b_FNZLrw7YGYIYey9ZsiOlEHsGccVUR/exec')),
+    : ((typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycbw2bBPjBVe3FnsRbGOqTO6usQZrZvmlyBg-ZWrVfiHZDju5-Eg7UOeIDrTptB6NiuMS/exec')),
   spreadsheetId: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.spreadsheetId)
     ? CONFIG.backend.spreadsheetId
     : '13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0',
