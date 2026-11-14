@@ -1400,7 +1400,15 @@ function applyExistingOrders(ordersList, initialIndex = 0) {
   if (record) {
     switchToEditMode(record);
     showFormContent();
-    goToStep(1, false);
+
+    // In 'edit' mode (user already purchased), hide wizard stepper & step panes until user clicks 'สั่งเพิ่มอีกตัว'
+    const stepper = document.getElementById('wizardStepper');
+    if (stepper) stepper.classList.add('hidden');
+    for (let s = 1; s <= 4; s++) {
+      const pane = document.getElementById(`wizardStepPane${s}`);
+      if (pane) pane.classList.add('hidden');
+    }
+
     updateWizardRecap();
     const countMsg = AppState.userOrders.length > 1 ? ` (พบทั้งหมด ${AppState.userOrders.length} ตัว)` : '';
     showToast(`พบข้อมูลเดิม ดึงข้อมูลมาให้เรียบร้อยแล้ว${countMsg}`, 'success');
@@ -1449,7 +1457,12 @@ function switchSelectedOrder(index) {
   });
 
   switchToEditMode(targetRecord);
-  goToStep(1, false);
+  const stepper = document.getElementById('wizardStepper');
+  if (stepper) stepper.classList.add('hidden');
+  for (let s = 1; s <= 4; s++) {
+    const pane = document.getElementById(`wizardStepPane${s}`);
+    if (pane) pane.classList.add('hidden');
+  }
   updateWizardRecap();
   showToast(`สลับไปดูเสื้อตัวที่ ${index + 1} (${targetRecord.name || 'ไม่ระบุชื่อ'}) แล้ว`, 'info');
 }
@@ -2495,6 +2508,10 @@ function goToStep(targetStep, validateCurrent = true) {
   }
 
   AppState.currentStep = targetStep;
+
+  // Make sure stepper header is visible when navigating steps
+  const stepper = document.getElementById('wizardStepper');
+  if (stepper) stepper.classList.remove('hidden');
 
   // Show/hide step panes
   for (let s = 1; s <= 4; s++) {
