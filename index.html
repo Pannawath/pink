@@ -314,14 +314,30 @@
                 title="กรุณากรอกอีเมลให้ถูกต้อง เช่น student@spk.ac.th"
                 class="apple-glass-input w-full pl-3.5 pr-10 py-2.5 text-sm">
               <button type="button" id="btnClearEmail" title="ล้างอีเมล" aria-label="ล้างอีเมล"
-                class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 flex items-center justify-center transition cursor-pointer">
+                class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer">
                 <i class="fa-solid fa-xmark text-xs"></i>
               </button>
-              <div id="emailLoadingSpinner" class="absolute right-3.5 top-1/2 -translate-y-1/2 hidden text-slate-700">
-                <i class="fa-solid fa-circle-notch fa-spin text-sm"></i>
+            </div>
+
+            <!-- Prominent Visual Checking / Loading State -->
+            <div id="emailCheckingNotice" class="hidden p-3.5 rounded-2xl border border-zinc-800 bg-zinc-900/90 shadow-lg shadow-black/40 flex items-center gap-3.5 transition-all">
+              <div class="relative w-9 h-9 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-center text-pink-500 shrink-0">
+                <i class="fa-solid fa-circle-notch fa-spin text-base"></i>
+                <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-pink-500"></span>
+                </span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-zinc-100 tracking-wide">กำลังตรวจสอบข้อมูลในระบบ...</span>
+                  <span class="text-[10px] font-medium text-pink-400/90 px-1.5 py-0.2 rounded bg-pink-500/10 border border-pink-500/20">Checking</span>
+                </div>
+                <p class="text-[11px] text-zinc-400 truncate mt-0.5">ระบบกำลังค้นหาประวัติการจองจากฐานข้อมูล กรุณารอสักครู่</p>
               </div>
             </div>
-            <p class="text-[11px] text-slate-500">
+
+            <p class="text-[11px] text-zinc-400" id="emailInputGuideText">
               กด Enter หรือรอสักครู่ ระบบจะดึงข้อมูลอัตโนมัติ
             </p>
           </div>
@@ -330,36 +346,36 @@
           <div id="formContentSection" class="space-y-4 hidden">
 
             <!-- 2.0 Purchased Status Card (Shown when user has ordered before) -->
-            <div id="purchasedStatusCard" class="hidden studio-subcard p-4 rounded-2xl border border-emerald-500/40 bg-gradient-to-r from-emerald-950/30 to-slate-900/50 space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-lg shrink-0">
-                    <i class="fa-solid fa-circle-check"></i>
+            <div id="purchasedStatusCard" class="hidden p-4 rounded-2xl border border-zinc-800 bg-zinc-900/90 shadow-sm space-y-3">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 flex items-center justify-center text-sm shrink-0">
+                    <i class="fa-solid fa-check text-emerald-400"></i>
                   </div>
-                  <div>
-                    <span class="text-base sm:text-lg font-black tracking-wide text-white uppercase flex items-center gap-2">
-                      <span>ซื้อแล้ว</span>
-                      <span id="purchasedStatusBadge" class="text-[10px] font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">รอตรวจสอบสลิป</span>
-                    </span>
-                    <p class="text-[11px] text-slate-400">คุณเคยสั่งจองเสื้อด้วยอีเมลนี้แล้ว สามารถตรวจสอบข้อมูลหรือสั่งเพิ่มได้</p>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-bold text-zinc-100 tracking-wide">ซื้อแล้ว</span>
+                      <span id="purchasedStatusBadge" class="text-[10px] font-medium text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">รอตรวจสอบสลิป</span>
+                    </div>
+                    <p class="text-[11px] text-zinc-400 truncate mt-0.5">คุณเคยสั่งจองเสื้อด้วยอีเมลนี้แล้ว สามารถตรวจสอบข้อมูลหรือสั่งเพิ่มได้</p>
                   </div>
                 </div>
                 <button type="button" id="btnOrderAnother"
-                  class="shrink-0 text-xs font-bold text-white px-3.5 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 active:scale-95 cursor-pointer shadow-md shadow-pink-600/20 transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-plus text-xs"></i>
+                  class="shrink-0 text-xs font-semibold text-zinc-100 px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-800 border border-zinc-700/80 cursor-pointer transition flex items-center gap-1.5 shadow-none">
+                  <i class="fa-solid fa-plus text-xs text-pink-400"></i>
                   <span>สั่งเพิ่มอีกตัว</span>
                 </button>
               </div>
             </div>
 
             <!-- 2.0 Multi-Order Switcher Bar (Appears when email has multiple shirts) -->
-            <div id="multiOrderSection" class="hidden studio-subcard p-3 rounded-2xl space-y-2 border border-pink-500/30 bg-pink-950/10">
+            <div id="multiOrderSection" class="hidden p-3 rounded-2xl space-y-2 border border-zinc-800 bg-zinc-900/90 shadow-sm">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                  <i class="fa-solid fa-layer-group text-pink-400"></i>
+                <span class="text-xs font-semibold text-zinc-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-layer-group text-zinc-400"></i>
                   <span>รายการเสื้อที่สั่งด้วยอีเมลนี้ (<span id="multiOrderCount">1</span> ตัว)</span>
                 </span>
-                <span class="text-[10px] text-pink-300 font-semibold">แตะสลับเพื่อดู/แก้ไข</span>
+                <span class="text-[10px] text-zinc-400 font-normal">แตะสลับเพื่อดู/แก้ไข</span>
               </div>
               <div id="multiOrderTabs" class="flex flex-wrap gap-2 pt-1">
                 <!-- Dynamically populated buttons -->
@@ -412,6 +428,13 @@
                         class="apple-glass-input w-full px-3 py-2 text-sm font-semibold text-slate-800 appearance-none cursor-pointer pr-8">
                         <option value="" disabled selected>เลือกห้องเรียน / กลุ่มผู้สั่ง...</option>
                         
+                        <!-- กลุ่มอื่นๆ: ย้ายขึ้นบนสุดตามที่ต้องการ -->
+                        <optgroup label="กลุ่มอื่นๆ / บุคคลภายนอก">
+                          <option value="OTHER_STUDENT">นักเรียนห้องอื่น (More... ระบุห้อง 1-17)</option>
+                          <option value="ครู/บุคลากร">ครู / บุคลากรทางการศึกษา</option>
+                          <option value="บุคคลภายนอก">บุคคลภายนอก</option>
+                        </optgroup>
+
                         <!-- กลุ่มนักเรียนสีชมพู (ห้องหลัก) -->
                         <optgroup label="นักเรียนสีชมพู (ม.1)">
                           <option value="1/2">ม.1/2 (สีชมพู)</option>
@@ -445,13 +468,6 @@
                           <option value="6/4">ม.6/4 (สีชมพู)</option>
                           <option value="6/7">ม.6/7 (สีชมพู)</option>
                           <option value="6/14">ม.6/14 (สีชมพู)</option>
-                        </optgroup>
-
-                        <!-- กลุ่มอื่นๆ: บุคลากร / ภายนอก / นักเรียนห้องอื่น -->
-                        <optgroup label="กลุ่มอื่นๆ / บุคคลภายนอก">
-                          <option value="OTHER_STUDENT">นักเรียนห้องอื่น (More... ระบุห้อง 1-17)</option>
-                          <option value="ครู/บุคลากร">ครู / บุคลากรทางการศึกษา</option>
-                          <option value="บุคคลภายนอก">บุคคลภายนอก</option>
                         </optgroup>
                       </select>
                       <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
@@ -649,35 +665,35 @@
             <div id="wizardStepPane4" class="wizard-step-pane space-y-4 hidden">
 
               <!-- Order Summary Recap Card (Editable by clicking steps or back) -->
-              <div class="studio-subcard p-4 rounded-2xl space-y-3 bg-slate-900/50 border border-slate-800">
-                <div class="flex items-center justify-between border-b pb-2">
-                  <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <i class="fa-solid fa-clipboard-check text-emerald-500"></i>
+              <div class="studio-subcard p-4 rounded-2xl space-y-3 bg-zinc-900/60 border border-zinc-800">
+                <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+                  <span class="text-xs font-semibold text-zinc-300 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-zinc-400"></i>
                     <span>ขั้นตอนที่ 4 : ตรวจสอบสรุปรายการสั่งซื้อ</span>
                   </span>
-                  <span class="text-xs font-bold text-pink-500 font-mono">฿285</span>
+                  <span class="text-xs font-bold font-mono text-zinc-200">฿285</span>
                 </div>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
-                    <span class="text-[10px] text-slate-400 block mb-0.5">ห้องเรียน / เลขที่</span>
-                    <span id="recapClassNum" class="font-bold text-slate-200">ม.6/7 เลขที่ 6ก</span>
-                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(1)">แก้ไข</button>
+                  <div class="p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+                    <span class="text-[10px] text-zinc-400 block mb-0.5">ห้องเรียน / เลขที่</span>
+                    <span id="recapClassNum" class="font-bold text-zinc-100">ม.6/7 เลขที่ 6ก</span>
+                    <button type="button" class="text-[10px] text-zinc-400 hover:text-zinc-100 block mt-1 underline cursor-pointer transition" onclick="goToStep(1)">แก้ไข</button>
                   </div>
-                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
-                    <span class="text-[10px] text-slate-400 block mb-0.5">ชื่อสกรีนหลังเสื้อ</span>
-                    <span id="recapScreenName" class="font-bold text-slate-200 uppercase truncate block">SECOND</span>
-                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(2)">แก้ไข</button>
+                  <div class="p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+                    <span class="text-[10px] text-zinc-400 block mb-0.5">ชื่อสกรีนหลังเสื้อ</span>
+                    <span id="recapScreenName" class="font-bold text-zinc-100 uppercase truncate block">SECOND</span>
+                    <button type="button" class="text-[10px] text-zinc-400 hover:text-zinc-100 block mt-1 underline cursor-pointer transition" onclick="goToStep(2)">แก้ไข</button>
                   </div>
-                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
-                    <span class="text-[10px] text-slate-400 block mb-0.5">เบอร์เสื้อ</span>
-                    <span id="recapScreenNumber" class="font-bold text-slate-200 font-mono block">11</span>
-                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(2)">แก้ไข</button>
+                  <div class="p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+                    <span class="text-[10px] text-zinc-400 block mb-0.5">เบอร์เสื้อ</span>
+                    <span id="recapScreenNumber" class="font-bold text-zinc-100 font-mono block">11</span>
+                    <button type="button" class="text-[10px] text-zinc-400 hover:text-zinc-100 block mt-1 underline cursor-pointer transition" onclick="goToStep(2)">แก้ไข</button>
                   </div>
-                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
-                    <span class="text-[10px] text-slate-400 block mb-0.5">ขนาดไซส์</span>
-                    <span id="recapSize" class="font-bold text-pink-400 block">L (40")</span>
-                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(3)">แก้ไข</button>
+                  <div class="p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+                    <span class="text-[10px] text-zinc-400 block mb-0.5">ขนาดไซส์</span>
+                    <span id="recapSize" class="font-bold text-zinc-100 block">L (40")</span>
+                    <button type="button" class="text-[10px] text-zinc-400 hover:text-zinc-100 block mt-1 underline cursor-pointer transition" onclick="goToStep(3)">แก้ไข</button>
                   </div>
                 </div>
               </div>
@@ -887,31 +903,30 @@
 
   </main>
 
-  <!-- ================= MODAL SHEET: SIZE GUIDE (APPLE STYLE) ================= -->
+  <!-- ================= MODAL SHEET: SIZE GUIDE (STUDIO DARK STYLE) ================= -->
   <div id="modalSizeGuide"
-    class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="apple-glass-card w-full max-w-2xl p-4 sm:p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto" style="max-height: 90vh !important; overflow-y: auto !important; margin-bottom: 0 !important;">
+    class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="studio-subcard w-full max-w-2xl p-4 sm:p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto border border-zinc-800 bg-zinc-950/95" style="max-height: 90vh !important; overflow-y: auto !important; margin-bottom: 0 !important;">
 
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200/60 sticky top-0 bg-white/70 backdrop-blur-md z-10 -mx-2 px-2 rounded-t-xl">
+      <div class="flex items-center justify-between pb-3 border-b border-zinc-800/80 sticky top-0 bg-zinc-950/90 backdrop-blur-md z-10 -mx-2 px-2 rounded-t-xl">
         <div>
-          <h3 class="text-base font-bold text-slate-900 font-sport-bold">ตารางขนาดเสื้อ</h3>
-          <p class="text-xs text-slate-500">สเปกขนาดทางการ SS ถึง 6XL</p>
+          <h3 class="text-base font-bold text-zinc-100 font-sport-bold tracking-wide">ตารางขนาดเสื้อ</h3>
+          <p class="text-xs text-zinc-400">สเปกขนาดทางการ SS ถึง 6XL</p>
         </div>
         <button type="button" id="btnCloseSizeGuide"
-          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center text-lg cursor-pointer transition shadow-2xs" aria-label="ปิดหน้าต่าง">&times;</button>
+          class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 flex items-center justify-center text-lg cursor-pointer transition border border-zinc-800" aria-label="ปิดหน้าต่าง">&times;</button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
         <div
-          class="md:col-span-5 flex flex-col items-center justify-center p-3 bg-slate-50/50 rounded-2xl border border-slate-200">
-          <img id="imgSizeGuideDiagram" src="assets/images/jersey_guide_preview.webp?v=20261018_2215" data-highres="assets/images/jersey_guide.png?v=20261018_2215" alt="Size Guide" class="w-full max-w-[200px] object-contain" loading="lazy">
-          <p class="text-[11px] text-slate-500 mt-2 text-center">&bull; <strong>รอบอก</strong> วัดรอบส่วนที่กว้างที่สุด
-            (นิ้ว)</p>
+          class="md:col-span-5 flex flex-col items-center justify-center p-3.5 bg-zinc-900/40 rounded-2xl border border-zinc-800/70">
+          <img id="imgSizeGuideDiagram" src="assets/images/jersey_guide_preview.webp?v=20261018_2215" data-highres="assets/images/jersey_guide.png?v=20261018_2215" alt="Size Guide" class="w-full max-w-[200px] object-contain rounded-xl" loading="lazy">
+          <p class="text-[11px] text-zinc-400 mt-2 text-center">&bull; <strong>รอบอก</strong> วัดรอบส่วนที่กว้างที่สุด (นิ้ว)</p>
         </div>
 
-        <div class="md:col-span-7 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <div class="md:col-span-7 overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-900/30">
           <table class="w-full text-center text-xs">
-            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+            <thead class="bg-zinc-900/80 text-zinc-300 font-bold border-b border-zinc-800/80">
               <tr>
                 <th class="py-2.5 px-3 text-left">ไซส์</th>
                 <th class="py-2.5 px-3">รอบอก (นิ้ว)</th>
@@ -919,85 +934,85 @@
                 <th class="py-2.5 px-3 text-right">เลือก</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">SS</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">34"</td>
-                <td class="py-2 px-3 font-mono">25"</td>
+            <tbody class="divide-y divide-zinc-800/50 text-zinc-300 font-medium">
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">SS</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">34"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">25"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="SS"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">S</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">36"</td>
-                <td class="py-2 px-3 font-mono">26"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">S</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">36"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">26"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="S"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">M</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">38"</td>
-                <td class="py-2 px-3 font-mono">27"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">M</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">38"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">27"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="M"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr class="bg-slate-50/40">
-                <td class="py-2 px-3 text-left font-bold text-slate-950">L (ยอดนิยม)</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-950">40"</td>
-                <td class="py-2 px-3 font-mono">28"</td>
+              <tr class="bg-pink-950/20 border-l-2 border-l-pink-500">
+                <td class="py-2 px-3 text-left font-bold text-pink-400">L (ยอดนิยม)</td>
+                <td class="py-2 px-3 font-mono font-bold text-pink-300">40"</td>
+                <td class="py-2 px-3 font-mono text-zinc-300">28"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="L"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-900 text-white font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-pink-600 text-white font-bold shadow-xs hover:bg-pink-700 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">XL</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">42"</td>
-                <td class="py-2 px-3 font-mono">29"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">XL</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">42"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">29"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="XL"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">2XL</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">44"</td>
-                <td class="py-2 px-3 font-mono">30"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">2XL</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">44"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">30"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="2XL"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">3XL</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">46"</td>
-                <td class="py-2 px-3 font-mono">31"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">3XL</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">46"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">31"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="3XL"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">4XL</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">48"</td>
-                <td class="py-2 px-3 font-mono">32"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">4XL</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">48"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">32"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="4XL"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">5XL</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">50"</td>
-                <td class="py-2 px-3 font-mono">33"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">5XL</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">50"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">33"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="5XL"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
-              <tr>
-                <td class="py-2 px-3 text-left font-bold">6XL</td>
-                <td class="py-2 px-3 font-mono font-bold text-slate-800">52"</td>
-                <td class="py-2 px-3 font-mono">34"</td>
+              <tr class="hover:bg-zinc-800/20 transition">
+                <td class="py-2 px-3 text-left font-bold text-zinc-200">6XL</td>
+                <td class="py-2 px-3 font-mono font-bold text-zinc-300">52"</td>
+                <td class="py-2 px-3 font-mono text-zinc-400">34"</td>
                 <td class="py-2 px-3 text-right"><button data-select-size="6XL"
-                    class="btn-quick-select-size px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 font-bold">เลือก</button>
+                    class="btn-quick-select-size px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-pink-600 hover:text-white text-zinc-300 font-semibold border border-zinc-700/60 transition">เลือก</button>
                 </td>
               </tr>
             </tbody>
@@ -1125,62 +1140,67 @@
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
   <!-- QR Code PromptPay Modal -->
-  <div id="qrPromptPayModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full mx-4 overflow-hidden">
-      <div class="bg-gradient-to-r from-pink-600 to-indigo-600 p-4 text-white">
+  <!-- ================= MODAL: PROMPTPAY QR CODE (STUDIO DARK STYLE) ================= -->
+  <div id="qrPromptPayModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md">
+    <div class="studio-subcard bg-zinc-950 border border-zinc-800 rounded-3xl shadow-2xl max-w-sm w-full mx-4 overflow-hidden">
+      <!-- Modal Header -->
+      <div class="bg-zinc-900 border-b border-zinc-800/80 px-5 py-4 text-zinc-100">
         <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-qrcode text-2xl"></i>
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700/60 flex items-center justify-center text-zinc-200 text-sm">
+              <i class="fa-solid fa-qrcode"></i>
+            </div>
             <div>
-              <h3 class="font-bold text-lg">สแกนจ่ายผ่าน PromptPay</h3>
-              <p class="text-xs text-pink-100">ธนาคารกสิกรไทย (KBank)</p>
+              <h3 class="font-bold text-sm tracking-wide text-zinc-100">สแกนจ่ายผ่าน PromptPay</h3>
+              <p class="text-[11px] text-zinc-400">ธนาคารกสิกรไทย (KBank)</p>
             </div>
           </div>
-          <button type="button" id="btnCloseQrModal" class="text-white hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center transition">
-            <i class="fa-solid fa-xmark text-xl"></i>
+          <button type="button" id="btnCloseQrModal" class="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/80 rounded-full w-8 h-8 flex items-center justify-center transition border border-transparent hover:border-zinc-700">
+            <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
       </div>
       
-      <div class="p-6 text-center space-y-4">
-        <div class="bg-white border-4 border-slate-200 rounded-2xl p-4 inline-block shadow-inner">
-          <img id="qrPromptPayImage" src="assets/images/qr-code.png" alt="QR PromptPay" class="w-64 h-64 mx-auto object-contain">
+      <div class="p-5 text-center space-y-4">
+        <!-- QR Code Canvas Container -->
+        <div class="bg-white rounded-2xl p-4 inline-block shadow-md">
+          <img id="qrPromptPayImage" src="assets/images/qr-code.png" alt="QR PromptPay" class="w-60 h-60 mx-auto object-contain">
         </div>
 
         <!-- Download QR Code Button -->
         <div class="flex justify-center">
           <a id="btnDownloadQr" href="assets/images/qr-code.png" download="PromptPay_QR_Pink_Jersey.png"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 text-xs font-bold border border-pink-200/80 shadow-2xs hover:shadow-xs transition duration-150 cursor-pointer">
-            <i class="fa-solid fa-download"></i>
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-xs font-semibold border border-zinc-800 transition duration-150 cursor-pointer">
+            <i class="fa-solid fa-arrow-down-to-bracket text-zinc-400"></i>
             <span>บันทึกรูป QR Code</span>
           </a>
         </div>
         
         <div class="space-y-3">
           <!-- Recipient Name Verification Box -->
-          <div class="bg-pink-50/90 border border-pink-200/80 rounded-2xl p-3.5 text-left space-y-1.5 shadow-2xs">
-            <div class="flex items-center justify-between text-xs text-slate-500">
-              <span class="flex items-center gap-1.5 font-bold text-pink-700">
-                <i class="fa-solid fa-circle-check text-pink-600"></i>ยืนยันชื่อบัญชีผู้รับโอน
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-3.5 text-left space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="flex items-center gap-1.5 font-semibold text-zinc-300">
+                <i class="fa-solid fa-circle-check text-emerald-400"></i>ยืนยันชื่อบัญชีผู้รับโอน
               </span>
-              <span class="text-[10px] bg-pink-100/80 text-pink-800 px-2 py-0.5 rounded-full font-medium">ตรวจก่อนโอน</span>
+              <span class="text-[10px] bg-zinc-800 text-zinc-400 border border-zinc-700/60 px-2 py-0.5 rounded-full font-medium">ตรวจก่อนโอน</span>
             </div>
-            <p class="text-sm font-bold text-slate-900" id="promptPayRecipientName">
+            <p class="text-sm font-bold text-zinc-100" id="promptPayRecipientName">
               ชื่อบัญชี: น.ส. ภัททิยา เมืองวงษ์
             </p>
-            <p class="text-[11px] text-slate-500 leading-relaxed">
+            <p class="text-[11px] text-zinc-400 leading-relaxed">
               สแกน QR Code ผ่านแอปธนาคารใดก็ได้ และโปรดตรวจสอบชื่อผู้รับเงินให้ตรงกันก่อนกดยืนยัน
             </p>
           </div>
         </div>
         
-        <div class="pt-1 space-y-1.5">
-          <p class="text-xs text-slate-400 flex items-center justify-center gap-1">
-            <i class="fa-solid fa-receipt text-pink-500"></i>
+        <div class="pt-1 space-y-1 text-center">
+          <p class="text-xs text-zinc-400 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-receipt text-zinc-400"></i>
             <span>กรุณาบันทึกสลิปและแนบในหน้าเว็บหลังโอนเงินเรียบร้อย</span>
           </p>
-          <p class="text-[11px] text-pink-700/80 font-medium flex items-center justify-center gap-1">
-            <i class="fa-solid fa-circle-question"></i>
+          <p class="text-[11px] text-zinc-500 font-medium flex items-center justify-center gap-1">
+            <i class="fa-solid fa-circle-info"></i>
             <span>หากพบปัญหาการชำระเงิน กรุณาติดต่อเจ้าหน้าที่โดยตรง</span>
           </p>
         </div>

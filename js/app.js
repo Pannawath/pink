@@ -41,7 +41,7 @@ const AppState = {
   isSubmitting: false,
   gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.gasUrl) 
     ? CONFIG.backend.gasUrl 
-    : ((typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycbw2bBPjBVe3FnsRbGOqTO6usQZrZvmlyBg-ZWrVfiHZDju5-Eg7UOeIDrTptB6NiuMS/exec')),
+    : ((typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycbwjttRpZPfi9ljLegbufqFciF04efGeI2vgm-oUwLHYxmpY_RHvS1X9U2oNh8O4IoHZ/exec')),
   spreadsheetId: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.spreadsheetId)
     ? CONFIG.backend.spreadsheetId
     : '13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0',
@@ -62,6 +62,7 @@ const DOM = {
   configuratorCard: document.getElementById('configuratorCard'),
   inputEmail: document.getElementById('inputEmail'),
   emailLoadingSpinner: document.getElementById('emailLoadingSpinner'),
+  emailCheckingNotice: document.getElementById('emailCheckingNotice'),
   emailStatusBadge: document.getElementById('emailStatusBadge'),
   onboardingHintStep1: document.getElementById('onboardingHintStep1'),
   formContentSection: document.getElementById('formContentSection'),
@@ -201,7 +202,9 @@ function bindEmailSyncEvents() {
 
   const syncClearButtonVisibility = () => {
     if (!btnClearEmail) return;
-    btnClearEmail.classList.toggle('hidden', !(DOM.inputEmail && DOM.inputEmail.value.trim().length > 0));
+    const isChecking = DOM.emailCheckingNotice && !DOM.emailCheckingNotice.classList.contains('hidden');
+    const hasText = !!(DOM.inputEmail && DOM.inputEmail.value.trim().length > 0);
+    btnClearEmail.classList.toggle('hidden', !hasText || isChecking);
   };
 
   if (btnClearEmail) {
@@ -214,6 +217,7 @@ function bindEmailSyncEvents() {
       resetToNewMode();
       hideFormContent();
       DOM.emailStatusBadge.classList.add('hidden');
+      if (DOM.emailCheckingNotice) DOM.emailCheckingNotice.classList.add('hidden');
       syncClearButtonVisibility();
       DOM.inputEmail.focus();
     });
@@ -240,6 +244,7 @@ function bindEmailSyncEvents() {
       lastSearchedEmail = '';
       resetToNewMode();
       hideFormContent();
+      if (DOM.emailCheckingNotice) DOM.emailCheckingNotice.classList.add('hidden');
       if (AppState.email.length > 0) {
         DOM.emailStatusBadge.className = 'text-[11px] font-semibold text-amber-700';
         DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>รูปแบบอีเมลไม่ถูกต้อง';
@@ -1436,7 +1441,12 @@ function startPeriodicCacheSync() {
 }
 
 function applyExistingOrders(ordersList, initialIndex = 0) {
-  DOM.emailLoadingSpinner.classList.add('hidden');
+  if (DOM.emailLoadingSpinner) DOM.emailLoadingSpinner.classList.add('hidden');
+  if (DOM.emailCheckingNotice) DOM.emailCheckingNotice.classList.add('hidden');
+  const btnClearEmail = document.getElementById('btnClearEmail');
+  if (btnClearEmail && DOM.inputEmail && DOM.inputEmail.value.trim().length > 0) {
+    btnClearEmail.classList.remove('hidden');
+  }
   AppState.userOrders = ordersList || [];
   AppState.selectedOrderIndex = initialIndex;
 
@@ -1518,7 +1528,12 @@ function applyExistingOrder(record) {
 }
 
 function applyNewOrderPrompt() {
-  DOM.emailLoadingSpinner.classList.add('hidden');
+  if (DOM.emailLoadingSpinner) DOM.emailLoadingSpinner.classList.add('hidden');
+  if (DOM.emailCheckingNotice) DOM.emailCheckingNotice.classList.add('hidden');
+  const btnClearEmail = document.getElementById('btnClearEmail');
+  if (btnClearEmail && DOM.inputEmail && DOM.inputEmail.value.trim().length > 0) {
+    btnClearEmail.classList.remove('hidden');
+  }
   AppState.userOrders = [];
   AppState.selectedOrderIndex = 0;
   const multiSection = document.getElementById('multiOrderSection');
@@ -1538,8 +1553,11 @@ function applyNewOrderPrompt() {
 }
 
 async function lookupEmailAndShowForm(email) {
-  DOM.emailLoadingSpinner.classList.remove('hidden');
+  if (DOM.emailLoadingSpinner) DOM.emailLoadingSpinner.classList.remove('hidden');
+  if (DOM.emailCheckingNotice) DOM.emailCheckingNotice.classList.remove('hidden');
   DOM.emailStatusBadge.classList.add('hidden');
+  const btnClearEmail = document.getElementById('btnClearEmail');
+  if (btnClearEmail) btnClearEmail.classList.add('hidden');
 
   const normalizedKey = (email || '').trim().toLowerCase();
 
