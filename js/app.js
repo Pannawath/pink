@@ -80,8 +80,10 @@ const DOM = {
   sizeBtns: document.querySelectorAll('.size-btn'),
   quickSelectSizeBtns: document.querySelectorAll('.btn-quick-select-size'),
 
-  // Mode Banner
+  // Mode Banner & Purchased Status
   modeStatusBanner: document.getElementById('modeStatusBanner'),
+  purchasedStatusCard: document.getElementById('purchasedStatusCard'),
+  purchasedStatusBadge: document.getElementById('purchasedStatusBadge'),
   btnCancelEditMode: document.getElementById('btnCancelEditMode'),
   btnOrderAnother: document.getElementById('btnOrderAnother'),
   paymentStatusDisplay: document.getElementById('paymentStatusDisplay'),
@@ -1621,23 +1623,28 @@ function syncEditModeSlip(orderRecord) {
 }
 
 function updateEditModeBanners(orderRecord) {
-  DOM.modeStatusBanner.classList.remove('hidden');
+  if (DOM.modeStatusBanner) DOM.modeStatusBanner.classList.add('hidden');
   if (DOM.submitButtonSection) DOM.submitButtonSection.style.display = 'none';
 
-  if (!orderRecord.status) {
-    DOM.paymentStatusDisplay.classList.add('hidden');
-    return;
+  const card = document.getElementById('purchasedStatusCard');
+  const badge = document.getElementById('purchasedStatusBadge');
+  if (card) {
+    card.classList.remove('hidden');
+  }
+  if (badge) {
+    const statusText = orderRecord.status || 'รอตรวจสอบสลิป';
+    badge.textContent = statusText;
+    if (statusText.indexOf('ชำระเงินสำเร็จ') >= 0 || statusText.indexOf('ตรวจสอบแล้ว') >= 0) {
+      badge.className = 'text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30';
+    } else if (statusText.indexOf('รอตรวจสอบ') >= 0) {
+      badge.className = 'text-[10px] font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30';
+    } else {
+      badge.className = 'text-[10px] font-bold text-slate-300 bg-slate-500/20 px-2 py-0.5 rounded-full border border-slate-500/30';
+    }
   }
 
-  DOM.paymentStatusDisplay.classList.remove('hidden');
-  DOM.paymentStatusText.textContent = orderRecord.status;
-
-  if (orderRecord.status.indexOf('ชำระเงินสำเร็จ') >= 0 || orderRecord.status.indexOf('ตรวจสอบแล้ว') >= 0) {
-    DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-200/70 text-emerald-900';
-  } else if (orderRecord.status.indexOf('รอตรวจสอบ') >= 0) {
-    DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-amber-200/70 text-amber-900';
-  } else {
-    DOM.paymentStatusText.className = 'text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-700';
+  if (DOM.paymentStatusDisplay) {
+    DOM.paymentStatusDisplay.classList.add('hidden');
   }
 }
 
@@ -1720,13 +1727,16 @@ function switchToOrderAnother() {
   unlockFormFieldsForInput();
   renderSlipPreview();
 
-  DOM.modeStatusBanner.classList.remove('hidden');
-  DOM.paymentStatusDisplay.classList.add('hidden');
+  if (DOM.modeStatusBanner) DOM.modeStatusBanner.classList.add('hidden');
+  const card = document.getElementById('purchasedStatusCard');
+  if (card) card.classList.add('hidden');
+  if (DOM.paymentStatusDisplay) DOM.paymentStatusDisplay.classList.add('hidden');
   DOM.btnSubmitText.textContent = 'ยืนยันการสั่งจองเสื้อตัวนี้ (เมลเดิม)';
   DOM.btnSubmitIcon.className = 'fa-solid fa-cart-plus mr-1.5';
 
   updateLivePreview();
   showToast('เปิดฟอร์มสำหรับสั่งเสื้อเพิ่มอีกตัวด้วยอีเมลเดิมเรียบร้อยแล้ว', 'success');
+  goToStep(1, false);
   if (DOM.inputScreenName) DOM.inputScreenName.focus();
 }
 
@@ -1772,8 +1782,10 @@ function resetToNewMode() {
   renderSlipPreview();
   
   // Update button text
-  DOM.modeStatusBanner.classList.add('hidden');
-  DOM.paymentStatusDisplay.classList.add('hidden');
+  if (DOM.modeStatusBanner) DOM.modeStatusBanner.classList.add('hidden');
+  const card = document.getElementById('purchasedStatusCard');
+  if (card) card.classList.add('hidden');
+  if (DOM.paymentStatusDisplay) DOM.paymentStatusDisplay.classList.add('hidden');
   DOM.btnSubmitText.textContent = 'ยืนยันการสั่งจองและส่งสลิป';
   DOM.btnSubmitIcon.className = 'fa-solid fa-check mr-1.5';
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.remove('hidden');

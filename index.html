@@ -170,32 +170,6 @@
     
     
 
-    <!-- Mode Status Alert Banner (Shown when email matches past record) -->
-    <div id="modeStatusBanner"
-      class="apple-glass-card p-4 border border-emerald-300/80 bg-emerald-50/80 text-emerald-900 flex items-center justify-between gap-4 hidden transition-all duration-300">
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 rounded-xl bg-emerald-200 text-emerald-800 flex items-center justify-center text-sm shrink-0">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <div>
-          <span class="text-xs font-bold text-emerald-900 block">พบประวัติการสั่งจองของคุณ</span>
-          <p class="text-[11px] text-emerald-800/90">ระบบดึงข้อมูลเสื้อและสถานะคำสั่งซื้อของคุณมาแสดงเรียบร้อยแล้ว</p>
-          <div id="paymentStatusDisplay" class="mt-2 hidden">
-            <span class="text-xs font-semibold text-amber-900 mr-2">สถานะการชำระเงิน:</span>
-            <span id="paymentStatusText" class="text-xs font-bold px-2 py-0.5 rounded-md bg-amber-200/70 text-amber-900"></span>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button type="button" id="btnOrderAnother"
-          class="text-xs font-bold text-white px-3 py-1.5 rounded-xl bg-pink-600 hover:bg-pink-700 cursor-pointer shadow-xs transition flex items-center gap-1.5">
-          <i class="fa-solid fa-plus text-[10px]"></i>
-          <span>สั่งเพิ่มอีกตัว</span>
-        </button>
-        
-      </div>
-    </div>
-
     <!-- 2-COLUMN STUDIO LAYOUT -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
@@ -354,6 +328,29 @@
 
           <!-- 2. Form Content (Hidden until email is valid) -->
           <div id="formContentSection" class="space-y-4 hidden">
+
+            <!-- 2.0 Purchased Status Card (Shown when user has ordered before) -->
+            <div id="purchasedStatusCard" class="hidden studio-subcard p-4 rounded-2xl border border-emerald-500/40 bg-gradient-to-r from-emerald-950/30 to-slate-900/50 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-circle-check"></i>
+                  </div>
+                  <div>
+                    <span class="text-base sm:text-lg font-black tracking-wide text-white uppercase flex items-center gap-2">
+                      <span>ซื้อแล้ว</span>
+                      <span id="purchasedStatusBadge" class="text-[10px] font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">รอตรวจสอบสลิป</span>
+                    </span>
+                    <p class="text-[11px] text-slate-400">คุณเคยสั่งจองเสื้อด้วยอีเมลนี้แล้ว สามารถตรวจสอบข้อมูลหรือสั่งเพิ่มได้</p>
+                  </div>
+                </div>
+                <button type="button" id="btnOrderAnother"
+                  class="shrink-0 text-xs font-bold text-white px-3.5 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 active:scale-95 cursor-pointer shadow-md shadow-pink-600/20 transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-plus text-xs"></i>
+                  <span>สั่งเพิ่มอีกตัว</span>
+                </button>
+              </div>
+            </div>
 
             <!-- 2.0 Multi-Order Switcher Bar (Appears when email has multiple shirts) -->
             <div id="multiOrderSection" class="hidden studio-subcard p-3 rounded-2xl space-y-2 border border-pink-500/30 bg-pink-950/10">
