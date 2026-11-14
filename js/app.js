@@ -48,7 +48,10 @@ const AppState = {
   existingRecord: null,
   orders: [],
   ordersCache: new Map(),
-  isCacheReady: false
+  isCacheReady: false,
+  currentStep: 1,
+  userOrders: [],
+  selectedOrderIndex: 0
 };
 
 // ==========================================
@@ -495,6 +498,7 @@ function bindEvents() {
   initSlipUploadEvents();
   bindMobileScrollCollapse();
   bindModalAccessibilityEvents();
+  bindWizardEvents();
 }
 
 // ==========================================
@@ -1383,15 +1387,81 @@ function startPeriodicCacheSync() {
   // Background polling removed to protect student privacy and conserve quota.
 }
 
-function applyExistingOrder(record) {
+function applyExistingOrders(ordersList, initialIndex = 0) {
   DOM.emailLoadingSpinner.classList.add('hidden');
-  switchToEditMode(record);
-  showFormContent();
-  showToast('พบข้อมูลเดิม ดึงข้อมูลมาให้เรียบร้อยแล้ว', 'success');
+  AppState.userOrders = ordersList || [];
+  AppState.selectedOrderIndex = initialIndex;
+
+  renderMultiOrderTabs();
+
+  const record = AppState.userOrders[initialIndex] || AppState.userOrders[0];
+  if (record) {
+    switchToEditMode(record);
+    showFormContent();
+    goToStep(1, false);
+    updateWizardRecap();
+    const countMsg = AppState.userOrders.length > 1 ? ` (พบทั้งหมด ${AppState.userOrders.length} ตัว)` : '';
+    showToast(`พบข้อมูลเดิม ดึงข้อมูลมาให้เรียบร้อยแล้ว${countMsg}`, 'success');
+  }
+}
+
+function renderMultiOrderTabs() {
+  const container = document.getElementById('multiOrderSection');
+  const tabsList = document.getElementById('multiOrderTabs');
+  const countEl = document.getElementById('multiOrderCount');
+
+  if (!container || !tabsList) return;
+
+  if (!AppState.userOrders || AppState.userOrders.length <= 1) {
+    container.classList.add('hidden');
+    return;
+  }
+
+  container.classList.remove('hidden');
+  if (countEl) countEl.textContent = AppState.userOrders.length;
+  tabsList.innerHTML = '';
+
+  AppState.userOrders.forEach((ord, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `order-tab-pill ${idx === AppState.selectedOrderIndex ? 'active' : ''}`;
+    const screenNameDisplay = ord.name || ord.screenName || 'ไม่มีชื่อ';
+    const sizeDisplay = ord.size || 'L';
+    btn.innerHTML = `<i class="fa-solid fa-shirt mr-1.5 opacity-70"></i>ตัวที่ ${idx + 1}: ${screenNameDisplay} (${sizeDisplay})`;
+    btn.addEventListener('click', () => {
+      switchSelectedOrder(idx);
+    });
+    tabsList.appendChild(btn);
+  });
+}
+
+function switchSelectedOrder(index) {
+  if (index < 0 || index >= AppState.userOrders.length) return;
+  AppState.selectedOrderIndex = index;
+  const targetRecord = AppState.userOrders[index];
+
+  // Update tabs UI
+  const tabBtns = document.querySelectorAll('#multiOrderTabs .order-tab-pill');
+  tabBtns.forEach((btn, idx) => {
+    btn.classList.toggle('active', idx === index);
+  });
+
+  switchToEditMode(targetRecord);
+  goToStep(1, false);
+  updateWizardRecap();
+  showToast(`สลับไปดูเสื้อตัวที่ ${index + 1} (${targetRecord.name || 'ไม่ระบุชื่อ'}) แล้ว`, 'info');
+}
+
+function applyExistingOrder(record) {
+  applyExistingOrders([record], 0);
 }
 
 function applyNewOrderPrompt() {
   DOM.emailLoadingSpinner.classList.add('hidden');
+  AppState.userOrders = [];
+  AppState.selectedOrderIndex = 0;
+  const multiSection = document.getElementById('multiOrderSection');
+  if (multiSection) multiSection.classList.add('hidden');
   resetToNewMode();
   hideFormContent();
   DOM.emailStatusBadge.classList.remove('hidden');
@@ -1406,15 +1476,20 @@ async function lookupEmailAndShowForm(email) {
 
   const normalizedKey = (email || '').trim().toLowerCase();
 
-  // Instant Check from 30s background cache
+  // Instant Check from background cache
   if (AppState.ordersCache.has(normalizedKey)) {
     const cachedItem = AppState.ordersCache.get(normalizedKey);
-    const orderRecord = buildOrderRecordFromRaw(cachedItem, email);
-    applyExistingOrder(orderRecord);
+    let ordersList = [];
+    if (Array.isArray(cachedItem)) {
+      ordersList = cachedItem.map(item => buildOrderRecordFromRaw(item, email));
+    } else {
+      ordersList = [buildOrderRecordFromRaw(cachedItem, email)];
+    }
+    applyExistingOrders(ordersList, 0);
     return;
   }
 
-  // Fallback to Live GAS fetch if not found in cache or cache not yet ready
+  // Live GAS fetch
   if (AppState.gasUrl) {
     try {
       const searchUrl = `${AppState.gasUrl}?action=search&email=${encodeURIComponent(email)}`;
@@ -1428,11 +1503,20 @@ async function lookupEmailAndShowForm(email) {
         return;
       }
 
-      if (result && result.found && result.data) {
-        const orderRecord = buildOrderRecordFromRaw(result.data, email);
-        AppState.ordersCache.set(normalizedKey, result.data);
-        applyExistingOrder(orderRecord);
-        return;
+      if (result && result.found) {
+        let ordersList = [];
+        if (result.orders && Array.isArray(result.orders) && result.orders.length > 0) {
+          ordersList = result.orders.map(raw => buildOrderRecordFromRaw(raw, email));
+          AppState.ordersCache.set(normalizedKey, result.orders);
+        } else if (result.data) {
+          ordersList = [buildOrderRecordFromRaw(result.data, email)];
+          AppState.ordersCache.set(normalizedKey, result.data);
+        }
+
+        if (ordersList.length > 0) {
+          applyExistingOrders(ordersList, 0);
+          return;
+        }
       }
 
       applyNewOrderPrompt();
@@ -2297,3 +2381,168 @@ function preloadHighResImages() {
 }
 
 
+
+
+// ==========================================
+// WIZARD MULTI-STEP LOGIC & STEP VALIDATION
+// ==========================================
+function validateStep(stepNumber) {
+  let isValid = true;
+  document.querySelectorAll('.field-error-message').forEach(el => el.remove());
+
+  if (stepNumber === 1) {
+    // Validate Classroom
+    const classroom = DOM.selectClassroom ? DOM.selectClassroom.value : '';
+    if (!classroom) {
+      if (DOM.selectClassroom) showFieldError(DOM.selectClassroom, 'กรุณาเลือกระดับชั้น / ห้องเรียน');
+      isValid = false;
+    }
+
+    // Validate Student Number
+    const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
+    const studentNumPattern = /^[0-9]{1,2}[กข]$/;
+    if (!studentNumber) {
+      if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'กรุณากรอกเลขที่ตามด้วย ก หรือ ข (เช่น 15ก หรือ 22ข)');
+      isValid = false;
+    } else if (!studentNumPattern.test(studentNumber)) {
+      if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'ต้องระบุเลขที่ตามด้วย ก หรือ ข เท่านั้น (เช่น 15ก หรือ 22ข)');
+      isValid = false;
+    }
+  } else if (stepNumber === 2) {
+    // Validate Screen Name
+    const name = DOM.inputScreenName ? DOM.inputScreenName.value.trim() : '';
+    const englishNamePattern = /^[a-zA-Z\s]+$/;
+    if (!name) {
+      if (DOM.inputScreenName) showFieldError(DOM.inputScreenName, 'กรุณากรอกชื่อที่ต้องการสกรีน (A-Z)');
+      isValid = false;
+    } else if (!englishNamePattern.test(name)) {
+      if (DOM.inputScreenName) showFieldError(DOM.inputScreenName, 'ชื่อต้องเป็นภาษาอังกฤษเท่านั้น (A-Z)');
+      isValid = false;
+    } else if (name.length > 16) {
+      if (DOM.inputScreenName) showFieldError(DOM.inputScreenName, 'ชื่อยาวเกิน 16 ตัวอักษร');
+      isValid = false;
+    }
+
+    // Validate Screen Number
+    const number = DOM.inputScreenNumber ? DOM.inputScreenNumber.value.trim() : '';
+    if (!number) {
+      if (DOM.inputScreenNumber) showFieldError(DOM.inputScreenNumber, 'กรุณากรอกเบอร์เสื้อ (0-99)');
+      isValid = false;
+    } else {
+      const numValue = parseInt(number, 10);
+      if (isNaN(numValue) || numValue < 0 || numValue > 99) {
+        if (DOM.inputScreenNumber) showFieldError(DOM.inputScreenNumber, 'เบอร์ต้องอยู่ระหว่าง 0-99 เท่านั้น');
+        isValid = false;
+      }
+    }
+  } else if (stepNumber === 3) {
+    if (!AppState.size) {
+      showToast('กรุณาเลือกไซส์เสื้อ', 'warning');
+      isValid = false;
+    }
+  }
+
+  return isValid;
+}
+
+function updateWizardRecap() {
+  const recapClassNum = document.getElementById('recapClassNum');
+  const recapScreenName = document.getElementById('recapScreenName');
+  const recapScreenNumber = document.getElementById('recapScreenNumber');
+  const recapSize = document.getElementById('recapSize');
+
+  if (recapClassNum) {
+    const room = DOM.selectClassroom && DOM.selectClassroom.value ? `ม.${DOM.selectClassroom.value}` : 'ไม่ระบุห้อง';
+    const num = DOM.inputStudentNumber && DOM.inputStudentNumber.value ? `เลขที่ ${DOM.inputStudentNumber.value}` : '';
+    recapClassNum.textContent = `${room} ${num}`.trim();
+  }
+
+  if (recapScreenName) {
+    recapScreenName.textContent = (DOM.inputScreenName && DOM.inputScreenName.value.trim()) || 'YOUR NAME';
+  }
+
+  if (recapScreenNumber) {
+    recapScreenNumber.textContent = (DOM.inputScreenNumber && DOM.inputScreenNumber.value.trim()) || '10';
+  }
+
+  if (recapSize) {
+    recapSize.textContent = AppState.size || 'L';
+  }
+}
+
+function goToStep(targetStep, validateCurrent = true) {
+  targetStep = parseInt(targetStep, 10);
+  if (isNaN(targetStep) || targetStep < 1 || targetStep > 4) return;
+
+  if (validateCurrent && targetStep > AppState.currentStep) {
+    for (let s = AppState.currentStep; s < targetStep; s++) {
+      if (!validateStep(s)) {
+        return;
+      }
+    }
+  }
+
+  AppState.currentStep = targetStep;
+
+  // Show/hide step panes
+  for (let s = 1; s <= 4; s++) {
+    const pane = document.getElementById(`wizardStepPane${s}`);
+    if (pane) {
+      pane.classList.toggle('hidden', s !== targetStep);
+    }
+  }
+
+  // Update Stepper header buttons
+  const stepButtons = document.querySelectorAll('#wizardStepper .wizard-step-btn');
+  stepButtons.forEach((btn, idx) => {
+    const stepNum = idx + 1;
+    btn.classList.toggle('active', stepNum === targetStep);
+    btn.classList.toggle('completed', stepNum < targetStep);
+  });
+
+  if (targetStep === 4) {
+    updateWizardRecap();
+    if (AppState.mode === 'new') {
+      if (DOM.submitButtonSection) DOM.submitButtonSection.classList.remove('hidden');
+    }
+  }
+
+  // Smooth scroll up to wizard container for smooth UX
+  const wizardContainer = document.getElementById('wizardStepper');
+  if (wizardContainer) {
+    wizardContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function bindWizardEvents() {
+  // Stepper Header Buttons
+  const stepButtons = document.querySelectorAll('#wizardStepper .wizard-step-btn');
+  stepButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-step-target');
+      if (target) {
+        goToStep(parseInt(target, 10), true);
+      }
+    });
+  });
+
+  // Next Buttons
+  document.querySelectorAll('.btn-step-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nextStep = btn.getAttribute('data-next');
+      if (nextStep) {
+        goToStep(parseInt(nextStep, 10), true);
+      }
+    });
+  });
+
+  // Previous Buttons
+  document.querySelectorAll('.btn-step-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prevStep = btn.getAttribute('data-prev');
+      if (prevStep) {
+        goToStep(parseInt(prevStep, 10), false);
+      }
+    });
+  });
+}

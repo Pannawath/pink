@@ -355,301 +355,418 @@
           <!-- 2. Form Content (Hidden until email is valid) -->
           <div id="formContentSection" class="space-y-4 hidden">
 
-          <!-- 2.1 ข้อมูลนักเรียนสำหรับการจัดส่งและตรวจสอบรายชื่อ -->
-          <div class="studio-subcard p-3.5 rounded-2xl space-y-3">
-            <div class="flex items-center justify-between border-b pb-2">
-              <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <i class="fa-solid fa-id-card text-slate-500"></i>
-                <span>ข้อมูลนักเรียน (สำหรับจัดส่ง/เช็กชื่อ)</span>
-              </span>
-            </div>
-
-            <!-- Row 1: ระดับชั้น/ห้องเรียน + เลขที่ -->
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-              <!-- Classroom Selection -->
-              <div class="sm:col-span-7 space-y-1">
-                <label for="selectClassroom" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
-                  <span>ห้องเรียน</span> <span class="text-red-500">*</span>
-                </label>
-                <div class="relative">
-                  <select id="selectClassroom" required
-                    class="apple-glass-input w-full px-3 py-2 text-sm font-semibold text-slate-800 appearance-none cursor-pointer pr-8">
-                    <option value="" disabled selected>เลือกห้องเรียน...</option>
-                    <optgroup label="ม.1">
-                      <option value="1/2">ม.1/2</option>
-                      <option value="1/9">ม.1/9</option>
-                      <option value="1/12">ม.1/12</option>
-                    </optgroup>
-                    <optgroup label="ม.2">
-                      <option value="2/3">ม.2/3</option>
-                      <option value="2/6">ม.2/6</option>
-                      <option value="2/13">ม.2/13</option>
-                      <option value="2/16">ม.2/16</option>
-                    </optgroup>
-                    <optgroup label="ม.3">
-                      <option value="3/1">ม.3/1</option>
-                      <option value="3/7">ม.3/7</option>
-                      <option value="3/10">ม.3/10</option>
-                      <option value="3/17">ม.3/17</option>
-                    </optgroup>
-                    <optgroup label="ม.4">
-                      <option value="4/4">ม.4/4</option>
-                      <option value="4/11">ม.4/11</option>
-                      <option value="4/14">ม.4/14</option>
-                      <option value="4/17">ม.4/17</option>
-                    </optgroup>
-                    <optgroup label="ม.5">
-                      <option value="5/3">ม.5/3</option>
-                      <option value="5/10">ม.5/10</option>
-                      <option value="5/13">ม.5/13</option>
-                    </optgroup>
-                    <optgroup label="ม.6">
-                      <option value="6/4">ม.6/4</option>
-                      <option value="6/7">ม.6/7</option>
-                      <option value="6/14">ม.6/14</option>
-                    </optgroup>
-                  </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Student Number Input (บังคับระบุ ก หรือ ข) -->
-              <div class="sm:col-span-5 space-y-1">
-                <label for="inputStudentNumber" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
-                  <span>เลขที่ (ต้องมี ก หรือ ข)</span> <span class="text-red-500">*</span>
-                </label>
-                <input type="text" id="inputStudentNumber" placeholder="เช่น 15ก, 22ข, 1ก" 
-                  maxlength="4" 
-                  required
-                  pattern="^[0-9]{1,2}[กข]$"
-                  title="กรุณากรอกเลขที่ตามด้วย ก หรือ ข เท่านั้น เช่น 15ก หรือ 22ข"
-                  class="apple-glass-input w-full px-3 py-2 text-sm font-semibold text-slate-900 text-center">
-                <p class="text-[10px] text-pink-600 font-medium">ระบุตัวเลขตามด้วย ก หรือ ข (เช่น 15ก)</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 2.2 Personalization: Screen Name & Number (สกรีนบนเสื้อจริง) -->
-          <div class="studio-subcard p-3.5 rounded-2xl space-y-3">
-            <div class="flex items-center justify-between border-b pb-2">
-              <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <i class="fa-solid fa-shirt text-slate-500"></i>
-                <span>ข้อความสกรีนบนตัวเสื้อ</span>
-              </span>
-              <span class="text-[10px] text-slate-500 px-2 py-0.5 rounded-full font-medium">
-                * ดูพรีวิวสดได้ที่รูปเสื้อด้านบน
-              </span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-              <!-- Name Input -->
-              <div class="sm:col-span-8 space-y-1">
-                <div class="flex items-center justify-between">
-                  <label for="inputScreenName" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
-                    <span>ชื่อสกรีนหลังเสื้อ (A-Z)</span> <span class="text-red-500">*</span>
-                  </label>
-                  <button type="button" id="btnCapsName" class="hidden"
-                    class="text-[10px] text-pink-600 hover:text-pink-700 font-semibold cursor-pointer">
-                    A-Z
-                  </button>
-                </div>
-                <input type="text" id="inputScreenName" placeholder="MESSI, RONALDO" 
-                  maxlength="16" 
-                  required
-                  minlength="1"
-                  pattern="^[a-zA-Z\s]+$"
-                  title="กรุณากรอกภาษาอังกฤษเท่านั้น (A-Z)"
-                  class="apple-glass-input w-full px-3.5 py-2 text-sm uppercase tracking-wider font-semibold font-cmu-name">
-              </div>
-
-              <!-- Number Input -->
-              <div class="sm:col-span-4 space-y-1">
-                <div class="flex items-center justify-between">
-                  <label for="inputScreenNumber" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
-                    <span>เบอร์เสื้อ</span> <span class="text-red-500">*</span>
-                  </label>
-                  <button type="button" id="btnRandomNumber" title="สุ่มเบอร์โชคดีวันนี้" style="display: none !important;"
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500/10 to-rose-500/10 hover:from-pink-500/20 hover:to-rose-500/20 border border-pink-300/60 text-[11px] text-pink-700 font-bold transition active:scale-95 cursor-pointer shadow-xs">
-                    <i class="fa-solid fa-dice text-pink-600 transition-transform"></i>
-                    <span>โชคดีวันนี้</span>
-                  </button>
-                </div>
-                <input type="number" id="inputScreenNumber" placeholder="10" 
-                  min="0" 
-                  max="99" 
-                  required
-                  title="กรุณากรอกเบอร์เสื้อ (0-99)"
-                  class="apple-glass-input w-full px-3.5 py-2 text-sm font-black font-mono text-slate-950 text-center">
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. Size Selector (2S to 5XL) -->
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-700">
-                ขนาดเสื้อ (Singha Design Size)
-              </label>
-              <button type="button" id="btnOpenSizeGuideLink"
-                class="text-[11px] text-slate-700 hover:text-slate-900 font-semibold cursor-pointer">
-                ดูขนาดรอบอก &rarr;
-              </button>
-            </div>
-
-            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-              <button type="button" data-size="SS" class="size-btn apple-size-btn py-2 text-center text-xs">SS
-                (34")</button>
-              <button type="button" data-size="S" class="size-btn apple-size-btn py-2 text-center text-xs">S
-                (36")</button>
-              <button type="button" data-size="M" class="size-btn apple-size-btn py-2 text-center text-xs">M
-                (38")</button>
-              <button type="button" data-size="L" class="size-btn apple-size-btn py-2 text-center text-xs active">L
-                (40")</button>
-              <button type="button" data-size="XL" class="size-btn apple-size-btn py-2 text-center text-xs">XL
-                (42")</button>
-              <button type="button" data-size="2XL" class="size-btn apple-size-btn py-2 text-center text-xs">2XL
-                (44")</button>
-              <button type="button" data-size="3XL" class="size-btn apple-size-btn py-2 text-center text-xs">3XL
-                (46")</button>
-              <button type="button" data-size="4XL" class="size-btn apple-size-btn py-2 text-center text-xs">4XL
-                (48")</button>
-              <button type="button" data-size="5XL" class="size-btn apple-size-btn py-2 text-center text-xs">5XL
-                (50")</button>
-              <button type="button" data-size="6XL" class="size-btn apple-size-btn py-2 text-center text-xs">6XL
-                (52")</button>
-            </div>
-          </div>
-
-          <!-- 4. Payment Transfer & Slip Upload Section (หน้าอัปสลิป) -->
-          <div id="slipUploadSection" class="space-y-3 pt-2 border-t border-slate-200/60">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                <i class="fa-solid fa-receipt text-slate-700"></i>
-                <span>หลักฐานการโอนเงิน (สลิปชำระเงิน)</span>
-              </label>
-              <div class="flex items-center gap-2">
-                <span id="orderStatusBadge" class="text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">
-                  <i class="fa-solid fa-hourglass-half mr-1"></i>รอตรวจสอบสลิป
-                </span>
-                <span class="text-[10px] font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-full">
-                  ยอดโอน ฿285
-                </span>
-              </div>
-            </div>
-
-            <!-- Payment Account Info Capsule -->
-            <div class="studio-subcard p-3.5 rounded-2xl text-xs text-slate-700 space-y-2">
+            <!-- 2.0 Multi-Order Switcher Bar (Appears when email has multiple shirts) -->
+            <div id="multiOrderSection" class="hidden studio-subcard p-3 rounded-2xl space-y-2 border border-pink-500/30 bg-pink-950/10">
               <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <div
-                    class="w-7 h-7 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xs font-bold shadow-sm">
-                    <i class="fa-solid fa-qrcode"></i>
-                  </div>
-                  <div>
-                    <span class="font-bold text-slate-900 block text-[11px]">สแกน QR Code ชำระเงิน</span>
-                    <span class="text-[10px] text-slate-500">รองรับทุกแอปธนาคาร / พร้อมเพย์</span>
-                  </div>
-                </div>
-                <button type="button" id="btnCopyAccount"
-                  class="text-[10px] text-slate-800 hover:text-slate-950 bg-white/90 hover:bg-white px-3 py-1.5 rounded-lg border border-slate-200 font-semibold cursor-pointer transition shadow-2xs flex items-center gap-1.5">
-                  <i class="fa-solid fa-qrcode"></i>เปิด QR โค้ด
+                <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-layer-group text-pink-400"></i>
+                  <span>รายการเสื้อที่สั่งด้วยอีเมลนี้ (<span id="multiOrderCount">1</span> ตัว)</span>
+                </span>
+                <span class="text-[10px] text-pink-300 font-semibold">แตะสลับเพื่อดู/แก้ไข</span>
+              </div>
+              <div id="multiOrderTabs" class="flex flex-wrap gap-2 pt-1">
+                <!-- Dynamically populated buttons -->
+              </div>
+            </div>
+
+            <!-- 2.0.1 Modern Stepper Progress Header -->
+            <div id="wizardStepper" class="studio-subcard p-2.5 rounded-2xl bg-slate-900/40 border border-slate-800">
+              <div class="grid grid-cols-4 gap-1.5 sm:gap-2">
+                <button type="button" data-step-target="1" class="wizard-step-btn active flex flex-col items-center py-1.5 px-1 rounded-xl text-center transition cursor-pointer">
+                  <div class="step-badge w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 transition">1</div>
+                  <span class="step-title text-[10px] font-medium truncate w-full">ข้อมูลผู้สั่ง</span>
+                </button>
+                <button type="button" data-step-target="2" class="wizard-step-btn flex flex-col items-center py-1.5 px-1 rounded-xl text-center transition cursor-pointer">
+                  <div class="step-badge w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 transition">2</div>
+                  <span class="step-title text-[10px] font-medium truncate w-full">ลายสกรีน</span>
+                </button>
+                <button type="button" data-step-target="3" class="wizard-step-btn flex flex-col items-center py-1.5 px-1 rounded-xl text-center transition cursor-pointer">
+                  <div class="step-badge w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 transition">3</div>
+                  <span class="step-title text-[10px] font-medium truncate w-full">ขนาดเสื้อ</span>
+                </button>
+                <button type="button" data-step-target="4" class="wizard-step-btn flex flex-col items-center py-1.5 px-1 rounded-xl text-center transition cursor-pointer">
+                  <div class="step-badge w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 transition">4</div>
+                  <span class="step-title text-[10px] font-medium truncate w-full">สรุปและสลิป</span>
                 </button>
               </div>
-              <div class="pt-1.5 border-t flex items-center justify-between text-[11px]">
-                <span class="text-slate-500 font-medium flex items-center gap-1">
-                  <i class="fa-solid fa-shield-check text-slate-500"></i>ชื่อบัญชีผู้รับโอน:
-                </span>
-                <span class="font-bold text-slate-900 bg-white/70 px-2 py-0.5 rounded-md border border-slate-200/70">น.ส. ภัททิยา เมืองวงษ์</span>
-              </div>
             </div>
 
-            <!-- Dropzone (When no slip attached) -->
-            <div id="slipDropzone"
-              class="apple-dropzone rounded-2xl p-4 text-center cursor-pointer transition relative group">
-              <input type="file" id="inputSlipFile" accept="image/*"
-                aria-label="อัปโหลดสลิปการโอนเงิน"
-                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-              <div class="space-y-1.5 pointer-events-none">
-                <div
-                  class="w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center mx-auto group-hover:scale-110 transition duration-200">
-                  <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+            <!-- STEP 1 PANE: ข้อมูลนักเรียน -->
+            <div id="wizardStepPane1" class="wizard-step-pane space-y-4">
+              <div class="studio-subcard p-4 rounded-2xl space-y-3">
+                <div class="flex items-center justify-between border-b pb-2">
+                  <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-id-card text-pink-500"></i>
+                    <span>ขั้นตอนที่ 1 : ข้อมูลนักเรียน (สำหรับจัดส่ง/เช็กชื่อ)</span>
+                  </span>
+                  <span class="text-[10px] text-slate-400 font-mono">1/4</span>
                 </div>
-                <div class="text-xs font-bold text-slate-700">
-                  <span class="text-slate-700">คลิกเพื่อเลือกไฟล์สลิป</span> หรือ ลากไฟล์มาวางที่นี่
-                </div>
-                <p class="text-[10px] text-slate-400">รองรับรูปภาพ JPG, PNG, WEBP</p>
-              </div>
-            </div>
 
-            <!-- Slip Preview Card (Shown when slip is chosen or synced from email) -->
-            <div id="slipPreviewCard"
-              class="hidden apple-glass-card p-3 rounded-2xl border border-white/60 bg-white/20 space-y-2">
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center space-x-2.5 overflow-hidden">
-                  <div
-                    class="relative w-12 h-14 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 cursor-pointer group"
-                    id="btnViewSlipFullscreen" title="คลิกเพื่อดูรูปขยาย">
-                    <img id="slipThumbnailImg" src="" alt="Slip Preview"
-                      class="w-full h-full object-cover group-hover:scale-105 transition">
-                    <div
-                      class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs">
-                      <i class="fa-solid fa-magnifying-glass-plus"></i>
+                <!-- Row 1: ระดับชั้น/ห้องเรียน + เลขที่ -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                  <!-- Classroom Selection -->
+                  <div class="sm:col-span-7 space-y-1">
+                    <label for="selectClassroom" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                      <span>ห้องเรียน</span> <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <select id="selectClassroom" required
+                        class="apple-glass-input w-full px-3 py-2 text-sm font-semibold text-slate-800 appearance-none cursor-pointer pr-8">
+                        <option value="" disabled selected>เลือกห้องเรียน...</option>
+                        <optgroup label="ม.1">
+                          <option value="1/2">ม.1/2</option>
+                          <option value="1/9">ม.1/9</option>
+                          <option value="1/12">ม.1/12</option>
+                        </optgroup>
+                        <optgroup label="ม.2">
+                          <option value="2/3">ม.2/3</option>
+                          <option value="2/6">ม.2/6</option>
+                          <option value="2/13">ม.2/13</option>
+                          <option value="2/16">ม.2/16</option>
+                        </optgroup>
+                        <optgroup label="ม.3">
+                          <option value="3/1">ม.3/1</option>
+                          <option value="3/7">ม.3/7</option>
+                          <option value="3/10">ม.3/10</option>
+                          <option value="3/17">ม.3/17</option>
+                        </optgroup>
+                        <optgroup label="ม.4">
+                          <option value="4/4">ม.4/4</option>
+                          <option value="4/11">ม.4/11</option>
+                          <option value="4/14">ม.4/14</option>
+                          <option value="4/17">ม.4/17</option>
+                        </optgroup>
+                        <optgroup label="ม.5">
+                          <option value="5/3">ม.5/3</option>
+                          <option value="5/10">ม.5/10</option>
+                          <option value="5/13">ม.5/13</option>
+                        </optgroup>
+                        <optgroup label="ม.6">
+                          <option value="6/4">ม.6/4</option>
+                          <option value="6/7">ม.6/7</option>
+                          <option value="6/14">ม.6/14</option>
+                        </optgroup>
+                      </select>
+                      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                      </div>
                     </div>
                   </div>
-                  <div class="truncate">
-                    <span id="slipStatusBadge"
-                      class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md inline-block mb-0.5">
-                      <i class="fa-solid fa-circle-check mr-1"></i>แนบสลิปเรียบร้อยแล้ว
-                    </span>
-                    <p id="slipFileName" class="text-xs font-semibold text-slate-800 truncate max-w-[170px]">
-                      slip_image.png</p>
-                    <p id="slipUploadTime" class="text-[10px] text-slate-400 font-mono">อัปโหลดเมื่อ สักครู่</p>
+
+                  <!-- Student Number Input (บังคับระบุ ก หรือ ข) -->
+                  <div class="sm:col-span-5 space-y-1">
+                    <label for="inputStudentNumber" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                      <span>เลขที่ (ต้องมี ก หรือ ข)</span> <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="inputStudentNumber" placeholder="เช่น 15ก, 22ข, 1ก" 
+                      maxlength="4" 
+                      required
+                      pattern="^[0-9]{1,2}[กข]$"
+                      title="กรุณากรอกเลขที่ตามด้วย ก หรือ ข เท่านั้น เช่น 15ก หรือ 22ข"
+                      class="apple-glass-input w-full px-3 py-2 text-sm font-semibold text-slate-900 text-center">
+                    <p class="text-[10px] text-pink-600 font-medium">ระบุตัวเลขตามด้วย ก หรือ ข (เช่น 15ก)</p>
                   </div>
-                </div>
-                <div class="flex items-center space-x-1 shrink-0">
-                  <button type="button" id="btnChangeSlip"
-                    class="p-2 text-xs rounded-xl text-slate-800 hover:bg-slate-100 transition cursor-pointer"
-                    title="เปลี่ยนรูปสลิป">
-                    <i class="fa-solid fa-arrow-rotate-right"></i>
-                  </button>
-                  <button type="button" id="btnRemoveSlip"
-                    class="p-2 text-xs rounded-xl text-rose-500 hover:bg-rose-50 transition cursor-pointer"
-                    title="ลบสลิป">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
                 </div>
               </div>
 
-              <!-- Automated Recipient Verification Result Box -->
-              <div id="slipVerificationBox" class="mt-2 pt-2 border-t border-slate-200/60 hidden">
-                <div id="slipVerifyingState" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 flex items-center gap-2">
-                  <i class="fa-solid fa-circle-notch fa-spin text-pink-600 text-sm"></i>
-                  <span>กำลังตรวจสอบความถูกต้องของสลิป...</span>
-                </div>
-                <div id="slipVerifiedMatch" class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/90 text-xs text-emerald-800 hidden space-y-1">
-                  <div class="flex items-center gap-1.5 font-bold text-emerald-700">
-                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                    <span>ตรวจสอบใบเสร็จถูกต้อง</span>
-                  </div>
-                  <p class="text-[10px] text-emerald-700">
-                    สลิปถูกต้องสมบูรณ์ สามารถกดยืนยันการสั่งจองด้านล่างได้ทันที
-                  </p>
-                </div>
-                <div id="slipVerifiedMismatch" class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/90 text-xs text-amber-800 hidden space-y-1">
-                  <div class="flex items-center gap-1.5 font-bold text-amber-700">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
-                    <span>ข้อมูลในสลิปไม่ตรง หรือรูปภาพไม่ชัดเจน</span>
-                  </div>
-                  <p class="text-[10px] text-amber-700">
-                    คุณยังคงสามารถกดยืนยันการจองได้ตามปกติ เพื่อให้แอดมินตรวจสอบสลิปในขั้นตอนต่อไป
-                  </p>
-                </div>
+              <!-- Step 1 Actions -->
+              <div class="flex items-center justify-end pt-1">
+                <button type="button" class="btn-step-next apple-btn-primary px-6 py-2.5 text-xs font-bold flex items-center gap-2" data-next="2">
+                  <span>ถัดไป: ข้อความสกรีน</span>
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
               </div>
             </div>
 
-          </div>
+            <!-- STEP 2 PANE: ปรับแต่งสกรีนเสื้อ -->
+            <div id="wizardStepPane2" class="wizard-step-pane space-y-4 hidden">
+              <div class="studio-subcard p-4 rounded-2xl space-y-3">
+                <div class="flex items-center justify-between border-b pb-2">
+                  <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-shirt text-pink-500"></i>
+                    <span>ขั้นตอนที่ 2 : ข้อความสกรีนบนตัวเสื้อ</span>
+                  </span>
+                  <span class="text-[10px] text-slate-400 font-mono">2/4</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                  <!-- Name Input -->
+                  <div class="sm:col-span-8 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <label for="inputScreenName" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                        <span>ชื่อสกรีนหลังเสื้อ (A-Z)</span> <span class="text-red-500">*</span>
+                      </label>
+                      <button type="button" id="btnCapsName" class="hidden"
+                        class="text-[10px] text-pink-600 hover:text-pink-700 font-semibold cursor-pointer">
+                        A-Z
+                      </button>
+                    </div>
+                    <input type="text" id="inputScreenName" placeholder="MESSI, RONALDO" 
+                      maxlength="16" 
+                      required
+                      minlength="1"
+                      pattern="^[a-zA-Z\s]+$"
+                      title="กรุณากรอกภาษาอังกฤษเท่านั้น (A-Z)"
+                      class="apple-glass-input w-full px-3.5 py-2 text-sm uppercase tracking-wider font-semibold font-cmu-name">
+                  </div>
+
+                  <!-- Number Input -->
+                  <div class="sm:col-span-4 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <label for="inputScreenNumber" class="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                        <span>เบอร์เสื้อ</span> <span class="text-red-500">*</span>
+                      </label>
+                      <button type="button" id="btnRandomNumber" title="สุ่มเบอร์โชคดีวันนี้" style="display: none !important;"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500/10 to-rose-500/10 hover:from-pink-500/20 hover:to-rose-500/20 border border-pink-300/60 text-[11px] text-pink-700 font-bold transition active:scale-95 cursor-pointer shadow-xs">
+                        <i class="fa-solid fa-dice text-pink-600 transition-transform"></i>
+                        <span>โชคดีวันนี้</span>
+                      </button>
+                    </div>
+                    <input type="number" id="inputScreenNumber" placeholder="10" 
+                      min="0" 
+                      max="99" 
+                      required
+                      title="กรุณากรอกเบอร์เสื้อ (0-99)"
+                      class="apple-glass-input w-full px-3.5 py-2 text-sm font-black font-mono text-slate-950 text-center">
+                  </div>
+                </div>
+                <p class="text-[10px] text-slate-400 italic">
+                  * ชื่อและเบอร์จะแสดงพรีวิวแบบเรียลไทม์บนตัวเสื้อ 3D ด้านบน
+                </p>
+              </div>
+
+              <!-- Step 2 Actions -->
+              <div class="flex items-center justify-between pt-1">
+                <button type="button" class="btn-step-prev apple-btn-secondary px-5 py-2.5 text-xs font-medium flex items-center gap-2" data-prev="1">
+                  <i class="fa-solid fa-arrow-left text-xs"></i>
+                  <span>ย้อนกลับ</span>
+                </button>
+                <button type="button" class="btn-step-next apple-btn-primary px-6 py-2.5 text-xs font-bold flex items-center gap-2" data-next="3">
+                  <span>ถัดไป: เลือกไซส์</span>
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 3 PANE: ขนาดไซส์เสื้อ -->
+            <div id="wizardStepPane3" class="wizard-step-pane space-y-4 hidden">
+              <div class="studio-subcard p-4 rounded-2xl space-y-3">
+                <div class="flex items-center justify-between border-b pb-2">
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <i class="fa-solid fa-ruler-combined text-pink-500"></i>
+                      <span>ขั้นตอนที่ 3 : ขนาดเสื้อ (Singha Design Size)</span>
+                    </span>
+                    <span class="text-[10px] text-slate-400">เลือกไซส์ที่ต้องการใส่</span>
+                  </div>
+                  <button type="button" id="btnOpenSizeGuideLink"
+                    class="text-[11px] text-pink-600 hover:text-pink-700 font-semibold cursor-pointer">
+                    ดูขนาดรอบอก &rarr;
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 pt-1">
+                  <button type="button" data-size="SS" class="size-btn apple-size-btn py-2 text-center text-xs">SS (34")</button>
+                  <button type="button" data-size="S" class="size-btn apple-size-btn py-2 text-center text-xs">S (36")</button>
+                  <button type="button" data-size="M" class="size-btn apple-size-btn py-2 text-center text-xs">M (38")</button>
+                  <button type="button" data-size="L" class="size-btn apple-size-btn py-2 text-center text-xs active">L (40")</button>
+                  <button type="button" data-size="XL" class="size-btn apple-size-btn py-2 text-center text-xs">XL (42")</button>
+                  <button type="button" data-size="2XL" class="size-btn apple-size-btn py-2 text-center text-xs">2XL (44")</button>
+                  <button type="button" data-size="3XL" class="size-btn apple-size-btn py-2 text-center text-xs">3XL (46")</button>
+                  <button type="button" data-size="4XL" class="size-btn apple-size-btn py-2 text-center text-xs">4XL (48")</button>
+                  <button type="button" data-size="5XL" class="size-btn apple-size-btn py-2 text-center text-xs">5XL (50")</button>
+                  <button type="button" data-size="6XL" class="size-btn apple-size-btn py-2 text-center text-xs">6XL (52")</button>
+                </div>
+              </div>
+
+              <!-- Step 3 Actions -->
+              <div class="flex items-center justify-between pt-1">
+                <button type="button" class="btn-step-prev apple-btn-secondary px-5 py-2.5 text-xs font-medium flex items-center gap-2" data-prev="2">
+                  <i class="fa-solid fa-arrow-left text-xs"></i>
+                  <span>ย้อนกลับ</span>
+                </button>
+                <button type="button" class="btn-step-next apple-btn-primary px-6 py-2.5 text-xs font-bold flex items-center gap-2" data-next="4">
+                  <span>ถัดไป: สรุปยอดและชำระเงิน</span>
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 4 PANE: สรุปและสลิปชำระเงิน -->
+            <div id="wizardStepPane4" class="wizard-step-pane space-y-4 hidden">
+
+              <!-- Order Summary Recap Card (Editable by clicking steps or back) -->
+              <div class="studio-subcard p-4 rounded-2xl space-y-3 bg-slate-900/50 border border-slate-800">
+                <div class="flex items-center justify-between border-b pb-2">
+                  <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-clipboard-check text-emerald-500"></i>
+                    <span>ขั้นตอนที่ 4 : ตรวจสอบสรุปรายการสั่งซื้อ</span>
+                  </span>
+                  <span class="text-xs font-bold text-pink-500 font-mono">฿285</span>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
+                    <span class="text-[10px] text-slate-400 block mb-0.5">ห้องเรียน / เลขที่</span>
+                    <span id="recapClassNum" class="font-bold text-slate-200">ม.6/7 เลขที่ 6ก</span>
+                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(1)">แก้ไข</button>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
+                    <span class="text-[10px] text-slate-400 block mb-0.5">ชื่อสกรีนหลังเสื้อ</span>
+                    <span id="recapScreenName" class="font-bold text-slate-200 uppercase truncate block">SECOND</span>
+                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(2)">แก้ไข</button>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
+                    <span class="text-[10px] text-slate-400 block mb-0.5">เบอร์เสื้อ</span>
+                    <span id="recapScreenNumber" class="font-bold text-slate-200 font-mono block">11</span>
+                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(2)">แก้ไข</button>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
+                    <span class="text-[10px] text-slate-400 block mb-0.5">ขนาดไซส์</span>
+                    <span id="recapSize" class="font-bold text-pink-400 block">L (40")</span>
+                    <button type="button" class="text-[10px] text-pink-400 hover:text-pink-300 block mt-1 underline cursor-pointer" onclick="goToStep(3)">แก้ไข</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment Transfer & Slip Upload Section (หน้าอัปสลิป) -->
+              <div id="slipUploadSection" class="space-y-3 pt-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-receipt text-slate-700"></i>
+                    <span>หลักฐานการโอนเงิน (สลิปชำระเงิน)</span>
+                  </label>
+                  <div class="flex items-center gap-2">
+                    <span id="orderStatusBadge" class="text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">
+                      <i class="fa-solid fa-hourglass-half mr-1"></i>รอตรวจสอบสลิป
+                    </span>
+                    <span class="text-[10px] font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-full">
+                      ยอดโอน ฿285
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Payment Account Info Capsule -->
+                <div class="studio-subcard p-3.5 rounded-2xl text-xs text-slate-700 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                      <div
+                        class="w-7 h-7 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                        <i class="fa-solid fa-qrcode"></i>
+                      </div>
+                      <div>
+                        <span class="font-bold text-slate-900 block text-[11px]">สแกน QR Code ชำระเงิน</span>
+                        <span class="text-[10px] text-slate-500">รองรับทุกแอปธนาคาร / พร้อมเพย์</span>
+                      </div>
+                    </div>
+                    <button type="button" id="btnCopyAccount"
+                      class="text-[10px] text-slate-800 hover:text-slate-950 bg-white/90 hover:bg-white px-3 py-1.5 rounded-lg border border-slate-200 font-semibold cursor-pointer transition shadow-2xs flex items-center gap-1.5">
+                      <i class="fa-solid fa-qrcode"></i>เปิด QR โค้ด
+                    </button>
+                  </div>
+                  <div class="pt-1.5 border-t flex items-center justify-between text-[11px]">
+                    <span class="text-slate-500 font-medium flex items-center gap-1">
+                      <i class="fa-solid fa-shield-check text-slate-500"></i>ชื่อบัญชีผู้รับโอน:
+                    </span>
+                    <span class="font-bold text-slate-900 bg-white/70 px-2 py-0.5 rounded-md border border-slate-200/70">น.ส. ภัททิยา เมืองวงษ์</span>
+                  </div>
+                </div>
+
+                <!-- Dropzone (When no slip attached) -->
+                <div id="slipDropzone"
+                  class="apple-dropzone rounded-2xl p-4 text-center cursor-pointer transition relative group">
+                  <input type="file" id="inputSlipFile" accept="image/*"
+                    aria-label="อัปโหลดสลิปการโอนเงิน"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                  <div class="space-y-1.5 pointer-events-none">
+                    <div
+                      class="w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center mx-auto group-hover:scale-110 transition duration-200">
+                      <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                    </div>
+                    <div class="text-xs font-bold text-slate-700">
+                      <span class="text-slate-700">คลิกเพื่อเลือกไฟล์สลิป</span> หรือ ลากไฟล์มาวางที่นี่
+                    </div>
+                    <p class="text-[10px] text-slate-400">รองรับรูปภาพ JPG, PNG, WEBP</p>
+                  </div>
+                </div>
+
+                <!-- Slip Preview Card (Shown when slip is chosen or synced from email) -->
+                <div id="slipPreviewCard"
+                  class="hidden apple-glass-card p-3 rounded-2xl border border-white/60 bg-white/20 space-y-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center space-x-2.5 overflow-hidden">
+                      <div
+                        class="relative w-12 h-14 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 cursor-pointer group"
+                        id="btnViewSlipFullscreen" title="คลิกเพื่อดูรูปขยาย">
+                        <img id="slipThumbnailImg" src="" alt="Slip Preview"
+                          class="w-full h-full object-cover group-hover:scale-105 transition">
+                        <div
+                          class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs">
+                          <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        </div>
+                      </div>
+                      <div class="truncate">
+                        <span id="slipStatusBadge"
+                          class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md inline-block mb-0.5">
+                          <i class="fa-solid fa-circle-check mr-1"></i>แนบสลิปเรียบร้อยแล้ว
+                        </span>
+                        <p id="slipFileName" class="text-xs font-semibold text-slate-800 truncate max-w-[170px]">
+                          slip_image.png</p>
+                        <p id="slipUploadTime" class="text-[10px] text-slate-400 font-mono">อัปโหลดเมื่อ สักครู่</p>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-1 shrink-0">
+                      <button type="button" id="btnChangeSlip"
+                        class="p-2 text-xs rounded-xl text-slate-800 hover:bg-slate-100 transition cursor-pointer"
+                        title="เปลี่ยนรูปสลิป">
+                        <i class="fa-solid fa-arrow-rotate-right"></i>
+                      </button>
+                      <button type="button" id="btnRemoveSlip"
+                        class="p-2 text-xs rounded-xl text-rose-500 hover:bg-rose-50 transition cursor-pointer"
+                        title="ลบสลิป">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Automated Recipient Verification Result Box -->
+                  <div id="slipVerificationBox" class="mt-2 pt-2 border-t border-slate-200/60 hidden">
+                    <div id="slipVerifyingState" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 flex items-center gap-2">
+                      <i class="fa-solid fa-circle-notch fa-spin text-pink-600 text-sm"></i>
+                      <span>กำลังตรวจสอบความถูกต้องของสลิป...</span>
+                    </div>
+                    <div id="slipVerifiedMatch" class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/90 text-xs text-emerald-800 hidden space-y-1">
+                      <div class="flex items-center gap-1.5 font-bold text-emerald-700">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        <span>ตรวจสอบใบเสร็จถูกต้อง</span>
+                      </div>
+                      <p class="text-[10px] text-emerald-700">
+                        สลิปถูกต้องสมบูรณ์ สามารถกดยืนยันการสั่งจองด้านล่างได้ทันที
+                      </p>
+                    </div>
+                    <div id="slipVerifiedMismatch" class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/90 text-xs text-amber-800 hidden space-y-1">
+                      <div class="flex items-center gap-1.5 font-bold text-amber-700">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                        <span>ข้อมูลในสลิปไม่ตรง หรือรูปภาพไม่ชัดเจน</span>
+                      </div>
+                      <p class="text-[10px] text-amber-700">
+                        คุณยังคงสามารถกดยืนยันการจองได้ตามปกติ เพื่อให้แอดมินตรวจสอบสลิปในขั้นตอนต่อไป
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Step 4 Actions -->
+              <div class="flex items-center justify-between pt-1">
+                <button type="button" class="btn-step-prev apple-btn-secondary px-5 py-2.5 text-xs font-medium flex items-center gap-2" data-prev="3">
+                  <i class="fa-solid fa-arrow-left text-xs"></i>
+                  <span>ย้อนกลับไปแก้ไข</span>
+                </button>
+              </div>
+
+            </div>
 
           </div>
           <!-- End of formContentSection -->

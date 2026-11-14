@@ -280,6 +280,7 @@ function doGet(e) {
     }
 
     if (action === "search" && email) {
+      var foundOrders = [];
       for (var i = 1; i < values.length; i++) {
         var rowEmail = (values[i][colMap.email - 1] || "").toString().trim().toLowerCase();
         if (rowEmail === email) {
@@ -302,29 +303,38 @@ function doGet(e) {
               : "ยังไม่แนบสลิป"
           );
           
-          return createJsonResponse({
-            status: "success",
-            found: true,
-            data: {
-              timestamp: values[i][colMap.timestamp - 1],
-              email: values[i][colMap.email - 1],
-              fullName: colMap.fullName > 0 ? (values[i][colMap.fullName - 1] || "") : "",
-              studentNumber: colMap.studentNumber > 0 ? (values[i][colMap.studentNumber - 1] || "").toString() : "",
-              name: values[i][colMap.name - 1],
-              classroom: values[i][colMap.classroom - 1] || "",
-              number: (values[i][colMap.number - 1] || "").toString(),
-              size: values[i][colMap.size - 1] || "L",
-              hasSlip: hasSlipStatus,
-              slipUrl: slipUrl,
-              status: values[i][colMap.status - 1] || ""
-            }
+          foundOrders.push({
+            rowIndex: i + 1,
+            timestamp: values[i][colMap.timestamp - 1],
+            email: values[i][colMap.email - 1],
+            fullName: colMap.fullName > 0 ? (values[i][colMap.fullName - 1] || "") : "",
+            studentNumber: colMap.studentNumber > 0 ? (values[i][colMap.studentNumber - 1] || "").toString() : "",
+            name: values[i][colMap.name - 1],
+            classroom: values[i][colMap.classroom - 1] || "",
+            number: (values[i][colMap.number - 1] || "").toString(),
+            size: values[i][colMap.size - 1] || "L",
+            hasSlip: hasSlipStatus,
+            slipUrl: slipUrl,
+            status: values[i][colMap.status - 1] || ""
           });
         }
+      }
+
+      if (foundOrders.length > 0) {
+        return createJsonResponse({
+          status: "success",
+          found: true,
+          total: foundOrders.length,
+          data: foundOrders[0],
+          orders: foundOrders
+        });
       }
 
       return createJsonResponse({
         status: "success",
         found: false,
+        total: 0,
+        orders: [],
         message: "Email not found"
       });
     }
