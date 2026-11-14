@@ -367,9 +367,55 @@ function bindPersonalizationEvents() {
 
   if (DOM.selectClassroom) {
     DOM.selectClassroom.addEventListener('change', (event) => {
-      AppState.classroom = event.target.value;
+      const val = event.target.value;
+      const otherSec = document.getElementById('otherStudentSection');
+      const numInput = DOM.inputStudentNumber;
+      const labelNum = document.getElementById('labelStudentNumber');
+      const hintNum = document.getElementById('studentNumberHint');
+
+      if (val === 'OTHER_STUDENT') {
+        if (otherSec) otherSec.classList.remove('hidden');
+        syncCustomClassroomValue();
+        if (labelNum) labelNum.innerHTML = '<span>เลขที่ (มี ก หรือ ข)</span> <span class="text-red-500">*</span>';
+        if (hintNum) hintNum.textContent = 'ระบุตัวเลขตามด้วย ก หรือ ข (เช่น 15ก)';
+        if (numInput) {
+          numInput.placeholder = 'เช่น 15ก, 22ข';
+          numInput.pattern = '^[0-9]{1,2}[กข]$';
+        }
+      } else if (val === 'ครู/บุคลากร' || val === 'บุคคลภายนอก') {
+        if (otherSec) otherSec.classList.add('hidden');
+        AppState.classroom = val;
+        if (labelNum) labelNum.innerHTML = '<span>เบอร์โทร / เลขระบุตัวตน</span> <span class="text-red-500">*</span>';
+        if (hintNum) hintNum.textContent = 'ระบุเบอร์โทรหรือตัวเลขสำหรับติดต่อ/ส่งมอบ';
+        if (numInput) {
+          numInput.placeholder = 'เช่น 0812345678 หรือ 1';
+          numInput.pattern = '.*';
+        }
+      } else {
+        if (otherSec) otherSec.classList.add('hidden');
+        AppState.classroom = val;
+        if (labelNum) labelNum.innerHTML = '<span>เลขที่ (มี ก หรือ ข)</span> <span class="text-red-500">*</span>';
+        if (hintNum) hintNum.textContent = 'ระบุตัวเลขตามด้วย ก หรือ ข (เช่น 15ก)';
+        if (numInput) {
+          numInput.placeholder = 'เช่น 15ก, 22ข, 1ก';
+          numInput.pattern = '^[0-9]{1,2}[กข]$';
+        }
+      }
       clearFieldError(DOM.selectClassroom);
     });
+
+    const gradeSelect = document.getElementById('selectCustomGrade');
+    const roomSelect = document.getElementById('selectCustomRoom');
+    if (gradeSelect) gradeSelect.addEventListener('change', syncCustomClassroomValue);
+    if (roomSelect) roomSelect.addEventListener('change', syncCustomClassroomValue);
+  }
+
+  function syncCustomClassroomValue() {
+    const gradeSelect = document.getElementById('selectCustomGrade');
+    const roomSelect = document.getElementById('selectCustomRoom');
+    if (gradeSelect && roomSelect && DOM.selectClassroom && DOM.selectClassroom.value === 'OTHER_STUDENT') {
+      AppState.classroom = `${gradeSelect.value}/${roomSelect.value}`;
+    }
   }
 
   if (DOM.inputStudentNumber) {
@@ -1477,12 +1523,18 @@ function applyNewOrderPrompt() {
   AppState.selectedOrderIndex = 0;
   const multiSection = document.getElementById('multiOrderSection');
   if (multiSection) multiSection.classList.add('hidden');
+  const card = document.getElementById('purchasedStatusCard');
+  if (card) card.classList.add('hidden');
+
   resetToNewMode();
-  hideFormContent();
+  unlockFormFieldsForInput();
+  showFormContent();
+  goToStep(1, false);
+
   DOM.emailStatusBadge.classList.remove('hidden');
-  DOM.emailStatusBadge.className = 'text-[11px] font-semibold text-rose-600';
-  DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i>ไม่พบประวัติการสั่งจอง (ปิดรับจองแล้ว)';
-  showToast('ไม่พบประวัติการสั่งจองของอีเมลนี้ (ระบบปิดรับการสั่งจองแล้ว)', 'warning');
+  DOM.emailStatusBadge.className = 'text-[11px] font-semibold text-emerald-400';
+  DOM.emailStatusBadge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i>พร้อมสำหรับการสั่งจอง';
+  showToast('ยินดีต้อนรับ! กรุณากรอกข้อมูลเพื่อสั่งจองเสื้อ', 'info');
 }
 
 async function lookupEmailAndShowForm(email) {
@@ -1570,8 +1622,32 @@ function populateEditModeFields(orderRecord) {
     DOM.inputScreenName.style.cursor = 'default';
   }
   if (DOM.selectClassroom) {
-    const normRoom = normalizeClassroom(orderRecord.classroom || '');
-    DOM.selectClassroom.value = normRoom;
+    const rawRoom = (orderRecord.classroom || '').trim();
+    const otherSec = document.getElementById('otherStudentSection');
+    const normRoom = normalizeClassroom(rawRoom);
+    
+    // Check if it matches an existing option in selectClassroom
+    let matched = false;
+    for (let opt of DOM.selectClassroom.options) {
+      if (opt.value === normRoom || opt.value === rawRoom) {
+        DOM.selectClassroom.value = opt.value;
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched && /^\d\/\d+$/.test(normRoom)) {
+      DOM.selectClassroom.value = 'OTHER_STUDENT';
+      if (otherSec) otherSec.classList.remove('hidden');
+      const parts = normRoom.split('/');
+      const gSel = document.getElementById('selectCustomGrade');
+      const rSel = document.getElementById('selectCustomRoom');
+      if (gSel) { gSel.value = parts[0]; gSel.disabled = true; }
+      if (rSel) { rSel.value = parts[1]; rSel.disabled = true; }
+    } else {
+      if (otherSec) otherSec.classList.add('hidden');
+    }
+
     DOM.selectClassroom.disabled = true;
     DOM.selectClassroom.style.backgroundColor = '#f1f5f9';
     DOM.selectClassroom.style.color = '#0f172a';
@@ -1663,20 +1739,26 @@ function updateEditModeBanners(orderRecord) {
 
 
 function unlockFormFieldsForInput() {
-  // Lock classroom and studentNumber as requested
+  // Unlock classroom and studentNumber for free selection
   if (DOM.inputStudentNumber) {
-    DOM.inputStudentNumber.readOnly = true;
-    DOM.inputStudentNumber.style.backgroundColor = 'rgba(241, 245, 249, 0.7)';
-    DOM.inputStudentNumber.style.cursor = 'default';
+    DOM.inputStudentNumber.readOnly = false;
+    DOM.inputStudentNumber.style.backgroundColor = '';
+    DOM.inputStudentNumber.style.cursor = 'text';
   }
   if (DOM.selectClassroom) {
-    DOM.selectClassroom.disabled = true;
-    DOM.selectClassroom.style.backgroundColor = '#f1f5f9';
-    DOM.selectClassroom.style.color = '#0f172a';
-    DOM.selectClassroom.style.webkitTextFillColor = '#0f172a';
+    DOM.selectClassroom.disabled = false;
+    DOM.selectClassroom.style.backgroundColor = '';
+    DOM.selectClassroom.style.color = '';
+    DOM.selectClassroom.style.webkitTextFillColor = '';
     DOM.selectClassroom.style.opacity = '1';
-    DOM.selectClassroom.style.cursor = 'default';
+    DOM.selectClassroom.style.cursor = 'pointer';
   }
+
+  // Unlock custom grade and room if visible
+  const gSel = document.getElementById('selectCustomGrade');
+  const rSel = document.getElementById('selectCustomRoom');
+  if (gSel) gSel.disabled = false;
+  if (rSel) rSel.disabled = false;
 
   // Unlock screenName and screenNumber for the new jersey
   if (DOM.inputScreenName) {
@@ -1869,14 +1951,19 @@ function validateForm() {
     if (!firstErrorField && DOM.selectClassroom) firstErrorField = DOM.selectClassroom;
   }
 
-  // 3. Validate Student Number (เลขที่ - บังคับ 1-60 ตามด้วย ก หรือ ข)
+  // 3. Validate Student Number / Contact Number
   const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
+  const isNonStudent = (classroom === 'ครู/บุคลากร' || classroom === 'บุคคลภายนอก');
   const studentNumPattern = /^[0-9]{1,2}[กข]$/;
+
   if (!studentNumber) {
-    if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'กรุณากรอกเลขที่ตามด้วย ก หรือ ข (เช่น 15ก หรือ 22ข)');
+    const errorMsg = isNonStudent 
+      ? 'กรุณากรอกเบอร์โทรหรือตัวเลขระบุตัวตน' 
+      : 'กรุณากรอกเลขที่ตามด้วย ก หรือ ข (เช่น 15ก หรือ 22ข)';
+    if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, errorMsg);
     isValid = false;
     if (!firstErrorField && DOM.inputStudentNumber) firstErrorField = DOM.inputStudentNumber;
-  } else if (!studentNumPattern.test(studentNumber)) {
+  } else if (!isNonStudent && !studentNumPattern.test(studentNumber)) {
     if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'ต้องระบุเลขที่ตามด้วย ก หรือ ข เท่านั้น (เช่น 15ก หรือ 22ข)');
     isValid = false;
     if (!firstErrorField && DOM.inputStudentNumber) firstErrorField = DOM.inputStudentNumber;
@@ -2043,7 +2130,14 @@ async function handleFormSubmit() {
   const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
   const name = DOM.inputScreenName.value.trim();
   const number = DOM.inputScreenNumber.value.trim();
-  const classroom = DOM.selectClassroom ? DOM.selectClassroom.value : '';
+  
+  let classroom = DOM.selectClassroom ? DOM.selectClassroom.value : '';
+  if (classroom === 'OTHER_STUDENT') {
+    const g = document.getElementById('selectCustomGrade')?.value || '6';
+    const r = document.getElementById('selectCustomRoom')?.value || '1';
+    classroom = `${g}/${r}`;
+  }
+
   const nowTimestamp = new Date().toLocaleString('th-TH');
 
   updateFormSubmissionUI(true);
@@ -2423,13 +2517,18 @@ function validateStep(stepNumber) {
       isValid = false;
     }
 
-    // Validate Student Number
+    // Validate Student Number / Contact Number
     const studentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
+    const isNonStudent = (classroom === 'ครู/บุคลากร' || classroom === 'บุคคลภายนอก');
     const studentNumPattern = /^[0-9]{1,2}[กข]$/;
+
     if (!studentNumber) {
-      if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'กรุณากรอกเลขที่ตามด้วย ก หรือ ข (เช่น 15ก หรือ 22ข)');
+      const errorMsg = isNonStudent 
+        ? 'กรุณากรอกเบอร์โทรหรือตัวเลขระบุตัวตน' 
+        : 'กรุณากรอกเลขที่ตามด้วย ก หรือ ข (เช่น 15ก หรือ 22ข)';
+      if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, errorMsg);
       isValid = false;
-    } else if (!studentNumPattern.test(studentNumber)) {
+    } else if (!isNonStudent && !studentNumPattern.test(studentNumber)) {
       if (DOM.inputStudentNumber) showFieldError(DOM.inputStudentNumber, 'ต้องระบุเลขที่ตามด้วย ก หรือ ข เท่านั้น (เช่น 15ก หรือ 22ข)');
       isValid = false;
     }
@@ -2477,8 +2576,20 @@ function updateWizardRecap() {
   const recapSize = document.getElementById('recapSize');
 
   if (recapClassNum) {
-    const room = DOM.selectClassroom && DOM.selectClassroom.value ? `ม.${DOM.selectClassroom.value}` : 'ไม่ระบุห้อง';
-    const num = DOM.inputStudentNumber && DOM.inputStudentNumber.value ? `เลขที่ ${DOM.inputStudentNumber.value}` : '';
+    let room = 'ไม่ระบุห้อง';
+    if (DOM.selectClassroom) {
+      const val = DOM.selectClassroom.value;
+      if (val === 'OTHER_STUDENT') {
+        const g = document.getElementById('selectCustomGrade')?.value || '6';
+        const r = document.getElementById('selectCustomRoom')?.value || '1';
+        room = `ม.${g}/${r}`;
+      } else if (val === 'ครู/บุคลากร' || val === 'บุคคลภายนอก') {
+        room = val;
+      } else if (val) {
+        room = `ม.${val}`;
+      }
+    }
+    const num = DOM.inputStudentNumber && DOM.inputStudentNumber.value ? `(${DOM.inputStudentNumber.value})` : '';
     recapClassNum.textContent = `${room} ${num}`.trim();
   }
 
