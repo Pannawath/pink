@@ -22,13 +22,13 @@ const JERSEY_CONFIG = {
 // 1. APPLICATION STATE
 // ==========================================
 function _getEndpoint() {
-  const _p = [
-    'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy8=',
-    'QUtmeWNid2p0dFJwWlBmaTlsakxlZ2J1ZnFGY2lGMDRlZkdlSTJ2Z20tb1V3TEhZeG1wWV9SSHZTMVg5VTJvTmg4TzRJb0ha',
-    'L2V4ZWM='
+  const _k = [
+    104,116,116,112,115,58,47,47,115,99,114,105,112,116,46,103,111,111,103,108,101,46,99,111,109,47,109,97,99,114,111,115,47,115,47,
+    65,75,102,121,99,98,119,106,116,116,82,112,90,80,102,105,57,108,106,76,101,103,98,117,102,113,70,99,105,70,48,52,101,102,71,101,73,50,118,103,109,45,111,85,119,76,72,89,120,109,112,89,95,82,72,118,83,49,88,57,85,50,111,78,104,56,79,52,73,111,72,90,
+    47,101,120,101,99
   ];
   try {
-    return typeof atob !== 'undefined' ? _p.map(s => atob(s)).join('') : '';
+    return String.fromCharCode.apply(null, _k);
   } catch (e) {
     return '';
   }
@@ -52,7 +52,7 @@ const AppState = {
   slipChanged: false,
   isSearchingEmail: false,
   isSubmitting: false,
-  gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : _getEndpoint(),
+  gasUrl: _getEndpoint(),
   existingRecord: null,
   orders: [],
   ordersCache: new Map(),
