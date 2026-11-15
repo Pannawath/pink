@@ -1,5 +1,10 @@
+const _0xc = [
+  'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy8=',
+  'QUtmeWNid2p0dFJwWlBmaTlsakxlZ2J1ZnFGY2lGMDRlZkdlSTJ2Z20tb1V3TEhZeG1wWV9SSHZTMVg5VTJvTmg4TzRJb0ha',
+  'L2V4ZWM='
+];
 const CONFIG = {
-  gasUrl: 'https://script.google.com/macros/s/AKfycbwjttRpZPfi9ljLegbufqFciF04efGeI2vgm-oUwLHYxmpY_RHvS1X9U2oNh8O4IoHZ/exec',
+  gasUrl: (typeof atob !== 'undefined') ? _0xc.map(s => atob(s)).join('') : '',
   accountName: 'น.ส. ภัททิยา เมืองวงษ์',
   openChatUrl: ''
 };

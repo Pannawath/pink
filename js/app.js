@@ -21,6 +21,19 @@ const JERSEY_CONFIG = {
 // ==========================================
 // 1. APPLICATION STATE
 // ==========================================
+function _getEndpoint() {
+  const _p = [
+    'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy8=',
+    'QUtmeWNid2p0dFJwWlBmaTlsakxlZ2J1ZnFGY2lGMDRlZkdlSTJ2Z20tb1V3TEhZeG1wWV9SSHZTMVg5VTJvTmg4TzRJb0ha',
+    'L2V4ZWM='
+  ];
+  try {
+    return typeof atob !== 'undefined' ? _p.map(s => atob(s)).join('') : '';
+  } catch (e) {
+    return '';
+  }
+}
+
 const AppState = {
   mode: 'new', // 'new' | 'edit'
   viewSide: 'back', // 'back' | 'front' | 'both'
@@ -30,21 +43,16 @@ const AppState = {
   size: 'L',
   screenName: '',
   screenNumber: '70',
-  paymentStatus: 'pending', // legacy
-  orderStatus: 'รอชำระเงิน', // ค่าสถานะหลักที่บันทึกลง Sheets
-  slipImage: null, // Base64 data URL
+  paymentStatus: 'pending',
+  orderStatus: 'รอชำระเงิน',
+  slipImage: null,
   slipFileName: '',
   slipUploadedAt: null,
-  slipUrl: null, // URL of uploaded slip on Drive
-  slipChanged: false, // Track if slip was changed during edit mode
+  slipUrl: null,
+  slipChanged: false,
   isSearchingEmail: false,
   isSubmitting: false,
-  gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.gasUrl) 
-    ? CONFIG.backend.gasUrl 
-    : ((typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : (localStorage.getItem('PINK_JERSEY_GAS_URL') || 'https://script.google.com/macros/s/AKfycbwjttRpZPfi9ljLegbufqFciF04efGeI2vgm-oUwLHYxmpY_RHvS1X9U2oNh8O4IoHZ/exec')),
-  spreadsheetId: (typeof CONFIG !== 'undefined' && CONFIG.backend && CONFIG.backend.spreadsheetId)
-    ? CONFIG.backend.spreadsheetId
-    : '13qV2hAzFf5a9LpVUQPgcDcpWj7GypL5J8jMH8ttGqJ0',
+  gasUrl: (typeof CONFIG !== 'undefined' && CONFIG.gasUrl) ? CONFIG.gasUrl : _getEndpoint(),
   existingRecord: null,
   orders: [],
   ordersCache: new Map(),
@@ -496,11 +504,15 @@ function bindViewSwitcherEvents() {
 }
 
 function bindOrderActionEvents() {
-  DOM.btnReset.addEventListener('click', () => {
-    if (confirm('คุณต้องการล้างข้อมูลในแบบฟอร์มใช่หรือไม่?')) resetForm();
-  });
+  if (DOM.btnReset) {
+    DOM.btnReset.addEventListener('click', () => {
+      if (confirm('คุณต้องการล้างข้อมูลในแบบฟอร์มใช่หรือไม่?')) resetForm();
+    });
+  }
 
-  DOM.btnSubmit.addEventListener('click', handleFormSubmit);
+  if (DOM.btnSubmit) {
+    DOM.btnSubmit.addEventListener('click', handleFormSubmit);
+  }
 
   if (DOM.btnDownloadJersey) {
     DOM.btnDownloadJersey.addEventListener('click', downloadJerseyMockup);
@@ -522,24 +534,8 @@ function bindOrderActionEvents() {
   });
 }
 
-function bindDatabaseModalEvents() {
-  if (DOM.btnOpenDatabase) DOM.btnOpenDatabase.addEventListener('click', openDatabaseModal);
-  if (DOM.btnCloseDatabase) DOM.btnCloseDatabase.addEventListener('click', closeDatabaseModal);
-  if (DOM.btnCloseDatabaseFooter) DOM.btnCloseDatabaseFooter.addEventListener('click', closeDatabaseModal);
-  if (DOM.btnExportCSV) DOM.btnExportCSV.addEventListener('click', exportOrdersToCSV);
-}
-
-function bindConfigModalEvents() {
-  if (DOM.btnOpenConfig) DOM.btnOpenConfig.addEventListener('click', openConfigModal);
-  if (DOM.btnCloseConfig) DOM.btnCloseConfig.addEventListener('click', closeConfigModal);
-  if (DOM.btnSaveConfig) DOM.btnSaveConfig.addEventListener('click', saveGasConfig);
-  if (DOM.btnTestGas) DOM.btnTestGas.addEventListener('click', testGasConnection);
-}
-
 function bindActionModalEvents() {
   bindOrderActionEvents();
-  bindDatabaseModalEvents();
-  bindConfigModalEvents();
 }
 
 function bindEvents() {
@@ -1361,14 +1357,12 @@ function bindModalAccessibilityEvents() {
 // ==========================================
 function hideFormContent() {
   if (DOM.formContentSection) DOM.formContentSection.classList.add('hidden');
-  if (DOM.submitButtonSection) DOM.submitButtonSection.classList.add('hidden');
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.remove('hidden');
 }
 
 function showFormContent() {
   if (DOM.formContentSection) DOM.formContentSection.classList.remove('hidden');
   if (DOM.paymentStatusSection) DOM.paymentStatusSection.classList.remove('hidden');
-  if (DOM.submitButtonSection) DOM.submitButtonSection.style.display = 'none';
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.add('hidden');
 }
 
@@ -2067,22 +2061,17 @@ function showFieldError(inputElement, message) {
 // ==========================================
 async function fetchDriveImageViaGAS(fileId) {
   try {
-    console.log('[GAS PROXY] Fetching image for fileId:', fileId);
     const url = `${AppState.gasUrl}?action=getImage&fileId=${encodeURIComponent(fileId)}`;
-    
     const response = await fetch(url);
     const driveResponse = await response.json();
     
     if (driveResponse.status === 'success' && driveResponse.image) {
-      console.log('[GAS PROXY] Image fetched successfully, size:', driveResponse.image.length);
-      AppState.slipImage = driveResponse.image; // base64 data URL
+      AppState.slipImage = driveResponse.image;
       renderSlipPreview();
     } else {
-      console.error('[GAS PROXY] Failed:', driveResponse.message);
       showToast('ไม่สามารถโหลดสลิปจาก Google Drive ได้', 'error');
     }
   } catch (err) {
-    console.error('[GAS PROXY] Error:', err);
     showToast('เกิดข้อผิดพลาดในการโหลดสลิป', 'error');
   }
 }
@@ -2169,154 +2158,6 @@ async function handleFormSubmit() {
   AppState.slipChanged = false;
   triggerConfetti();
   showToast(AppState.mode === 'edit' ? 'บันทึกการแก้ไขเรียบร้อยแล้ว!' : 'สั่งจองเสื้อและแนบสลิปสำเร็จ!', 'success');
-}
-
-// ==========================================
-// 9. MODALS & EXPORT
-// ==========================================
-function openDatabaseModal() {
-  renderOrdersList();
-  DOM.modalDatabase.classList.remove('hidden');
-}
-
-function closeDatabaseModal() {
-  DOM.modalDatabase.classList.add('hidden');
-}
-
-function renderOrdersList() {
-  if (AppState.orders.length === 0) {
-    DOM.ordersListContainer.innerHTML = `
-      <div class="text-center py-8 text-slate-400">
-        <i class="fa-solid fa-box-open text-3xl mb-2"></i>
-        <p class="text-xs">ยังไม่มีรายการสั่งจอง</p>
-      </div>`;
-    return;
-  }
-
-  DOM.ordersListContainer.innerHTML = AppState.orders.map((o, idx) => {
-    const safeSlip = sanitizeMediaUrl(o.slipImage);
-    const safeName = esc(o.name);
-    const safeNumber = esc(o.number);
-    const safeSize = esc(o.size);
-    const safeClassroom = esc(o.classroom);
-    const safeEmail = esc(o.email);
-    const safePrice = esc(o.price);
-
-    return `
-    <div class="p-3.5 rounded-2xl bg-white border border-pink-100 shadow-sm flex items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
-        ${safeSlip ? `
-          <div class="w-10 h-12 rounded-lg bg-slate-100 border border-pink-100 overflow-hidden shrink-0 cursor-pointer" onclick="viewOrderSlipFull(${idx})" title="คลิกเพื่อดูสลิป">
-            <img src="${safeSlip}" alt="Slip" class="w-full h-full object-cover">
-          </div>
-        ` : `
-          <div class="w-10 h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-300 text-xs shrink-0" title="ไม่มีสลิป">
-            <i class="fa-solid fa-image"></i>
-          </div>
-        `}
-        <div class="space-y-1">
-          <div class="flex items-center gap-2">
-            <span class="font-black text-slate-900 text-sm font-sport-bold">${safeName}</span>
-            <span class="px-2 py-0.5 rounded-md bg-pink-100 text-pink-700 font-mono font-bold text-xs">#${safeNumber}</span>
-            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs">Size ${safeSize}</span>
-            ${safeClassroom ? `<span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 font-bold text-xs">ห้อง ${safeClassroom}</span>` : ''}
-          </div>
-          <p class="text-[11px] text-slate-500 font-mono">${safeEmail} &bull; ฿${safePrice}</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-1.5">
-        <button onclick="editOrderFromList(${idx})" class="p-2 rounded-lg text-pink-600 hover:bg-pink-50 text-xs font-bold transition cursor-pointer" title="แก้ไข">
-          <i class="fa-solid fa-pen-to-square"></i>
-        </button>
-        <button onclick="deleteOrderFromList(${idx})" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 text-xs font-bold transition cursor-pointer" title="ลบ">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      </div>
-    </div>
-  `;
-  }).join('');
-}
-
-window.viewOrderSlipFull = function (idx) {
-  const order = AppState.orders[idx];
-  if (order && order.slipImage) {
-    DOM.slipFullImg.src = order.slipImage;
-    DOM.modalSlipLightbox.classList.remove('hidden');
-  }
-};
-
-window.editOrderFromList = function (idx) {
-  const order = AppState.orders[idx];
-  if (!order) return;
-  closeDatabaseModal();
-  DOM.inputEmail.value = order.email;
-  lookupEmailAndShowForm(order.email);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-window.deleteOrderFromList = function (idx) {
-  if (confirm('คุณต้องการลบรายการสั่งจองนี้ใช่หรือไม่?')) {
-    AppState.orders.splice(idx, 1);
-    renderOrdersList();
-    showToast('ลบรายการเรียบร้อยแล้ว', 'info');
-  }
-};
-
-function exportOrdersToCSV() {
-  if (AppState.orders.length === 0) {
-    showToast('ไม่มีข้อมูลสำหรับส่งออก', 'error');
-    return;
-  }
-
-  let csv = 'Timestamp,Email,Name,Classroom,Number,Size,Style,Price,Status,HasSlip\n';
-  AppState.orders.forEach(o => {
-    csv += `"${o.timestamp}","${o.email}","${o.name}","${o.classroom || ''}","${o.number}","${o.size}","${o.style}","${o.price}","${o.status || 'Confirmed'}","${o.slipImage ? 'YES' : 'NO'}"\n`;
-  });
-
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', `ayutthaya_pink_orders_${Date.now()}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  showToast('ส่งออกไฟล์ CSV สำเร็จ', 'success');
-}
-
-// Google Sheets Config Modal Handlers
-function openConfigModal() {
-  if (DOM.inputGasUrl) DOM.inputGasUrl.value = AppState.gasUrl;
-  if (DOM.modalConfig) DOM.modalConfig.classList.remove('hidden');
-}
-
-function closeConfigModal() {
-  if (DOM.modalConfig) DOM.modalConfig.classList.add('hidden');
-}
-
-function saveGasConfig() {
-  const url = DOM.inputGasUrl ? DOM.inputGasUrl.value.trim() : '';
-  AppState.gasUrl = url;
-  localStorage.setItem('PINK_JERSEY_GAS_URL', url);
-  checkGasConnection();
-  closeConfigModal();
-  showToast('บันทึกการตั้งค่า Google Sheets แล้ว', 'success');
-}
-
-function testGasConnection() {
-  const url = DOM.inputGasUrl ? DOM.inputGasUrl.value.trim() : '';
-  if (!url) {
-    showToast('กรุณากรอก Web App URL ก่อนทดสอบ', 'error');
-    return;
-  }
-  showToast('กำลังทดสอบการเชื่อมต่อ...', 'info');
-  fetch(`${url}?action=ping`, { mode: 'no-cors' })
-    .then(() => {
-      showToast('เชื่อมต่อกับ Google Apps Script สำเร็จ!', 'success');
-    })
-    .catch(() => {
-      showToast('การส่งข้อมูลพร้อมใช้งาน (โหมด no-cors)', 'info');
-    });
 }
 
 function checkGasConnection() {
@@ -2660,8 +2501,8 @@ function goToStep(targetStep, validateCurrent = true) {
 
   if (targetStep === 4) {
     updateWizardRecap();
-    if (AppState.mode === 'new') {
-      if (DOM.submitButtonSection) DOM.submitButtonSection.classList.remove('hidden');
+    if (DOM.submitButtonSection) {
+      DOM.submitButtonSection.style.display = AppState.mode === 'new' ? 'block' : 'none';
     }
   }
 
