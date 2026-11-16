@@ -52,6 +52,8 @@ const AppState = {
   slipChanged: false,
   isSearchingEmail: false,
   isSubmitting: false,
+  isSubmitted: false,
+  isOrderingAnother: false,
   gasUrl: _getEndpoint(),
   existingRecord: null,
   orders: [],
@@ -916,6 +918,17 @@ function updateSlipStatusBadge(isExternalUrl) {
 
 function updateSubmitButtonAvailability() {
   if (!DOM.btnSubmit) return;
+  if (AppState.isSubmitted) {
+    DOM.btnSubmit.disabled = true;
+    DOM.btnSubmit.classList.add('is-submitted');
+    DOM.btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+    DOM.btnSubmit.removeAttribute('title');
+    if (DOM.btnSubmitText) DOM.btnSubmitText.textContent = 'จองสำเร็จแล้ว';
+    if (DOM.btnSubmitIcon) DOM.btnSubmitIcon.className = 'fa-solid fa-circle-check mr-1.5';
+    if (DOM.submitSlipNotice) DOM.submitSlipNotice.classList.add('hidden');
+    return;
+  }
+  DOM.btnSubmit.classList.remove('is-submitted');
   const isEligible = AppState.mode === 'edit' || Boolean(AppState.slipImage);
   DOM.btnSubmit.disabled = !isEligible;
   if (!isEligible) {
@@ -1611,6 +1624,8 @@ async function lookupEmailAndShowForm(email) {
 
 function populateEditModeFields(orderRecord) {
   AppState.mode = 'edit';
+  AppState.isSubmitted = false;
+  AppState.isOrderingAnother = false;
   AppState.existingRecord = orderRecord;
   AppState.slipChanged = false;
   AppState.slipUrl = orderRecord.slipUrl || null;
@@ -1810,6 +1825,8 @@ function switchToOrderAnother() {
   const existingStudentNumber = DOM.inputStudentNumber ? DOM.inputStudentNumber.value.trim() : '';
 
   AppState.mode = 'new';
+  AppState.isSubmitted = false;
+  AppState.isOrderingAnother = true;
   AppState.existingRecord = null;
   AppState.slipChanged = false;
   AppState.slipUrl = null;
@@ -1838,6 +1855,7 @@ function switchToOrderAnother() {
   const card = document.getElementById('purchasedStatusCard');
   if (card) card.classList.add('hidden');
   if (DOM.paymentStatusDisplay) DOM.paymentStatusDisplay.classList.add('hidden');
+  if (DOM.btnSubmit) DOM.btnSubmit.classList.remove('is-submitted');
   DOM.btnSubmitText.textContent = 'ยืนยันการสั่งจองเสื้อตัวนี้ (เมลเดิม)';
   DOM.btnSubmitIcon.className = 'fa-solid fa-cart-plus mr-1.5';
 
@@ -1856,6 +1874,8 @@ function switchToEditMode(orderRecord) {
 
 function resetToNewMode() {
   AppState.mode = 'new';
+  AppState.isSubmitted = false;
+  AppState.isOrderingAnother = false;
   AppState.existingRecord = null;
   AppState.slipChanged = false;
   AppState.slipUrl = null;
@@ -1893,6 +1913,7 @@ function resetToNewMode() {
   const card = document.getElementById('purchasedStatusCard');
   if (card) card.classList.add('hidden');
   if (DOM.paymentStatusDisplay) DOM.paymentStatusDisplay.classList.add('hidden');
+  if (DOM.btnSubmit) DOM.btnSubmit.classList.remove('is-submitted');
   DOM.btnSubmitText.textContent = 'ยืนยันการสั่งจองและส่งสลิป';
   DOM.btnSubmitIcon.className = 'fa-solid fa-check mr-1.5';
   if (DOM.onboardingHintStep1) DOM.onboardingHintStep1.classList.remove('hidden');
@@ -2108,9 +2129,23 @@ function updateFormSubmissionUI(isSubmitting) {
   if (isSubmitting) {
     DOM.btnSubmit.disabled = true;
     DOM.btnSubmitText.textContent = 'กำลังบันทึกข้อมูล...';
+    if (DOM.btnSubmitIcon) DOM.btnSubmitIcon.className = 'fa-solid fa-circle-notch fa-spin mr-1.5';
     return;
   }
-  DOM.btnSubmitText.textContent = AppState.mode === 'edit' ? 'บันทึกการแก้ไขข้อมูล' : 'ยืนยันการสั่งจองและส่งสลิป';
+  if (AppState.isSubmitted) {
+    DOM.btnSubmit.disabled = true;
+    DOM.btnSubmit.classList.add('is-submitted');
+    DOM.btnSubmitText.textContent = 'จองสำเร็จแล้ว';
+    if (DOM.btnSubmitIcon) DOM.btnSubmitIcon.className = 'fa-solid fa-circle-check mr-1.5';
+    if (DOM.submitSlipNotice) DOM.submitSlipNotice.classList.add('hidden');
+    return;
+  }
+  DOM.btnSubmitText.textContent = AppState.mode === 'edit'
+    ? 'บันทึกการแก้ไขข้อมูล'
+    : (AppState.isOrderingAnother ? 'ยืนยันการสั่งจองเสื้อตัวนี้ (เมลเดิม)' : 'ยืนยันการสั่งจองและส่งสลิป');
+  if (DOM.btnSubmitIcon) {
+    DOM.btnSubmitIcon.className = AppState.isOrderingAnother ? 'fa-solid fa-cart-plus mr-1.5' : 'fa-solid fa-check mr-1.5';
+  }
   updateSubmitButtonAvailability();
 }
 
@@ -2131,6 +2166,7 @@ async function sendOrderToGoogleSheets(submissionRecord) {
 }
 
 async function handleFormSubmit() {
+  if (AppState.isSubmitting || AppState.isSubmitted) return;
   if (!validateForm()) return;
 
   const email = DOM.inputEmail.value.trim();
@@ -2152,12 +2188,35 @@ async function handleFormSubmit() {
   const submissionRecord = buildOrderSubmissionRecord(email, studentNumber, name, number, classroom, nowTimestamp);
   const syncSuccess = await sendOrderToGoogleSheets(submissionRecord);
 
-  updateFormSubmissionUI(false);
-  if (!syncSuccess) return;
+  if (!syncSuccess) {
+    updateFormSubmissionUI(false);
+    return;
+  }
 
+  AppState.isSubmitted = true;
   AppState.slipChanged = false;
+  updateFormSubmissionUI(false);
+
+  if (DOM.btnChangeSlip) DOM.btnChangeSlip.style.display = 'none';
+  if (DOM.btnRemoveSlip) DOM.btnRemoveSlip.style.display = 'none';
+
+  const newSavedOrder = buildOrderRecordFromRaw(submissionRecord, email);
+  AppState.userOrders = Array.isArray(AppState.userOrders) ? [...AppState.userOrders, newSavedOrder] : [newSavedOrder];
+  AppState.selectedOrderIndex = AppState.userOrders.length - 1;
+  const normalizedKey = email.toLowerCase();
+  AppState.ordersCache.set(normalizedKey, AppState.userOrders);
+  renderMultiOrderTabs();
+
+  const card = document.getElementById('purchasedStatusCard');
+  const badge = document.getElementById('purchasedStatusBadge');
+  if (card) card.classList.remove('hidden');
+  if (badge) {
+    badge.textContent = 'รอตรวจสอบสลิป';
+    badge.className = 'text-[10px] font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30';
+  }
+
   triggerConfetti();
-  showToast(AppState.mode === 'edit' ? 'บันทึกการแก้ไขเรียบร้อยแล้ว!' : 'สั่งจองเสื้อและแนบสลิปสำเร็จ!', 'success');
+  showToast('จองสำเร็จแล้ว! บันทึกข้อมูลและสลิปเรียบร้อย', 'success');
 }
 
 function checkGasConnection() {

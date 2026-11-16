@@ -1010,6 +1010,17 @@ main.max-w-5xl {
   color: var(--pill-active-ink);
 }
 
+.apple-btn-primary.is-submitted,
+.apple-btn-primary.is-submitted:disabled {
+  opacity: 1 !important;
+  cursor: default !important;
+  transform: none !important;
+  background: rgba(16, 185, 129, 0.16) !important;
+  border: 1px solid rgba(52, 211, 153, 0.4) !important;
+  color: #6ee7b7 !important;
+  box-shadow: none !important;
+}
+
 .apple-btn-secondary {
   background: var(--surface-input);
   border: 1px solid var(--border-strong);
