@@ -30,7 +30,7 @@ const DEFAULT_DEPARTMENTS = [
   { name: 'ฝ่ายสวัสดิการ', deputyLabel: 'รองประธานฝ่ายสวัสดิการ' },
   { name: 'ฝ่ายกราฟิก' },
   { name: 'ฝ่ายกีฬา', hasSports: true, isClosed: true, closedNote: 'รอประกาศคัดตัวนักกีฬา' },
-  { name: 'ฝ่ายสแตนเชียร์', maxCapacity: 25, isStand: true, m1Only: true },
+  { name: 'ฝ่ายสแตนเชียร์', isStand: true, m1Only: false },
   { name: 'ฝ่ายขบวน' },
   { name: 'ฝ่ายดรัมเมเยอร์', maxCapacity: 12 },
 ];
@@ -58,14 +58,14 @@ const NUMBERS = (() => {
   return arr;
 })();
 
-const SETTINGS_STORAGE_KEY = 'pink_admin_dynamic_settings_v1';
+const SETTINGS_STORAGE_KEY = 'pink_admin_dynamic_settings_v2';
 const DEFAULT_ADMIN_PIN = '2569';
 
 function loadDynamicSettings() {
   const defaults = {
     departments: JSON.parse(JSON.stringify(DEFAULT_DEPARTMENTS)),
     strictOnePerson: true,
-    m1StandOnly: true,
+    m1StandOnly: false,
     lockM1Registration: true,
     adminPin: DEFAULT_ADMIN_PIN,
     updatedAt: Date.now()
@@ -77,10 +77,17 @@ function loadDynamicSettings() {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
     if (!raw) return defaults;
     const parsed = JSON.parse(raw);
+    const m1StandOnly = typeof parsed.m1StandOnly === 'boolean' ? parsed.m1StandOnly : defaults.m1StandOnly;
+    const rawDepartments = Array.isArray(parsed.departments) ? parsed.departments : defaults.departments;
+    const syncedDepartments = rawDepartments.map(dept =>
+      (dept && (dept.isStand || dept.name === 'ฝ่ายสแตนเชียร์'))
+        ? { ...dept, m1Only: m1StandOnly }
+        : dept
+    );
     return {
-      departments: Array.isArray(parsed.departments) ? parsed.departments : defaults.departments,
+      departments: syncedDepartments,
       strictOnePerson: typeof parsed.strictOnePerson === 'boolean' ? parsed.strictOnePerson : defaults.strictOnePerson,
-      m1StandOnly: typeof parsed.m1StandOnly === 'boolean' ? parsed.m1StandOnly : defaults.m1StandOnly,
+      m1StandOnly,
       lockM1Registration: typeof parsed.lockM1Registration === 'boolean' ? parsed.lockM1Registration : defaults.lockM1Registration,
       adminPin: parsed.adminPin || defaults.adminPin,
       updatedAt: parsed.updatedAt || Date.now()

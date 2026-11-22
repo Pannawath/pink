@@ -566,8 +566,9 @@ function formatDeptOption(deptItem, selectedDeptName, selectedRoom) {
   }
 
   // Check if stand is only for M.1 and user is not M.1
+  const settings = (typeof AttendanceConfig.getSettings === 'function') ? AttendanceConfig.getSettings() : {};
   const isM1 = selectedRoom && selectedRoom.startsWith('ม.1');
-  if (deptItem.m1Only && !isM1) {
+  if (deptItem.m1Only && settings.m1StandOnly === true && !isM1) {
     // Hide stand from M.2-M.6
     return '';
   }
@@ -729,7 +730,8 @@ function validateConflict(candidateRecord) {
   if (deptMeta && deptMeta.isClosed) {
     return `ฝ่าย${candidateRecord.department} ปิดรับชั่วคราว (${deptMeta.closedNote || 'รอคัดตัว'})`;
   }
-  if (deptMeta && deptMeta.m1Only && !(candidateRecord.classRoom || '').startsWith('ม.1')) {
+  const settings = (typeof AttendanceConfig.getSettings === 'function') ? AttendanceConfig.getSettings() : {};
+  if (deptMeta && deptMeta.m1Only && settings.m1StandOnly === true && !(candidateRecord.classRoom || '').startsWith('ม.1')) {
     return 'ฝ่ายสแตนเชียร์เปิดรับเฉพาะนักเรียนระดับชั้น ม.1 เท่านั้น';
   }
   if (candidateRecord.department && AttendanceStore.isDeptFull(candidateRecord.department)) {

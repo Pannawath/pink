@@ -524,6 +524,13 @@
     },
     toggleSetting(key, val) {
       adminSettings[key] = val;
+      if (key === 'm1StandOnly' && Array.isArray(adminSettings.departments)) {
+        adminSettings.departments.forEach(dept => {
+          if (dept && (dept.isStand || dept.name === 'ฝ่ายสแตนเชียร์')) {
+            dept.m1Only = Boolean(val);
+          }
+        });
+      }
       AttendanceConfig.saveSettings(adminSettings);
       renderActiveTab();
     },
