@@ -1,7 +1,0 @@
-# ไฟล์ที่ไม่ต้อง push ขึ้น GitHub
-server.js
-package.json
-node_modules/
-.DS_Store
-*.log
-
